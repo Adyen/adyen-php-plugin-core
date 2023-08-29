@@ -1,0 +1,7 @@
+{
+  "type": "https://docs.adyen.com/errors/not-found",
+  "title": "Entity was not found",
+  "status": 422,
+  "requestId": "D7T8TZFVD8JSTC82",
+  "errorCode": "30_112"
+}

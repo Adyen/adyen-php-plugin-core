@@ -1,0 +1,42 @@
+{
+  "paymentMethods": [
+    {
+      "details": [
+        {
+          "key": "additionalData.visacheckout.callId",
+          "type": "text"
+        }
+      ],
+      "name": "Visa Checkout",
+      "type": "visacheckout"
+    },
+    {
+      "name": "VVV Cadeaubon",
+      "brand": "vvvcadeaubon",
+      "type": "giftcard"
+    },
+    {
+      "name": "Webshop Giftcard",
+      "brand": "webshopgiftcard",
+      "type": "giftcard"
+    },
+    {
+      "name": "WE Fashion Giftcard",
+      "type": "wefashiongiftcard"
+    },
+    {
+      "name": "Western Union",
+      "type": "westernunion"
+    },
+    {
+      "name": "Winkel Cheque",
+      "brand": "winkelcheque",
+      "type": "giftcard"
+    },
+    {
+      "name": "Your Gift",
+      "brand": "yourgift",
+      "type": "giftcard"
+    }
+  ]
+}

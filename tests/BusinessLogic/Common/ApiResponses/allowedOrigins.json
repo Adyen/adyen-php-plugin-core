@@ -1,0 +1,9 @@
+{
+  "id": "S2-636D705F243B7F552662782E414E732B626D495C32554B495472533C2E605B3B4D6A6C40793F3033333E52",
+  "domain": "http://5-6-10.shopware5.localhostst",
+  "_links": {
+    "self": {
+      "href": "https://management-test.adyen.com/v1/me/allowedOrigins/S2-636D705F243B7F552662782E414E732B626D495C32554B495472533C2E605B3B4D6A6C40793F3033333E52"
+    }
+  }
+}

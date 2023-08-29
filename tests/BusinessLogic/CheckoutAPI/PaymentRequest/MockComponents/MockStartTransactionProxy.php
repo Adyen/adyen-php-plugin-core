@@ -1,0 +1,69 @@
+<?php
+
+namespace Adyen\Core\Tests\BusinessLogic\CheckoutAPI\PaymentRequest\MockComponents;
+
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\AvailablePaymentMethodsResponse;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodsRequest;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentRequest;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ResultCode;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\StartTransactionResult;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePaymentDetailsRequest;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePaymentDetailsResult;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Proxies\PaymentsProxy;
+
+/**
+ * Class MockStartTransactionProxy
+ *
+ * @package Adyen\Core\Tests\BusinessLogic\CheckoutAPI\PaymentRequest\MockComponents
+ */
+class MockStartTransactionProxy implements PaymentsProxy
+{
+    /**
+     * @var StartTransactionResult
+     */
+    private $result;
+    /**
+     * @var true
+     */
+    private $isCalled = false;
+    /**
+     * @var PaymentRequest
+     */
+    private $lastRequest;
+
+    public function startPaymentTransaction(PaymentRequest $request): StartTransactionResult
+    {
+        $this->isCalled = true;
+        $this->lastRequest = $request;
+
+        return $this->result;
+    }
+
+    public function updatePaymentDetails(UpdatePaymentDetailsRequest $request): UpdatePaymentDetailsResult
+    {
+        return new UpdatePaymentDetailsResult(ResultCode::error());
+    }
+
+    public function setMockResult(StartTransactionResult $result): void
+    {
+        $this->result = $result;
+    }
+
+    /**
+     * @return true
+     */
+    public function getIsCalled(): bool
+    {
+        return $this->isCalled;
+    }
+
+    public function getLastRequest(): PaymentRequest
+    {
+        return $this->lastRequest;
+    }
+
+    public function getAvailablePaymentMethods(PaymentMethodsRequest $request): AvailablePaymentMethodsResponse
+    {
+        return new AvailablePaymentMethodsResponse([]);
+    }
+}

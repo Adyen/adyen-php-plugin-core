@@ -1,1 +1,3 @@
-# adyen-php-plugin-core
+#Introduction
+
+Adyen's integration core.

@@ -1,0 +1,113 @@
+{
+  "_links": {
+    "first": {
+      "href": "https://management-test.adyen.com/v1/merchants?pageNumber=1&pageSize=10"
+    },
+    "last": {
+      "href": "https://management-test.adyen.com/v1/merchants?pageNumber=1&pageSize=10"
+    },
+    "self": {
+      "href": "https://management-test.adyen.com/v1/merchants?pageNumber=1&pageSize=10"
+    }
+  },
+  "itemsTotal": 3,
+  "pagesTotal": 1,
+  "data": [
+    {
+      "id": "LogeecomECOM",
+      "name": "LogeecomECOM",
+      "companyId": "Logeecom",
+      "captureDelay": "immediate",
+      "defaultShopperInteraction": "Ecommerce",
+      "status": "Active",
+      "shopWebAddress": "https://www.adyen.com/",
+      "merchantCity": "",
+      "primarySettlementCurrency": "EUR",
+      "dataCenters": [
+        {
+          "name": "default",
+          "livePrefix": ""
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+        },
+        "apiCredentials": {
+          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/apiCredentials"
+        },
+        "users": {
+          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/users"
+        },
+        "webhooks": {
+          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks"
+        }
+      },
+      "reference": "LogeecomECOM"
+    },
+    {
+      "id": "Logeecom_LogeecomECOM1_TEST",
+      "name": "Logeecom_LogeecomECOM1_TEST",
+      "companyId": "Logeecom",
+      "captureDelay": "3",
+      "defaultShopperInteraction": "Ecommerce",
+      "status": "Active",
+      "shopWebAddress": "https://www.adyen.com/",
+      "merchantCity": "",
+      "primarySettlementCurrency": "EUR",
+      "dataCenters": [
+        {
+          "name": "default",
+          "livePrefix": ""
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "https://management-test.adyen.com/v1/merchants/Logeecom_LogeecomECOM1_TEST"
+        },
+        "apiCredentials": {
+          "href": "https://management-test.adyen.com/v1/merchants/Logeecom_LogeecomECOM1_TEST/apiCredentials"
+        },
+        "users": {
+          "href": "https://management-test.adyen.com/v1/merchants/Logeecom_LogeecomECOM1_TEST/users"
+        },
+        "webhooks": {
+          "href": "https://management-test.adyen.com/v1/merchants/Logeecom_LogeecomECOM1_TEST/webhooks"
+        }
+      },
+      "reference": "Logeecom_LogeecomECOM1_TEST"
+    },
+    {
+      "id": "Logeecom_Sava_local_test_TEST",
+      "name": "Logeecom_Sava_local_test_TEST",
+      "companyId": "Logeecom",
+      "captureDelay": "3",
+      "defaultShopperInteraction": "Ecommerce",
+      "status": "Active",
+      "shopWebAddress": "https://www.adyen.com/",
+      "merchantCity": "Amsterdam",
+      "primarySettlementCurrency": "EUR",
+      "dataCenters": [
+        {
+          "name": "default",
+          "livePrefix": ""
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "https://management-test.adyen.com/v1/merchants/Logeecom_Sava_local_test_TEST"
+        },
+        "apiCredentials": {
+          "href": "https://management-test.adyen.com/v1/merchants/Logeecom_Sava_local_test_TEST/apiCredentials"
+        },
+        "users": {
+          "href": "https://management-test.adyen.com/v1/merchants/Logeecom_Sava_local_test_TEST/users"
+        },
+        "webhooks": {
+          "href": "https://management-test.adyen.com/v1/merchants/Logeecom_Sava_local_test_TEST/webhooks"
+        }
+      },
+      "reference": "Logeecom_Sava_local_test_TEST"
+    }
+  ]
+}

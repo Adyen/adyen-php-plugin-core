@@ -1,0 +1,7 @@
+{
+  "status": 403,
+  "errorCode": "901",
+  "message": "Invalid Merchant Account",
+  "errorType": "security",
+  "pspReference": "LT3D9H8CP4BLNK82"
+}

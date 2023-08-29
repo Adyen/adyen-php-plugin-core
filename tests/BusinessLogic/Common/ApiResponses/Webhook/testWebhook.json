@@ -1,0 +1,12 @@
+{
+  "data": [
+    {
+      "merchantId": "Logeecom_LogeecomECOM1_TEST",
+      "output": "{\"notificationResponse\":\"[accepted]\"}",
+      "requestSent": "{\"live\":\"false\",\"notificationItems\":[{\"NotificationRequestItem\":{\"additionalData\":{\"expiryDate\":\"12\\/2012\",\"authCode\":\"1234\",\"cardSummary\":\"7777\",\"totalFraudScore\":\"10\",\"hmacSignature\":\"fO\\/59+3SXA0prTISYZR1S07fUM0gGB070LbO08WCx8s=\",\"NAME2\":\"VALUE2\",\"NAME1\":\"VALUE1\",\"fraudCheck-6-ShopperIpUsage\":\"10\"},\"amount\":{\"currency\":\"EUR\",\"value\":10100},\"eventCode\":\"AUTHORISATION\",\"eventDate\":\"2023-03-15T15:14:33+01:00\",\"merchantAccountCode\":\"Logeecom_LogeecomECOM1_TEST\",\"merchantReference\":\"8313842560770001\",\"operations\":[\"CANCEL\",\"CAPTURE\",\"REFUND\"],\"paymentMethod\":\"visa\",\"pspReference\":\"BLGXX6T5LFQ3FR8M\",\"reason\":\"1234:7777:12\\/2012\",\"success\":\"true\"}}]}",
+      "responseCode": "200",
+      "responseTime": "174 ms",
+      "status": "success"
+    }
+  ]
+}

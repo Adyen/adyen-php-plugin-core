@@ -1,0 +1,34 @@
+{
+  "paymentMethods": [
+    {
+      "name": "AliPay",
+      "type": "alipay"
+    },
+    {
+      "brands": [
+        "amex",
+        "bcmc",
+        "cartebancaire",
+        "mc",
+        "visa",
+        "visadankort"
+      ],
+      "name": "Credit Card",
+      "type": "scheme"
+    },
+    {
+      "brands": [
+        "amex",
+        "cartebancaire",
+        "mc",
+        "visa"
+      ],
+      "configuration": {
+        "merchantId": "000000000203160",
+        "merchantName": "LogeecomECOM"
+      },
+      "name": "Apple Pay",
+      "type": "applepay"
+    }
+  ]
+}

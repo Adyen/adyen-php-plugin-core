@@ -1,0 +1,57 @@
+{
+  "itemsTotal": 3,
+  "pagesTotal": 1,
+  "data": [
+    {
+      "PaymentMethod": {
+        "id": "PM3224P22322225FR8FHP6DQF",
+        "type": "alipay",
+        "enabled": true,
+        "countries": [
+          "ANY"
+        ],
+        "currencies": [
+          "CHF",
+          "HKD",
+          "EUR",
+          "DKK",
+          "USD",
+          "MYR",
+          "CAD",
+          "NOK",
+          "CNY",
+          "THB",
+          "AUD",
+          "SGD",
+          "JPY",
+          "GBP",
+          "CZK",
+          "SEK",
+          "NZD",
+          "RUB"
+        ],
+        "customRoutingFlags": []
+      }
+    },
+    {
+      "PaymentMethod": {
+        "id": "PM3224P22322225FNZ7B8G595",
+        "type": "amex",
+        "enabled": true,
+        "countries": [],
+        "currencies": [],
+        "customRoutingFlags": []
+      }
+    },
+    {
+      "PaymentMethod": {
+        "id": "PM3224R223224K5FRJX6FDD2M",
+        "type": "amex_applepay",
+        "enabled": true,
+        "countries": [],
+        "currencies": [],
+        "customRoutingFlags": []
+      }
+    }
+  ]
+}

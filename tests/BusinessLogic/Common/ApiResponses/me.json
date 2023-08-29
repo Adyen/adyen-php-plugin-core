@@ -1,0 +1,98 @@
+{
+  "id": "S2-78712F343C575E",
+  "username": "ws_038292@Company.Logeecom",
+  "description": "Sale2",
+  "clientKey": "test_NCIFFICIC5EUFD4WU72RM65BRE3SEOGK",
+  "allowedIpAddresses": [],
+  "roles": [
+    "Management API - Accounts read",
+    "Management API - Webhooks read",
+    "Management API - API credentials read and write",
+    "Management API - Stores read",
+    "Management API — Payment methods read",
+    "Management API - Stores read and write",
+    "Management API - Webhooks read and write",
+    "Checkout encrypted cardholder data",
+    "Merchant Recurring role",
+    "Data Protection API",
+    "Management API - Payout Account Settings Read",
+    "Checkout webservice role",
+    "Management API - Accounts read and write",
+    "Merchant PAL Webservice role"
+  ],
+  "active": true,
+  "allowedOrigins": [
+    {
+      "id": "S2-3D7770442D3F4F7A6A367F2F41416C6425772B33795F316D46472B3F6C4D7D4C4C7671283457207A3F",
+      "domain": "http://5-6-10.shopware5.localhost",
+      "_links": {
+        "self": {
+          "href": "https://management-test.adyen.com/v1/me/allowedOrigins/S2-3D7770442D3F4F7A6A367F2F41416C6425772B33795F316D46472B3F6C4D7D4C4C7671283457207A3F"
+        }
+      }
+    },
+    {
+      "id": "S2-6A68747B32563C235B762B76205256264B63736D3C70417D6D5D672A5A497C3F49424443454631495F2B6C44274B7D2F68",
+      "domain": "https://5-6-10.shopware5.sale.eu.ngrok.io",
+      "_links": {
+        "self": {
+          "href": "https://management-test.adyen.com/v1/me/allowedOrigins/S2-6A68747B32563C235B762B76205256264B63736D3C70417D6D5D672A5A497C3F49424443454631495F2B6C44274B7D2F68"
+        }
+      }
+    },
+    {
+      "id": "S2-745F35774440296D5C767F7F4766522B253B6C6C487B327C7A2368762F",
+      "domain": "https://www.test1.com",
+      "_links": {
+        "self": {
+          "href": "https://management-test.adyen.com/v1/me/allowedOrigins/S2-745F35774440296D5C767F7F4766522B253B6C6C487B327C7A2368762F"
+        }
+      }
+    },
+    {
+      "id": "S2-4769244B6B526D567B776F4F73344930577B434B27564E4A616F77534F",
+      "domain": "https://www.test2.com",
+      "_links": {
+        "self": {
+          "href": "https://management-test.adyen.com/v1/me/allowedOrigins/S2-4769244B6B526D567B776F4F73344930577B434B27564E4A616F77534F"
+        }
+      }
+    },
+    {
+      "id": "S2-2133574D4A29342371324B7235353E254C773F4C6F696F263E5F696D30",
+      "domain": "https://www.test3.com",
+      "_links": {
+        "self": {
+          "href": "https://management-test.adyen.com/v1/me/allowedOrigins/S2-2133574D4A29342371324B7235353E254C773F4C6F696F263E5F696D30"
+        }
+      }
+    },
+    {
+      "id": "S2-7C612B384E65254F6C3D6B435A363E232A7D4A624965497532377D452F",
+      "domain": "https://www.test4.com",
+      "_links": {
+        "self": {
+          "href": "https://management-test.adyen.com/v1/me/allowedOrigins/S2-7C612B384E65254F6C3D6B435A363E232A7D4A624965497532377D452F"
+        }
+      }
+    },
+    {
+      "id": "S2-7E786D5474555147403B48796431584B222753433022602374684B4D6E28",
+      "domain": "https://www.test4.com/",
+      "_links": {
+        "self": {
+          "href": "https://management-test.adyen.com/v1/me/allowedOrigins/S2-7E786D5474555147403B48796431584B222753433022602374684B4D6E28"
+        }
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://management-test.adyen.com/v1/me"
+    },
+    "allowedOrigins": {
+      "href": "https://management-test.adyen.com/v1/me/allowedOrigins"
+    }
+  },
+  "companyName": "Logeecom"
+}

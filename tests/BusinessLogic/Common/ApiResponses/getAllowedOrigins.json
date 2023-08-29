@@ -1,0 +1,31 @@
+{
+  "data": [
+    {
+      "id": "S2-745F35774440296D5C767F7F4766522B253B6C6C487B327C7A2368762F",
+      "domain": "https://www.test1.com",
+      "_links": {
+        "self": {
+          "href": "https://management-test.adyen.com/v1/me/allowedOrigins/S2-745F35774440296D5C767F7F4766522B253B6C6C487B327C7A2368762F"
+        }
+      }
+    },
+    {
+      "id": "S2-4769244B6B526D567B776F4F73344930577B434B27564E4A616F77534F",
+      "domain": "https://www.test2.com",
+      "_links": {
+        "self": {
+          "href": "https://management-test.adyen.com/v1/me/allowedOrigins/S2-4769244B6B526D567B776F4F73344930577B434B27564E4A616F77534F"
+        }
+      }
+    },
+    {
+      "id": "S2-2133574D4A29342371324B7235353E254C773F4C6F696F263E5F696D30",
+      "domain": "https://www.test3.com",
+      "_links": {
+        "self": {
+          "href": "https://management-test.adyen.com/v1/me/allowedOrigins/S2-2133574D4A29342371324B7235353E254C773F4C6F696F263E5F696D30"
+        }
+      }
+    }
+  ]
+}

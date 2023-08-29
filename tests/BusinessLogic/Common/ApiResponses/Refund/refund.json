@@ -1,0 +1,10 @@
+{
+  "merchantAccount": "Logeecom_LogeecomECOM1_TEST",
+  "paymentPspReference": "RQJNMRR5QGNG5S82",
+  "pspReference": "ZVP63JB2ZGXXGN82",
+  "status": "received",
+  "amount": {
+    "currency": "EUR",
+    "value": 4001111
+  }
+}
