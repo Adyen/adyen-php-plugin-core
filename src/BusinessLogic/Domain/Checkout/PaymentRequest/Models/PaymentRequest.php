@@ -4,6 +4,7 @@ namespace Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models;
 
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\AdditionalData\AdditionalData;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ApplicationInfo\ApplicationInfo;
 
 /**
  * Class PaymentRequest
@@ -133,6 +134,44 @@ class PaymentRequest
      */
     private $bankAccount;
 
+    /**
+     * @var ApplicationInfo
+     */
+    private $applicationInfo;
+
+    /**
+     * @param Amount $amount
+     * @param string $merchantId
+     * @param string $reference
+     * @param string $returnUrl
+     * @param array $paymentMethod
+     * @param BrowserInfo|null $browserInfo
+     * @param BillingAddress|null $billingAddress
+     * @param DeliveryAddress|null $deliveryAddress
+     * @param RiskData|null $riskData
+     * @param ShopperName|null $shopperName
+     * @param string $dateOfBirth
+     * @param string $telephoneNumber
+     * @param string $shopperEmail
+     * @param string $countryCode
+     * @param string $socialSecurityNumber
+     * @param Installments|null $installments
+     * @param bool $storePaymentMethod
+     * @param string $conversionId
+     * @param ShopperReference|null $shopperReference
+     * @param string|null $recurringProcessingModel
+     * @param string|null $shopperInteraction
+     * @param string $shopperLocale
+     * @param int $captureDelayHours
+     * @param string $channel
+     * @param string $origin
+     * @param array $lineItems
+     * @param AdditionalData|null $additionalData
+     * @param AuthenticationData|null $authenticationData
+     * @param string $deviceFingerprint
+     * @param array $bankAccount
+     * @param ApplicationInfo|null $applicationInfo
+     */
     public function __construct(
         Amount $amount,
         string $merchantId,
@@ -163,7 +202,8 @@ class PaymentRequest
         AdditionalData $additionalData = null,
         AuthenticationData $authenticationData = null,
         string $deviceFingerprint = '',
-        array $bankAccount = []
+        array $bankAccount = [],
+        ApplicationInfo $applicationInfo = null
     ) {
         $this->amount = $amount;
         $this->merchantId = $merchantId;
@@ -195,6 +235,7 @@ class PaymentRequest
         $this->authenticationData = $authenticationData;
         $this->deviceFingerprint = $deviceFingerprint;
         $this->bankAccount = $bankAccount;
+        $this->applicationInfo = $applicationInfo;
     }
 
     /**
@@ -435,5 +476,13 @@ class PaymentRequest
     public function getBankAccount(): array
     {
         return $this->bankAccount;
+    }
+
+    /**
+     * @return ApplicationInfo|null
+     */
+    public function getApplicationInfo(): ?ApplicationInfo
+    {
+        return $this->applicationInfo;
     }
 }

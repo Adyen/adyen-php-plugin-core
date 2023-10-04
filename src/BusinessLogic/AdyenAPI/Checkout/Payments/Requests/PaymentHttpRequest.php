@@ -5,6 +5,8 @@ namespace Adyen\Core\BusinessLogic\AdyenAPI\Checkout\Payments\Requests;
 use Adyen\Core\BusinessLogic\AdyenAPI\Http\Requests\HttpRequest;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\AdditionalData\BasketItem;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\AdditionalData\ItemDetailLine;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ApplicationInfo\ExternalPlatform;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ApplicationInfo\MerchantApplication;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\LineItem;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentRequest;
 
@@ -148,7 +150,8 @@ class PaymentHttpRequest extends HttpRequest
             $body['additionalData']['riskData']['basket'] = $basketItems;
         }
 
-        if ($this->request->getAdditionalData() && $data = $this->request->getAdditionalData()->getEnhancedSchemeData()) {
+        if ($this->request->getAdditionalData() && $data = $this->request->getAdditionalData()->getEnhancedSchemeData(
+            )) {
             $itemDetailLine = [];
 
             foreach ($data->getItemDetailLines() as $key => $detailLine) {
@@ -181,13 +184,25 @@ class PaymentHttpRequest extends HttpRequest
             $body['bankAccount'] = $this->request->getBankAccount();
         }
 
+        if (!empty($this->request->getApplicationInfo())) {
+            $this->request->getApplicationInfo()->getExternalPlatform(
+            ) && $body['applicationInfo']['externalPlatform'] = $this->getFormattedExternalPlatform(
+                $this->request->getApplicationInfo()->getExternalPlatform()
+            );
+
+            $this->request->getApplicationInfo()->getMerchantApplication(
+            ) && $body['applicationInfo']['merchantApplication'] = $this->getFormattedMerchantApplication(
+                $this->request->getApplicationInfo()->getMerchantApplication()
+            );
+        }
+
         return $body;
     }
 
     /** @noinspection NullPointerExceptionInspection */
     private function getFormattedBrowserInfo(): array
     {
-        return  [
+        return [
             'acceptHeader' => $this->request->getBrowserInfo()->getAcceptHeader(),
             'colorDepth' => $this->request->getBrowserInfo()->getColorDepth(),
             'javaEnabled' => $this->request->getBrowserInfo()->isJavaEnabled(),
@@ -214,6 +229,11 @@ class PaymentHttpRequest extends HttpRequest
         ];
     }
 
+    /**
+     * @param BasketItem $basketItem
+     *
+     * @return array
+     */
     private function getFormattedBasketItem(BasketItem $basketItem): array
     {
         return [
@@ -233,6 +253,11 @@ class PaymentHttpRequest extends HttpRequest
         ];
     }
 
+    /**
+     * @param ItemDetailLine $detailLine
+     *
+     * @return array
+     */
     private function getFormattedItemDetailLine(ItemDetailLine $detailLine): array
     {
         return [
@@ -244,6 +269,33 @@ class PaymentHttpRequest extends HttpRequest
             'totalAmount' => $detailLine->getTotalAmount(),
             'unitOfMeasure' => $detailLine->getUnitOfMeasure(),
             'unitPrice' => $detailLine->getUnitPrice(),
+        ];
+    }
+
+    /**
+     * @param ExternalPlatform $externalPlatform
+     *
+     * @return array
+     */
+    private function getFormattedExternalPlatform(ExternalPlatform $externalPlatform): array
+    {
+        return [
+            'name' => $externalPlatform->getName(),
+            'version' => $externalPlatform->getVersion(),
+            'integrator' => $externalPlatform->getIntegrator()
+        ];
+    }
+
+    /**
+     * @param MerchantApplication $merchantApplication
+     *
+     * @return array
+     */
+    private function getFormattedMerchantApplication(MerchantApplication $merchantApplication): array
+    {
+        return [
+            'name' => $merchantApplication->getName(),
+            'version' => $merchantApplication->getVersion()
         ];
     }
 }

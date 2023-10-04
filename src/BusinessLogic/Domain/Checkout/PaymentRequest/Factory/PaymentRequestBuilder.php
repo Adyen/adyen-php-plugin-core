@@ -4,6 +4,7 @@ namespace Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Factory;
 
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\AdditionalData\AdditionalData;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ApplicationInfo\ApplicationInfo;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\AuthenticationData;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\BillingAddress;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\BrowserInfo;
@@ -144,6 +145,11 @@ class PaymentRequestBuilder
      */
     private $bankAccount = [];
 
+    /**
+     * @var ApplicationInfo
+     */
+    private $applicationInfo;
+
     public function build(): PaymentRequest
     {
         return new PaymentRequest(
@@ -176,7 +182,8 @@ class PaymentRequestBuilder
             $this->additionalData,
             $this->authenticationData,
             $this->deviceFingerprint,
-            $this->bankAccount
+            $this->bankAccount,
+            $this->applicationInfo
         );
     }
 
@@ -419,11 +426,11 @@ class PaymentRequestBuilder
     {
         $additionalData = new AdditionalData(
             $additionalData->getRiskData() ??
-                ($this->additionalData ? $this->additionalData->getRiskData() : null),
+            ($this->additionalData ? $this->additionalData->getRiskData() : null),
             $additionalData->getEnhancedSchemeData() ??
-                ($this->additionalData ? $this->additionalData->getEnhancedSchemeData() : null),
+            ($this->additionalData ? $this->additionalData->getEnhancedSchemeData() : null),
             $additionalData->getManualCapture() ??
-                ($this->additionalData ? $this->additionalData->getManualCapture() : null)
+            ($this->additionalData ? $this->additionalData->getManualCapture() : null)
         );
 
         $this->additionalData = $additionalData;
@@ -445,8 +452,23 @@ class PaymentRequestBuilder
         $this->deviceFingerprint = $deviceFingerprint;
     }
 
+    /**
+     * @param array $bankAccount
+     *
+     * @return void
+     */
     public function setBankAccount(array $bankAccount): void
     {
         $this->bankAccount = $bankAccount;
+    }
+
+    /**
+     * @param ApplicationInfo $applicationInfo
+     *
+     * @return void
+     */
+    public function setApplicationInfo(ApplicationInfo $applicationInfo): void
+    {
+        $this->applicationInfo = $applicationInfo;
     }
 }

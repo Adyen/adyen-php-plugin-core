@@ -100,6 +100,7 @@ use Adyen\Core\BusinessLogic\Domain\InfoSettings\Services\ValidationService;
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\Integration\Payment\ShopPaymentService;
 use Adyen\Core\BusinessLogic\Domain\Integration\Processors\AddressProcessor;
+use Adyen\Core\BusinessLogic\Domain\Integration\Processors\ApplicationInfoProcessor;
 use Adyen\Core\BusinessLogic\Domain\Integration\Processors\BasketItemsProcessor;
 use Adyen\Core\BusinessLogic\Domain\Integration\Processors\BirthdayProcessor;
 use Adyen\Core\BusinessLogic\Domain\Integration\Processors\DeviceFingerprintProcessor;
@@ -1095,6 +1096,7 @@ class BootstrapComponent extends BaseBootstrapComponent
         PaymentRequestProcessorsRegistry::registerGlobal(ShopperLocaleProcessor::class);
         PaymentRequestProcessorsRegistry::registerGlobal(ShopperNameProcessor::class);
         PaymentRequestProcessorsRegistry::registerGlobal(ShopperReferenceProcessor::class);
+        PaymentRequestProcessorsRegistry::registerGlobal(ApplicationInfoProcessor::class);
         PaymentRequestProcessorsRegistry::registerByPaymentType(
             PaymentMethodCode::facilyPay3x(),
             LineItemsProcessor::class
