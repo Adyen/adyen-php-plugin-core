@@ -401,7 +401,10 @@ class PaymentService
     protected function findCheckoutMethodByType(array $checkoutMethods, string $type): ?CheckoutPaymentMethodResponse
     {
         foreach ($checkoutMethods as $method) {
-            if (in_array($type, self::CREDIT_CARD_BRANDS) && isset($method->getMetaData()['brands']) &&
+            if ($method->getType() === self::CREDIT_CARD_CODE && in_array(
+                    $type,
+                    self::CREDIT_CARD_BRANDS
+                ) && isset($method->getMetaData()['brands']) &&
                 in_array($type, $method->getMetaData()['brands'], true)) {
                 return $method;
             }
