@@ -3,6 +3,7 @@
 namespace Adyen\Core\BusinessLogic\CheckoutAPI\PaymentRequest\Request;
 
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\PaymentRequestProcessor;
 
 /**
  * Class PaymentRequest

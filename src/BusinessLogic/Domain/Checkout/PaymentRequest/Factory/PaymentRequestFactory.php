@@ -4,7 +4,7 @@ namespace Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Factory;
 
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentRequest;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\StartTransactionRequestContext;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\PaymentRequestProcessorsRegistry;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\PaymentRequestProcessorsRegistry;
 
 /**
  * Class Factory

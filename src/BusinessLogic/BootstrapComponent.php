@@ -16,13 +16,14 @@ use Adyen\Core\BusinessLogic\AdminAPI\Integration\Controller\IntegrationControll
 use Adyen\Core\BusinessLogic\AdminAPI\Merchant\Controller\MerchantController;
 use Adyen\Core\BusinessLogic\AdminAPI\OrderMappings\Controller\OrderMappingsController;
 use Adyen\Core\BusinessLogic\AdminAPI\Payment\Controller\PaymentController;
+use Adyen\Core\BusinessLogic\AdminAPI\PaymentLink\Controller\PaymentLinkController;
 use Adyen\Core\BusinessLogic\AdminAPI\Refund\Controller\RefundController;
 use Adyen\Core\BusinessLogic\AdminAPI\ShopNotifications\Controller\ShopNotificationsController;
 use Adyen\Core\BusinessLogic\AdminAPI\Stores\Controller\StoreController;
 use Adyen\Core\BusinessLogic\AdminAPI\TestConnection\Controller\TestConnectionController;
 use Adyen\Core\BusinessLogic\AdminAPI\Versions\Controller\VersionInfoController;
 use Adyen\Core\BusinessLogic\AdminAPI\WebhookNotifications\Controller\WebhookNotificationController;
-use Adyen\Core\BusinessLogic\AdyenAPI;
+use Adyen\Core\BusinessLogic\AdyenAPI\Checkout\PaymentLink\Http\Proxy as PaymentLinkProxy;
 use Adyen\Core\BusinessLogic\AdyenAPI\Checkout\Payments\Http\Proxy as PaymentsProxy;
 use Adyen\Core\BusinessLogic\AdyenAPI\Management\Connection\Http\Proxy as ConnectionProxy;
 use Adyen\Core\BusinessLogic\AdyenAPI\Management\Merchant\Http\Proxy as MerchantProxy;
@@ -59,36 +60,38 @@ use Adyen\Core\BusinessLogic\Domain\Capture\Proxies\CaptureProxy;
 use Adyen\Core\BusinessLogic\Domain\Checkout\AdyenGiving\Proxies\DonationsProxy;
 use Adyen\Core\BusinessLogic\Domain\Checkout\AdyenGiving\Repositories\DonationsDataRepository;
 use Adyen\Core\BusinessLogic\Domain\Checkout\AdyenGiving\Services\DonationsService;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Proxies\PaymentLinkProxy as PaymentLinkProxyInterface;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Services\PaymentLinkService;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Factory\PaymentRequestFactory;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\AmountProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\AuthenticationDataProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\CaptureDelayHoursProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\CaptureProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\MerchantIdProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\PaymentRequestProcessorsRegistry;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\ReferenceProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\ReturnUrlProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\StateDataProcessors\BankAccountStateDataProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\StateDataProcessors\BillingAddressStateDataProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\StateDataProcessors\BrowserInfoStateDataProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\StateDataProcessors\ConversionIdStateDataProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\StateDataProcessors\CountryCodeStateDataProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\StateDataProcessors\DateOfBirthStateDataProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\StateDataProcessors\DeliveryAddressStateDataProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\StateDataProcessors\InstallmentsStateDataProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\StateDataProcessors\OriginStateDataProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\StateDataProcessors\PaymentMethodStateDataProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\StateDataProcessors\RiskDataStateDataProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\StateDataProcessors\ShopperEmailStateDataProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\StateDataProcessors\ShopperNameStateDataProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\StateDataProcessors\SocialSecurityNumberStateDataProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\StateDataProcessors\StorePaymentMethodStateDataProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\StateDataProcessors\TelephoneNumberStateDataProcessor;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Proxies\PaymentsProxy as PaymentsProxyInterface;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Proxies\StoredDetailsProxy;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Services\PaymentCheckoutConfigService;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Services\PaymentRequestService;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\AmountProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\CaptureDelayHoursProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\CaptureProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\MerchantIdProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\AuthenticationDataProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\PaymentRequestProcessorsRegistry;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\ReturnUrlProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateDataProcessors\BankAccountStateDataProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateDataProcessors\BillingAddressStateDataProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateDataProcessors\BrowserInfoStateDataProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateDataProcessors\ConversionIdStateDataProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateDataProcessors\CountryCodeStateDataProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateDataProcessors\DateOfBirthStateDataProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateDataProcessors\DeliveryAddressStateDataProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateDataProcessors\InstallmentsStateDataProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateDataProcessors\OriginStateDataProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateDataProcessors\PaymentMethodStateDataProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateDataProcessors\RiskDataStateDataProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateDataProcessors\ShopperEmailStateDataProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateDataProcessors\ShopperNameStateDataProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateDataProcessors\SocialSecurityNumberStateDataProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateDataProcessors\StorePaymentMethodStateDataProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\ReferenceProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\TelephoneNumberStateDataProcessor;
 use Adyen\Core\BusinessLogic\Domain\Connection\Proxies\ConnectionProxy as ConnectionProxyInterface;
 use Adyen\Core\BusinessLogic\Domain\Connection\Repositories\ConnectionSettingsRepository as ConnectionSettingsRepositoryInterface;
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
@@ -99,17 +102,16 @@ use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsServ
 use Adyen\Core\BusinessLogic\Domain\InfoSettings\Services\ValidationService;
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\Integration\Payment\ShopPaymentService;
-use Adyen\Core\BusinessLogic\Domain\Integration\Processors\AddressProcessor;
-use Adyen\Core\BusinessLogic\Domain\Integration\Processors\ApplicationInfoProcessor;
-use Adyen\Core\BusinessLogic\Domain\Integration\Processors\BasketItemsProcessor;
-use Adyen\Core\BusinessLogic\Domain\Integration\Processors\BirthdayProcessor;
-use Adyen\Core\BusinessLogic\Domain\Integration\Processors\DeviceFingerprintProcessor;
-use Adyen\Core\BusinessLogic\Domain\Integration\Processors\L2L3DataProcessor;
-use Adyen\Core\BusinessLogic\Domain\Integration\Processors\LineItemsProcessor;
-use Adyen\Core\BusinessLogic\Domain\Integration\Processors\ShopperEmailProcessor;
-use Adyen\Core\BusinessLogic\Domain\Integration\Processors\ShopperLocaleProcessor;
-use Adyen\Core\BusinessLogic\Domain\Integration\Processors\ShopperNameProcessor;
-use Adyen\Core\BusinessLogic\Domain\Integration\Processors\ShopperReferenceProcessor;
+use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentRequest\AddressProcessor;
+use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentRequest\ApplicationInfoProcessor;
+use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentRequest\BasketItemsProcessor;
+use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentRequest\BirthdayProcessor;
+use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentRequest\L2L3DataProcessor;
+use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentRequest\LineItemsProcessor;
+use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentRequest\ShopperEmailProcessor;
+use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentRequest\ShopperLocaleProcessor;
+use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentRequest\ShopperNameProcessor;
+use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentRequest\ShopperReferenceProcessor;
 use Adyen\Core\BusinessLogic\Domain\Integration\ShopNotifications\NullShopNotificationChannelAdapter;
 use Adyen\Core\BusinessLogic\Domain\Integration\ShopNotifications\ShopNotificationChannelAdapter;
 use Adyen\Core\BusinessLogic\Domain\Integration\Store\StoreService as IntegrationStoreService;
@@ -487,6 +489,13 @@ class BootstrapComponent extends BaseBootstrapComponent
                 );
             })
         );
+
+        ServiceRegister::registerService(
+            PaymentLinkService::class,
+            new SingleInstance(static function () {
+                return new PaymentLinkService();
+            })
+        );
     }
 
     /**
@@ -708,6 +717,15 @@ class BootstrapComponent extends BaseBootstrapComponent
                 );
             })
         );
+
+        ServiceRegister::registerService(
+            PaymentLinkController::class,
+            new SingleInstance(static function () {
+                return new PaymentLinkController(
+                    ServiceRegister::getService(PaymentLinkService::class)
+                );
+            })
+        );
     }
 
     /**
@@ -783,6 +801,13 @@ class BootstrapComponent extends BaseBootstrapComponent
             new SingleInstance(static function () {
                 return AdyenAPI\Checkout\ProxyFactory::makeProxy(AdyenAPI\Refund\Http\Proxy::class);
             })
+        );
+
+        ServiceRegister::registerService(
+            PaymentLinkProxyInterface::class,
+            static function () {
+                return AdyenAPI\Checkout\ProxyFactory::makeProxy(PaymentLinkProxy::class);
+            }
         );
     }
 
