@@ -39,11 +39,29 @@ class GeneralSettings
     private $retentionPeriod;
 
     /**
+     * @var bool
+     */
+    private $enablePayByLink;
+
+    /**
+     * @var string
+     */
+    private $payByLinkTitle;
+
+    /**
+     * @var int
+     */
+    private $defaultLinkExpirationTime;
+
+    /**
      * @param bool $basketItemSync
      * @param CaptureType $captureType
      * @param string $captureDelay
      * @param string $shipmentStatus
      * @param string $retentionPeriod
+     * @param bool $enablePayByLink
+     * @param string $payByLinkTitle
+     * @param string $defaultLinkExpirationTime
      *
      * @throws InvalidCaptureDelayException
      * @throws InvalidRetentionPeriodException
@@ -53,7 +71,10 @@ class GeneralSettings
         CaptureType $captureType,
         string $captureDelay = '1',
         string $shipmentStatus = '',
-        string $retentionPeriod = '60'
+        string $retentionPeriod = '60',
+        bool $enablePayByLink = true,
+        string $payByLinkTitle = 'Adyen Pay By Link',
+        string $defaultLinkExpirationTime = '7'
     ) {
         $this->validate($captureDelay, $retentionPeriod);
 
@@ -62,6 +83,9 @@ class GeneralSettings
         $this->captureDelay = $captureDelay;
         $this->shipmentStatus = $shipmentStatus;
         $this->retentionPeriod = $retentionPeriod;
+        $this->enablePayByLink = $enablePayByLink;
+        $this->payByLinkTitle = $payByLinkTitle;
+        $this->defaultLinkExpirationTime = $defaultLinkExpirationTime;
     }
 
     /**
@@ -118,6 +142,24 @@ class GeneralSettings
         }
 
         return 0;
+    }
+
+    public function isEnablePayByLink(): bool
+    {
+        return $this->enablePayByLink;
+    }
+
+    public function getPayByLinkTitle(): string
+    {
+        return $this->payByLinkTitle;
+    }
+
+    /**
+     * @return int|string
+     */
+    public function getDefaultLinkExpirationTime()
+    {
+        return $this->defaultLinkExpirationTime;
     }
 
     /**

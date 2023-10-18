@@ -74,7 +74,10 @@ class GeneralSettingsApiTest extends BaseTestCase
                 CaptureTypeModel::delayed(),
                 1,
                 's',
-                60
+                60,
+                true,
+                'Title',
+                '7'
             )
         );
 
@@ -97,7 +100,10 @@ class GeneralSettingsApiTest extends BaseTestCase
             CaptureTypeModel::delayed(),
             1,
             's',
-            60
+            60,
+            true,
+            'Title',
+            '7'
         );
         $this->generalSettingsRepository->setMockGeneralSettings(
             $settings
@@ -123,7 +129,10 @@ class GeneralSettingsApiTest extends BaseTestCase
             CaptureTypeModel::delayed(),
             1,
             's',
-            60
+            60,
+            true,
+            'Title',
+            '7'
         );
         $this->generalSettingsRepository->setMockGeneralSettings(
             $settings
@@ -192,7 +201,10 @@ class GeneralSettingsApiTest extends BaseTestCase
             'capture' => 'delayed',
             'captureDelay' => 1,
             'shipmentStatus' => 's',
-            'retentionPeriod' => 60
+            'retentionPeriod' => 60,
+            'enablePayByLink' => true,
+            'payByLinkTitle' => 'Title',
+            'defaultLinkExpirationTime' => 7
         ];
     }
 }

@@ -68,7 +68,10 @@ class GeneralSettingsServiceTest extends BaseTestCase
             CaptureTypeModel::delayed(),
             1,
             's',
-            60
+            60,
+            true,
+            'Title',
+            '7'
         );
         $settingsEntity = new GeneralSettingsEntity();
         $settingsEntity->setGeneralSettings($settings);
@@ -93,7 +96,10 @@ class GeneralSettingsServiceTest extends BaseTestCase
             CaptureTypeModel::delayed(),
             1,
             's',
-            60
+            60,
+            true,
+            'Title',
+            '7'
         );
         $settingsEntity = new GeneralSettingsEntity();
         $settingsEntity->setGeneralSettings($settings);
@@ -122,7 +128,10 @@ class GeneralSettingsServiceTest extends BaseTestCase
             CaptureTypeModel::delayed(),
             1,
             's',
-            60
+            60,
+            true,
+            'Title',
+            '7'
         );
 
         // act
@@ -148,7 +157,10 @@ class GeneralSettingsServiceTest extends BaseTestCase
             CaptureTypeModel::delayed(),
             1,
             's',
-            60
+            60,
+            true,
+            'Title',
+            '7'
         );
         $settingsEntity = new GeneralSettingsEntity();
         $settingsEntity->setGeneralSettings($settings);
@@ -183,7 +195,10 @@ class GeneralSettingsServiceTest extends BaseTestCase
             CaptureTypeModel::delayed(),
             1,
             's',
-            60
+            60,
+            true,
+            'Title',
+            '7'
         );
         $settingsEntity = new GeneralSettings();
         $settingsEntity->setGeneralSettings($settings);

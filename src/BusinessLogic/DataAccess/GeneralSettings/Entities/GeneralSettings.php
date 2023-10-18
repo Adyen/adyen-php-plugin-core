@@ -51,7 +51,10 @@ class GeneralSettings extends Entity
             CaptureType::fromState(self::getDataValue($generalSettings, 'capture')),
             self::getDataValue($generalSettings, 'captureDelay'),
             self::getDataValue($generalSettings, 'shipmentStatus'),
-            self::getDataValue($generalSettings, 'retentionPeriod')
+            self::getDataValue($generalSettings, 'retentionPeriod'),
+            self::getDataValue($generalSettings, 'enablePayByLink'),
+            self::getDataValue($generalSettings, 'payByLinkTitle'),
+            self::getDataValue($generalSettings, 'defaultLinkExpirationTime')
         );
     }
 
@@ -204,7 +207,10 @@ class GeneralSettings extends Entity
             'capture' => $this->generalSettings->getCapture()->getType(),
             'captureDelay' => $this->generalSettings->getCaptureDelay(),
             'shipmentStatus' => $this->generalSettings->getShipmentStatus(),
-            'retentionPeriod' => $this->generalSettings->getRetentionPeriod()
+            'retentionPeriod' => $this->generalSettings->getRetentionPeriod(),
+            'enablePayByLink' => $this->generalSettings->isEnablePayByLink(),
+            'payByLinkTitle' => $this->generalSettings->getPayByLinkTitle(),
+            'defaultLinkExpirationTime' => $this->generalSettings->getDefaultLinkExpirationTime()
         ];
     }
 }
