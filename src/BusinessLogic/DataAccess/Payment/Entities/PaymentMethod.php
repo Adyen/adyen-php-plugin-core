@@ -87,7 +87,8 @@ class PaymentMethod extends Entity
             static::getDataValue($paymentMethodData, 'percentSurcharge', 0),
             static::getDataValue($paymentMethodData, 'surchargeLimit', null),
             static::getDataValue($paymentMethodData, 'documentationUrl'),
-            $this->transformAdditionalData($paymentMethodData)
+            $this->transformAdditionalData($paymentMethodData),
+            static::getDataValue($paymentMethodData, 'excludeFromPayByLink')
         );
     }
 
@@ -112,6 +113,7 @@ class PaymentMethod extends Entity
             'documentationUrl' => $this->paymentMethod->getDocumentationUrl(),
             'countries' => $this->paymentMethod->getCountries(),
             'currencies' => $this->paymentMethod->getCurrencies(),
+            'excludeFromPayByLink' => $this->paymentMethod->getExcludeFromPayByLink()
         ];
 
         if ($this->paymentMethod->getAdditionalData()) {

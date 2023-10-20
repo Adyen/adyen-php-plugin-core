@@ -92,7 +92,7 @@ class SystemInfoApiTest extends BaseTestCase
         //arrange
         $pm1 = new PaymentMethodModel(
             '1234',
-            'code',
+            'scheme',
             'name',
             'logo',
             true,
@@ -108,7 +108,7 @@ class SystemInfoApiTest extends BaseTestCase
         $this->repository->save($entity1);
         $pm2 = new PaymentMethodModel(
             '2345',
-            'code',
+            'scheme',
             'name1',
             'logo1',
             true,

@@ -60,6 +60,7 @@ use Adyen\Core\BusinessLogic\Domain\Capture\Proxies\CaptureProxy;
 use Adyen\Core\BusinessLogic\Domain\Checkout\AdyenGiving\Proxies\DonationsProxy;
 use Adyen\Core\BusinessLogic\Domain\Checkout\AdyenGiving\Repositories\DonationsDataRepository;
 use Adyen\Core\BusinessLogic\Domain\Checkout\AdyenGiving\Services\DonationsService;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Factory\PaymentLinkRequestFactory;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Proxies\PaymentLinkProxy as PaymentLinkProxyInterface;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Services\PaymentLinkService;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Factory\PaymentRequestFactory;
@@ -72,6 +73,9 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\AmountProcessor;
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\CaptureDelayHoursProcessor;
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\CaptureProcessor;
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\MerchantIdProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentLinkRequest\AllowedPaymentMethodsProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentLinkRequest\ExpiresAtProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentLinkRequest\PaymentLinkRequestProcessorsRegistry;
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\AuthenticationDataProcessor;
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\PaymentRequestProcessorsRegistry;
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\ReturnUrlProcessor;
@@ -90,8 +94,8 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateData
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateDataProcessors\ShopperNameStateDataProcessor;
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateDataProcessors\SocialSecurityNumberStateDataProcessor;
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateDataProcessors\StorePaymentMethodStateDataProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\StateDataProcessors\TelephoneNumberStateDataProcessor;
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\ReferenceProcessor;
-use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\TelephoneNumberStateDataProcessor;
 use Adyen\Core\BusinessLogic\Domain\Connection\Proxies\ConnectionProxy as ConnectionProxyInterface;
 use Adyen\Core\BusinessLogic\Domain\Connection\Repositories\ConnectionSettingsRepository as ConnectionSettingsRepositoryInterface;
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
@@ -112,6 +116,14 @@ use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentRequest\Shoppe
 use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentRequest\ShopperLocaleProcessor;
 use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentRequest\ShopperNameProcessor;
 use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentRequest\ShopperReferenceProcessor;
+use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentLinkRequest\AddressProcessor as PaymentLinkAddressProcessor;
+use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentLinkRequest\ApplicationInfoProcessor as PaymentLinkApplicationInfoProcessor;
+use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentLinkRequest\LineItemsProcessor as PaymentLinkLineItemsProcessor;
+use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentLinkRequest\ShopperBirthdayProcessor as PaymentLinkShopperBirthdayProcessor;
+use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentLinkRequest\ShopperEmailProcessor as PaymentLinkShopperEmailProcessor;
+use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentLinkRequest\ShopperLocaleProcessor as PaymentLinkShopperLocaleProcessor;
+use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentLinkRequest\ShopperNameProcessor as PaymentLinkShopperNameProcessor;
+use Adyen\Core\BusinessLogic\Domain\Integration\Processors\PaymentLinkRequest\ShopperReferenceProcessor as PaymentLinkShopperReferenceProcessor;
 use Adyen\Core\BusinessLogic\Domain\Integration\ShopNotifications\NullShopNotificationChannelAdapter;
 use Adyen\Core\BusinessLogic\Domain\Integration\ShopNotifications\ShopNotificationChannelAdapter;
 use Adyen\Core\BusinessLogic\Domain\Integration\Store\StoreService as IntegrationStoreService;
@@ -493,7 +505,11 @@ class BootstrapComponent extends BaseBootstrapComponent
         ServiceRegister::registerService(
             PaymentLinkService::class,
             new SingleInstance(static function () {
-                return new PaymentLinkService();
+                return new PaymentLinkService(
+                    ServiceRegister::getService(PaymentLinkProxyInterface::class),
+                    new PaymentLinkRequestFactory(),
+                    ServiceRegister::getService(TransactionHistoryService::class)
+                );
             })
         );
     }
@@ -1151,10 +1167,14 @@ class BootstrapComponent extends BaseBootstrapComponent
             LineItemsProcessor::class
         );
         PaymentRequestProcessorsRegistry::registerByPaymentType(PaymentMethodCode::klarna(), LineItemsProcessor::class);
-        PaymentRequestProcessorsRegistry::registerByPaymentType(PaymentMethodCode::klarnaPayNow(),
-            LineItemsProcessor::class);
-        PaymentRequestProcessorsRegistry::registerByPaymentType(PaymentMethodCode::klarnaAccount(),
-            LineItemsProcessor::class);
+        PaymentRequestProcessorsRegistry::registerByPaymentType(
+            PaymentMethodCode::klarnaPayNow(),
+            LineItemsProcessor::class
+        );
+        PaymentRequestProcessorsRegistry::registerByPaymentType(
+            PaymentMethodCode::klarnaAccount(),
+            LineItemsProcessor::class
+        );
         PaymentRequestProcessorsRegistry::registerByPaymentType(PaymentMethodCode::zip(), LineItemsProcessor::class);
         PaymentRequestProcessorsRegistry::registerByPaymentType(
             PaymentMethodCode::scheme(),
@@ -1166,6 +1186,22 @@ class BootstrapComponent extends BaseBootstrapComponent
         );
 
         PaymentRequestProcessorsRegistry::registerGlobal(CaptureProcessor::class);
+
+        PaymentLinkRequestProcessorsRegistry::registerGlobal(AmountProcessor::class);
+        PaymentLinkRequestProcessorsRegistry::registerGlobal(CaptureDelayHoursProcessor::class);
+        PaymentLinkRequestProcessorsRegistry::registerGlobal(CaptureProcessor::class);
+        PaymentLinkRequestProcessorsRegistry::registerGlobal(MerchantIdProcessor::class);
+        PaymentLinkRequestProcessorsRegistry::registerGlobal(ReferenceProcessor::class);
+        PaymentLinkRequestProcessorsRegistry::registerGlobal(AllowedPaymentMethodsProcessor::class);
+        PaymentLinkRequestProcessorsRegistry::registerGlobal(ExpiresAtProcessor::class);
+        PaymentLinkRequestProcessorsRegistry::registerGlobal(PaymentLinkAddressProcessor::class);
+        PaymentLinkRequestProcessorsRegistry::registerGlobal(PaymentLinkApplicationInfoProcessor::class);
+        PaymentLinkRequestProcessorsRegistry::registerGlobal(PaymentLinkLineItemsProcessor::class);
+        PaymentLinkRequestProcessorsRegistry::registerGlobal(PaymentLinkShopperBirthdayProcessor::class);
+        PaymentLinkRequestProcessorsRegistry::registerGlobal(PaymentLinkShopperEmailProcessor::class);
+        PaymentLinkRequestProcessorsRegistry::registerGlobal(PaymentLinkShopperLocaleProcessor::class);
+        PaymentLinkRequestProcessorsRegistry::registerGlobal(PaymentLinkShopperNameProcessor::class);
+        PaymentLinkRequestProcessorsRegistry::registerGlobal(PaymentLinkShopperReferenceProcessor::class);
     }
 
     /**

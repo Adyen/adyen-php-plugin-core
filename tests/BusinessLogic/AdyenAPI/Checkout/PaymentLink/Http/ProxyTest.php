@@ -100,8 +100,7 @@ class ProxyTest extends BaseTestCase
             new PaymentLinkRequest(
                 'testReference',
                 'testMerchantId',
-                Amount::fromFloat(123.23, Currency::fromIsoCode('EUR')),
-                []
+                Amount::fromFloat(123.23, Currency::fromIsoCode('EUR'))
             )
         );
 

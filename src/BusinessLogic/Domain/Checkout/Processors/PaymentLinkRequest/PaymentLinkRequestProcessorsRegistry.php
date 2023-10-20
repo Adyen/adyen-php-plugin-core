@@ -38,8 +38,8 @@ class PaymentLinkRequestProcessorsRegistry
      */
     public static function getProcessors(): array
     {
-        return array_map(static function (string $paymentClass): PaymentLinkRequestProcessor {
-            return ServiceRegister::getService($paymentClass);
-        }, $globalProcessors ?? []);
+        return array_map(static function ($processor): PaymentLinkRequestProcessor {
+            return ServiceRegister::getService($processor);
+        }, static::$globalProcessors);
     }
 }

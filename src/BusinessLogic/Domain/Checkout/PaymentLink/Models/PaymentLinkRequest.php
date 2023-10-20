@@ -97,6 +97,11 @@ class PaymentLinkRequest
     private $lineItems;
 
     /**
+     * @var string
+     */
+    private $expiresAt;
+
+    /**
      * @param string $reference
      * @param string $merchantAccount
      * @param Amount $amount
@@ -108,6 +113,12 @@ class PaymentLinkRequest
      * @param BillingAddress|null $billingAddress
      * @param DeliveryAddress|null $deliveryAddress
      * @param int $captureDelayHours
+     * @param bool $manualCapture
+     * @param ShopperName|null $shopperName
+     * @param string|null $dateOfBirth
+     * @param ApplicationInfo|null $applicationInfo
+     * @param array|null $lineItems
+     * @param string|null $expiresAt
      */
     public function __construct(
         string $reference,
@@ -125,7 +136,8 @@ class PaymentLinkRequest
         ?ShopperName $shopperName = null,
         ?string $dateOfBirth = null,
         ?ApplicationInfo $applicationInfo = null,
-        array $lineItems = []
+        array $lineItems = null,
+        string $expiresAt = null
     ) {
         $this->reference = $reference;
         $this->merchantAccount = $merchantAccount;
@@ -143,6 +155,7 @@ class PaymentLinkRequest
         $this->dateOfBirth = $dateOfBirth;
         $this->applicationInfo = $applicationInfo;
         $this->lineItems = $lineItems;
+        $this->expiresAt = $expiresAt;
     }
 
     /**
@@ -266,10 +279,18 @@ class PaymentLinkRequest
     }
 
     /**
-     * @return LineItem[]
+     * @return LineItem[]|null
      */
-    public function getLineItems(): array
+    public function getLineItems(): ?array
     {
         return $this->lineItems;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getExpiresAt(): ?string
+    {
+        return $this->expiresAt;
     }
 }

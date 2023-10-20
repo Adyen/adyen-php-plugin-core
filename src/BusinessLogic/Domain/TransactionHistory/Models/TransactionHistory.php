@@ -2,6 +2,7 @@
 
 namespace Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models;
 
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Models\PaymentLink;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\CurrencyMismatchException;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
@@ -60,6 +61,11 @@ class TransactionHistory
      * @var Currency
      */
     private $currency;
+
+    /**
+     * @var PaymentLink|null
+     */
+    private $paymentLink;
 
     /**
      * @param string $merchantReference
@@ -258,5 +264,23 @@ class TransactionHistory
     public function getCurrency(): ?Currency
     {
         return $this->currency;
+    }
+
+    /**
+     * @return PaymentLink|null
+     */
+    public function getPaymentLink(): ?PaymentLink
+    {
+        return $this->paymentLink;
+    }
+
+    /**
+     * @param PaymentLink|null $paymentLink
+     *
+     * @return void
+     */
+    public function setPaymentLink(?PaymentLink $paymentLink): void
+    {
+        $this->paymentLink = $paymentLink;
     }
 }

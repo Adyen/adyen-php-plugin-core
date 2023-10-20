@@ -98,6 +98,11 @@ class PaymentLinkRequestBuilder
     private $lineItems;
 
     /**
+     * @var string
+     */
+    private $expiresAt;
+
+    /**
      * @return PaymentLinkRequest
      */
     public function build(): PaymentLinkRequest
@@ -118,7 +123,8 @@ class PaymentLinkRequestBuilder
             $this->shopperName,
             $this->dateOfBirth,
             $this->applicationInfo,
-            $this->lineItems
+            $this->lineItems,
+            $this->expiresAt
         );
     }
 
@@ -280,5 +286,15 @@ class PaymentLinkRequestBuilder
     public function setLineItems(array $lineItems): void
     {
         $this->lineItems = $lineItems;
+    }
+
+    /**
+     * @param string $expiresAt
+     *
+     * @return void
+     */
+    public function setExpiresAt(string $expiresAt): void
+    {
+        $this->expiresAt = $expiresAt;
     }
 }

@@ -15,6 +15,7 @@ use Adyen\Core\BusinessLogic\AdminAPI\InfoSettings\Controller\DebugController;
 use Adyen\Core\BusinessLogic\AdminAPI\InfoSettings\Controller\SystemInfoController;
 use Adyen\Core\BusinessLogic\AdminAPI\InfoSettings\Controller\WebhookValidationController;
 use Adyen\Core\BusinessLogic\AdminAPI\Integration\Controller\IntegrationController;
+use Adyen\Core\BusinessLogic\AdminAPI\PaymentLink\Controller\PaymentLinkController;
 use Adyen\Core\BusinessLogic\AdminAPI\Refund\Controller\RefundController;
 use Adyen\Core\BusinessLogic\AdminAPI\ShopNotifications\Controller\ShopNotificationsController;
 use Adyen\Core\BusinessLogic\AdminAPI\Versions\Controller\VersionInfoController;
@@ -292,5 +293,18 @@ class AdminAPI
             ::run(new ErrorHandlingAspect())
             ->andRun(new StoreContextAspect($storeId))
             ->beforeEachMethodOfService(DisconnectController::class);
+    }
+
+    /**
+     * @param string $storeId
+     *
+     * @return PaymentLinkController
+     */
+    public function paymentLink(string $storeId): object
+    {
+        return Aspects
+            ::run(new ErrorHandlingAspect())
+            ->andRun(new StoreContextAspect($storeId))
+            ->beforeEachMethodOfService(PaymentLinkController::class);
     }
 }

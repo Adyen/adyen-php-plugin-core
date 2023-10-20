@@ -3,6 +3,7 @@
 namespace Adyen\Core\Tests\BusinessLogic\DataAccess\TransactionHistory\Repositories;
 
 use Adyen\Core\BusinessLogic\DataAccess\TransactionHistory\Entities\TransactionHistory as TransactionEntity;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Models\PaymentLink;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
@@ -190,6 +191,29 @@ class TransactionRepositoryTest extends BaseTestCase
         self::assertCount(2, $savedEntity);
         self::assertEquals($transaction, $savedEntity[0]->getTransactionHistory());
         self::assertEquals($newTransaction, $savedEntity[1]->getTransactionHistory());
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testGetTransactionWithPaymentLink(): void
+    {
+        // arrange
+        $transaction = new TransactionModel('merchantReference', CaptureType::manual(), 0, Currency::getDefault(),
+            $this->historyItems());
+        $transaction->setPaymentLink(new PaymentLink('url', 'expiresAt'));
+        $transactionEntity = new TransactionEntity();
+        $transactionEntity->setTransactionHistory($transaction);
+        $transactionEntity->setStoreId('1');
+        $transactionEntity->setMerchantReference('merchantReference');
+        $this->repository->save($transactionEntity);
+
+        // act
+        $result = StoreContext::doWithStore('1', [$this->transactionRepository, 'getTransactionHistory'],
+            ['merchantReference']);
+
+        // assert
+        self::assertEquals($transaction, $result);
     }
 
     /**

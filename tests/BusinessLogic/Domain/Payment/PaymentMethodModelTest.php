@@ -14,7 +14,7 @@ class PaymentMethodModelTest extends BaseTestCase
 {
     public function testTotalSurchargeCalculationForNoneType()
     {
-        $paymentMethod = new PaymentMethod('test123', 'test', 'Test');
+        $paymentMethod = new PaymentMethod('test123', 'scheme', 'Test');
         $paymentMethod->setSurchargeType('none');
 
         self::assertEquals(0, $paymentMethod->getTotalSurchargeFor(123.45));
@@ -22,7 +22,7 @@ class PaymentMethodModelTest extends BaseTestCase
 
     public function testTotalSurchargeCalculationForCombinedType()
     {
-        $paymentMethod = new PaymentMethod('test123', 'test', 'Test');
+        $paymentMethod = new PaymentMethod('test123', 'scheme', 'Test');
         $paymentMethod->setSurchargeType('combined');
         $paymentMethod->setFixedSurcharge(100);
         $paymentMethod->setPercentSurcharge(10);
@@ -32,7 +32,7 @@ class PaymentMethodModelTest extends BaseTestCase
 
     public function testTotalSurchargeCalculationLimit()
     {
-        $paymentMethod = new PaymentMethod('test123', 'test', 'Test');
+        $paymentMethod = new PaymentMethod('test123', 'scheme', 'Test');
         $paymentMethod->setSurchargeType('combined');
         $paymentMethod->setFixedSurcharge(100);
         $paymentMethod->setPercentSurcharge(10);

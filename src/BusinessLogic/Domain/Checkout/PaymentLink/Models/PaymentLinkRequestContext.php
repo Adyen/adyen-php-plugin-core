@@ -3,37 +3,40 @@
 namespace Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Models;
 
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
+use DateTime;
 
 /**
  * Class PaymentLinkRequestContext.
  *
  * @package Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Models
  */
-class StartPaymentLinkRequestContext
+class PaymentLinkRequestContext
 {
     /**
      * @var Amount
      */
     private $amount;
+
     /**
      * @var string
      */
     private $reference;
+
     /**
-     * @var string
+     * @var DateTime
      */
-    private $returnUrl;
+    private $expiresAt;
 
     /**
      * @param Amount $amount
      * @param string $reference
-     * @param string $returnUrl
+     * @param DateTime|null $expiresAt
      */
-    public function __construct(Amount $amount, string $reference, string $returnUrl)
+    public function __construct(Amount $amount, string $reference, DateTime $expiresAt = null)
     {
         $this->amount = $amount;
         $this->reference = $reference;
-        $this->returnUrl = $returnUrl;
+        $this->expiresAt = $expiresAt;
     }
 
     /**
@@ -53,10 +56,10 @@ class StartPaymentLinkRequestContext
     }
 
     /**
-     * @return string
+     * @return DateTime|null
      */
-    public function getReturnUrl(): string
+    public function getExpiresAt(): ?DateTime
     {
-        return $this->returnUrl;
+        return $this->expiresAt;
     }
 }

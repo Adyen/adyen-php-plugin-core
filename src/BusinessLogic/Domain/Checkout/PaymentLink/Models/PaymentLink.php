@@ -1,6 +1,6 @@
 <?php
 
-namespace Adyen\Core\BusinessLogic\Domain\PaymentLink\Models;
+namespace Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Models;
 
 /**
  * Class PaymentLinkResponse.

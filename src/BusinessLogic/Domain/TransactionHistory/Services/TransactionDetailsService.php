@@ -12,6 +12,7 @@ use Adyen\Core\BusinessLogic\Domain\Payment\Models\PaymentMethod;
 use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
+use Adyen\Core\Infrastructure\Utility\TimeProvider;
 
 /**
  * Class TransactionDetailsService
@@ -49,7 +50,6 @@ class TransactionDetailsService
      *
      * @throws InvalidMerchantReferenceException
      * @throws InvalidPaymentMethodCodeException
-     * @throws CurrencyMismatchException
      */
     public function getTransactionDetails(string $merchantReference, string $storeId): array
     {
@@ -129,7 +129,10 @@ class TransactionDetailsService
                 'riskScore' => $transactionHistory->getRiskScore(),
                 'cancelSupported' => $isCaptureTypeKnown ? $cancel : true,
                 'paymentMethodType' => $item->getPaymentMethod(),
-                'paymentState' => $item->getPaymentState()
+                'paymentState' => $item->getPaymentState(),
+                'displayPaymentLink' => $this->shouldDisplayPaymentLink($transactionHistory),
+                'paymentLink' => $transactionHistory->getPaymentLink() ? $transactionHistory->getPaymentLink()->getUrl(
+                ) : ''
             ];
         }
 
@@ -218,6 +221,7 @@ class TransactionDetailsService
      * @param string $code
      * @param Amount $refundAmount
      * @param Amount $captureAmount
+     *
      * @return bool
      *
      * @throws InvalidPaymentMethodCodeException
@@ -282,5 +286,31 @@ class TransactionDetailsService
         }
 
         return PaymentMethodCode::parse($code);
+    }
+
+    /**
+     * @param TransactionHistory $transactionHistory
+     *
+     * @return bool
+     */
+    private function shouldDisplayPaymentLink(TransactionHistory $transactionHistory): bool
+    {
+        if ($transactionHistory->collection()->isEmpty()) {
+            return true;
+        }
+
+        $item = $transactionHistory->collection()->last();
+
+        if ($item->getPaymentState() === 'failed' || $item->getPaymentState(
+            ) === 'cancelled' || !$transactionHistory->getPaymentLink()) {
+            return true;
+        }
+
+        $now = TimeProvider::getInstance()->getCurrentLocalTime();
+        $expires = TimeProvider::getInstance()->deserializeDateString(
+            $transactionHistory->getPaymentLink()->getExpiresAt()
+        );
+
+        return $now->getTimestamp() > $expires->getTimestamp();
     }
 }

@@ -107,6 +107,10 @@ class PaymentLinkHttpRequest extends HttpRequest
             $body['dateOfBirth'] = $this->request->getDateOfBirth();
         }
 
+        if ($this->request->getExpiresAt() !== null) {
+            $body['expiresAt'] = $this->request->getExpiresAt();
+        }
+
         if (!empty($this->request->getApplicationInfo())) {
             $this->request->getApplicationInfo()->getExternalPlatform(
             ) && $body['applicationInfo']['externalPlatform'] = $this->getFormattedExternalPlatform(
@@ -119,7 +123,7 @@ class PaymentLinkHttpRequest extends HttpRequest
             );
         }
 
-        if ($this->request->getLineItems() !== []) {
+        if ($this->request->getLineItems() !== null) {
             $lineItems = [];
 
             foreach ($this->request->getLineItems() as $lineItem) {
@@ -131,8 +135,6 @@ class PaymentLinkHttpRequest extends HttpRequest
 
         return $body;
     }
-
-
 
     /**
      * @param ExternalPlatform $externalPlatform

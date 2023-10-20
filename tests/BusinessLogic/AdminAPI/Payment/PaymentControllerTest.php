@@ -154,7 +154,7 @@ class PaymentControllerTest extends BaseTestCase
         $this->expectException(Exception::class);
 
         // act
-        $result = StoreContext::doWithStore('1', [$this->controller, 'getConfiguredPaymentMethods']);
+        StoreContext::doWithStore('1', [$this->controller, 'getConfiguredPaymentMethods']);
     }
 
     public function testGetMethodById(): void
@@ -162,7 +162,7 @@ class PaymentControllerTest extends BaseTestCase
         // arrange
         $pm1 = new PaymentMethodModel(
             '1234',
-            'code',
+            'zip',
             'name',
             'logo',
             true,
@@ -173,7 +173,7 @@ class PaymentControllerTest extends BaseTestCase
         $entity1 = new PaymentMethod();
         $entity1->setStoreId('1');
         $entity1->setMethodId('1234');
-        $entity1->setCode('code');
+        $entity1->setCode('zip');
         $entity1->setPaymentMethod($pm1);
         $this->repository->save($entity1);
 
@@ -314,7 +314,7 @@ class PaymentControllerTest extends BaseTestCase
         // arrange
         $configuration = new PaymentMethodModel(
             '1234',
-            'code',
+            'zip',
             'name',
             'logo',
             true,
@@ -333,7 +333,7 @@ class PaymentControllerTest extends BaseTestCase
                 'countries' => [],
                 'type' => 'type',
                 'description' => 'description',
-                'code' => 'code'
+                'code' => 'zip'
             ]
         );
 
@@ -351,7 +351,7 @@ class PaymentControllerTest extends BaseTestCase
         // arrange
         $configuration = new PaymentMethodModel(
             '1234',
-            'code',
+            'scheme',
             'name',
             'logo',
             true,
@@ -368,7 +368,7 @@ class PaymentControllerTest extends BaseTestCase
         $this->repository->save($entity);
         $newConfig = new PaymentMethodModel(
             '1234',
-            'code',
+            'zip',
             'name1',
             'logo',
             true,
@@ -385,7 +385,7 @@ class PaymentControllerTest extends BaseTestCase
                 'status' => true,
                 'currencies' => [],
                 'countries' => [],
-                'code' => 'code',
+                'code' => 'zip',
                 'type' => 'type1',
                 'description' => 'description2',
             ]
@@ -405,7 +405,7 @@ class PaymentControllerTest extends BaseTestCase
         $this->expectException(Exception::class);
         $configuration = new PaymentMethodModel(
             '1234',
-            'code',
+            'zip',
             'name',
             'code',
             true,

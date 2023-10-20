@@ -144,18 +144,24 @@ class GeneralSettings
         return 0;
     }
 
+    /**
+     * @return bool
+     */
     public function isEnablePayByLink(): bool
     {
         return $this->enablePayByLink;
     }
 
+    /**
+     * @return string
+     */
     public function getPayByLinkTitle(): string
     {
         return $this->payByLinkTitle;
     }
 
     /**
-     * @return int|string
+     * @return int
      */
     public function getDefaultLinkExpirationTime()
     {

@@ -143,6 +143,10 @@ class PaymentMethodRequest extends Request
      * @var string[]
      */
     private $supportedInstallments;
+    /**
+     * @var bool
+     */
+    private $excludeFromPayByLink;
 
     /**
      * @param string $methodId
@@ -174,37 +178,39 @@ class PaymentMethodRequest extends Request
      * @param string $bankIssuer
      * @param string $gatewayMerchantId
      * @param string[] $supportedInstallments
+     * @param bool $excludeFromPayByLink
      */
     private function __construct(
-            string $methodId = '',
-            string $logo = '',
-            string $name = '',
-            bool $status = false,
-            array $currencies = [],
-            array $countries = [],
-            string $paymentType = '',
-            string $code = '',
-            string $description = '',
-            string $surchargeType = '',
-            string $fixedSurcharge = '',
-            float $percentSurcharge = null,
-            float $surchargeLimit = null,
-            string $publicKeyId = '',
-            string $merchantId = '',
-            string $storeId = '',
-            string $displayButtonOn = '',
-            string $merchantName = '',
-            bool $showLogos = false,
-            bool $singleClickPayment = false,
-            bool $installments = false,
-            bool $installmentAmounts = false,
-            bool $sendBasket = false,
-            array $installmentCountries = [],
-            float $minimumAmount = 0,
-            array $numberOfInstallments = [],
-            string $bankIssuer = '',
-            string $gatewayMerchantId = '',
-            array $supportedInstallments = []
+        string $methodId = '',
+        string $logo = '',
+        string $name = '',
+        bool $status = false,
+        array $currencies = [],
+        array $countries = [],
+        string $paymentType = '',
+        string $code = '',
+        string $description = '',
+        string $surchargeType = '',
+        string $fixedSurcharge = '',
+        float $percentSurcharge = null,
+        float $surchargeLimit = null,
+        string $publicKeyId = '',
+        string $merchantId = '',
+        string $storeId = '',
+        string $displayButtonOn = '',
+        string $merchantName = '',
+        bool $showLogos = false,
+        bool $singleClickPayment = false,
+        bool $installments = false,
+        bool $installmentAmounts = false,
+        bool $sendBasket = false,
+        array $installmentCountries = [],
+        float $minimumAmount = 0,
+        array $numberOfInstallments = [],
+        string $bankIssuer = '',
+        string $gatewayMerchantId = '',
+        array $supportedInstallments = [],
+        bool $excludeFromPayByLink = false
     ) {
         $this->methodId = $methodId;
         $this->logo = $logo;
@@ -235,6 +241,7 @@ class PaymentMethodRequest extends Request
         $this->bankIssuer = $bankIssuer;
         $this->gatewayMerchantId = $gatewayMerchantId;
         $this->supportedInstallments = $supportedInstallments;
+        $this->excludeFromPayByLink = $excludeFromPayByLink;
     }
 
     /**
@@ -245,43 +252,44 @@ class PaymentMethodRequest extends Request
     public static function parse(array $rawData): PaymentMethodRequest
     {
         return new PaymentMethodRequest(
-                $rawData['methodId'] ?? '',
-                $rawData['logo'],
-                $rawData['name'] ?? '',
-                true,
-                $rawData['currencies'] ?? [],
-                $rawData['countries'] ?? [],
-                $rawData['type'] ?? '',
-                $rawData['code'] ?? '',
-                $rawData['description'] ?? '',
-                $rawData['surchargeType'] ?? '',
-                $rawData['fixedSurcharge'] ?? '',
-                !empty($rawData['percentSurcharge']) ? $rawData['percentSurcharge'] : null,
-                !empty($rawData['surchargeLimit']) && $rawData['surchargeLimit'] !== 'null' ? $rawData['surchargeLimit'] : null,
-                $rawData['additionalData']['publicKeyId'] ?? '',
-                $rawData['additionalData']['merchantId'] ?? '',
-                $rawData['additionalData']['storeId'] ?? '',
-                $rawData['additionalData']['displayButtonOn'] ?? '',
-                $rawData['additionalData']['merchantName'] ?? '',
-                $rawData['additionalData']['showLogos'] ?? false,
-                $rawData['additionalData']['singleClickPayment'] ?? false,
-                $rawData['additionalData']['installments'] ?? false,
-                $rawData['additionalData']['installmentAmounts'] ?? false,
-                $rawData['additionalData']['sendBasket'] ?? false,
-                $rawData['additionalData']['installmentCountries'] ?? [],
-                !empty($rawData['additionalData']['minimumAmount']) ? $rawData['additionalData']['minimumAmount'] : 0,
-                !empty($rawData['additionalData']['numberOfInstallments']) && !is_array(
-                        $rawData['additionalData']['numberOfInstallments']
-                ) ?
-                        array_map(static function (string $installment) {
-                            return trim($installment);
-                        },
-                                explode(',', $rawData['additionalData']['numberOfInstallments'])
-                        ) : (!empty($rawData['additionalData']['numberOfInstallments']) ? $rawData['additionalData']['numberOfInstallments'] : []),
-                $rawData['additionalData']['bankIssuer'] ?? '',
-                $rawData['additionalData']['gatewayMerchantId'] ?? '',
-                !empty($rawData['additionalData']['supportedInstallments']) ?
-                        $rawData['additionalData']['supportedInstallments'] : []
+            $rawData['methodId'] ?? '',
+            $rawData['logo'],
+            $rawData['name'] ?? '',
+            true,
+            $rawData['currencies'] ?? [],
+            $rawData['countries'] ?? [],
+            $rawData['type'] ?? '',
+            $rawData['code'] ?? '',
+            $rawData['description'] ?? '',
+            $rawData['surchargeType'] ?? '',
+            $rawData['fixedSurcharge'] ?? '',
+            !empty($rawData['percentSurcharge']) ? $rawData['percentSurcharge'] : null,
+            !empty($rawData['surchargeLimit']) && $rawData['surchargeLimit'] !== 'null' ? $rawData['surchargeLimit'] : null,
+            $rawData['additionalData']['publicKeyId'] ?? '',
+            $rawData['additionalData']['merchantId'] ?? '',
+            $rawData['additionalData']['storeId'] ?? '',
+            $rawData['additionalData']['displayButtonOn'] ?? '',
+            $rawData['additionalData']['merchantName'] ?? '',
+            $rawData['additionalData']['showLogos'] ?? false,
+            $rawData['additionalData']['singleClickPayment'] ?? false,
+            $rawData['additionalData']['installments'] ?? false,
+            $rawData['additionalData']['installmentAmounts'] ?? false,
+            $rawData['additionalData']['sendBasket'] ?? false,
+            $rawData['additionalData']['installmentCountries'] ?? [],
+            !empty($rawData['additionalData']['minimumAmount']) ? $rawData['additionalData']['minimumAmount'] : 0,
+            !empty($rawData['additionalData']['numberOfInstallments']) && !is_array(
+                $rawData['additionalData']['numberOfInstallments']
+            ) ?
+                array_map(static function (string $installment) {
+                    return trim($installment);
+                },
+                    explode(',', $rawData['additionalData']['numberOfInstallments'])
+                ) : (!empty($rawData['additionalData']['numberOfInstallments']) ? $rawData['additionalData']['numberOfInstallments'] : []),
+            $rawData['additionalData']['bankIssuer'] ?? '',
+            $rawData['additionalData']['gatewayMerchantId'] ?? '',
+            !empty($rawData['additionalData']['supportedInstallments']) ?
+                $rawData['additionalData']['supportedInstallments'] : [],
+            $rawData['excludeFromPayByLink'] ?? false
         );
     }
 
@@ -296,26 +304,24 @@ class PaymentMethodRequest extends Request
      */
     public function transformToDomainModel(): object
     {
-        $paymentMethod = new PaymentMethod(
-                $this->methodId,
-                $this->code,
-                $this->name,
-                $this->logo,
-                $this->status,
-                $this->currencies,
-                $this->countries,
-                $this->paymentType,
-                $this->description,
-                $this->surchargeType,
-                $this->fixedSurcharge,
-                $this->percentSurcharge,
-                $this->surchargeLimit,
-                ''
+        return new PaymentMethod(
+            $this->methodId,
+            $this->code,
+            $this->name,
+            $this->logo,
+            $this->status,
+            $this->currencies,
+            $this->countries,
+            $this->paymentType,
+            $this->description,
+            $this->surchargeType,
+            $this->fixedSurcharge,
+            $this->percentSurcharge,
+            $this->surchargeLimit,
+            '',
+            $this->transformAdditionalData(),
+            $this->excludeFromPayByLink
         );
-
-        $paymentMethod->setAdditionalData($this->transformAdditionalData());
-
-        return $paymentMethod;
     }
 
     /**
@@ -338,14 +344,14 @@ class PaymentMethodRequest extends Request
 
         if (PaymentMethodCode::scheme()->equals($this->code)) {
             return new CardConfig(
-                    $this->showLogos,
-                    $this->singleClickPayment,
-                    $this->installments,
-                    $this->installmentAmounts,
-                    $this->sendBasket,
-                    $this->installmentCountries,
-                    $this->minimumAmount,
-                    $this->numberOfInstallments
+                $this->showLogos,
+                $this->singleClickPayment,
+                $this->installments,
+                $this->installmentAmounts,
+                $this->sendBasket,
+                $this->installmentCountries,
+                $this->minimumAmount,
+                $this->numberOfInstallments
             );
         }
 
@@ -354,12 +360,12 @@ class PaymentMethodRequest extends Request
         }
 
         if (PaymentMethodCode::googlePay()->equals($this->code) ||
-                PaymentMethodCode::payWithGoogle()->equals($this->code)) {
+            PaymentMethodCode::payWithGoogle()->equals($this->code)) {
             return new GooglePay($this->gatewayMerchantId, $this->merchantId, $this->displayButtonOn);
         }
 
         if (PaymentMethodCode::ideal()->equals($this->code) ||
-                PaymentMethodCode::molPayEBankingTh()->equals($this->code)) {
+            PaymentMethodCode::molPayEBankingTh()->equals($this->code)) {
             return new IDEALonlineBankingThailand($this->showLogos, $this->bankIssuer);
         }
 

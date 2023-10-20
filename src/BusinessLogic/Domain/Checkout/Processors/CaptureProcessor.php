@@ -3,7 +3,7 @@
 namespace Adyen\Core\BusinessLogic\Domain\Checkout\Processors;
 
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Factory\PaymentLinkRequestBuilder;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Models\StartPaymentLinkRequestContext;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Models\PaymentLinkRequestContext;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Factory\PaymentRequestBuilder;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\AdditionalData\AdditionalData;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\StartTransactionRequestContext;
@@ -45,13 +45,13 @@ class CaptureProcessor implements PaymentRequestProcessor, PaymentLinkRequestPro
 
     /**
      * @param PaymentLinkRequestBuilder $builder
-     * @param StartPaymentLinkRequestContext $context
+     * @param PaymentLinkRequestContext $context
      *
      * @return void
      */
     public function processPaymentLink(
         PaymentLinkRequestBuilder $builder,
-        StartPaymentLinkRequestContext $context
+        PaymentLinkRequestContext $context
     ): void {
         $generalSettings = $this->generalSettingsService->getGeneralSettings();
 
