@@ -482,6 +482,7 @@ class PaymentMethodCode
         self::VIPPS,
         self::ZIP,
         self::WECHATPAYQR,
+        self::PAY_WITH_GOOGLE,
         //<editor-fold desc="Gift cards" defaultstate="collapsed">
         self::GIFTCARD,
         self::AURIGA,

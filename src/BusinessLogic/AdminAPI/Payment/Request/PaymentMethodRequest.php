@@ -3,6 +3,7 @@
 namespace Adyen\Core\BusinessLogic\AdminAPI\Payment\Request;
 
 use Adyen\Core\BusinessLogic\AdminAPI\Request\Request;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidPaymentMethodCodeException;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\DuplicatedValuesNotAllowedException;
 use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\InvalidCardConfigurationException;
@@ -289,7 +290,7 @@ class PaymentMethodRequest extends Request
             $rawData['additionalData']['gatewayMerchantId'] ?? '',
             !empty($rawData['additionalData']['supportedInstallments']) ?
                 $rawData['additionalData']['supportedInstallments'] : [],
-            $rawData['excludeFromPayByLink'] ?? false
+            !empty($rawData['excludeFromPayByLink']) && $rawData['excludeFromPayByLink'] === 'true'
         );
     }
 
@@ -300,7 +301,8 @@ class PaymentMethodRequest extends Request
      * @throws InvalidCardConfigurationException
      * @throws NegativeValuesNotAllowedException
      * @throws PaymentMethodDataEmptyException
-     * @throws StringValuesNotAllowedException
+     * @throws StringValuesNotAllowedException|
+     * @throws InvalidPaymentMethodCodeException
      */
     public function transformToDomainModel(): object
     {
