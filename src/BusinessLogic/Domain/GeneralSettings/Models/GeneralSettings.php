@@ -3,6 +3,7 @@
 namespace Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models;
 
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidCaptureDelayException;
+use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidDefaultExpirationTimeException;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidRetentionPeriodException;
 use Adyen\Core\BusinessLogic\Domain\Translations\Model\TranslatableLabel;
 
@@ -65,6 +66,7 @@ class GeneralSettings
      *
      * @throws InvalidCaptureDelayException
      * @throws InvalidRetentionPeriodException
+     * @throws InvalidDefaultExpirationTimeException
      */
     public function __construct(
         bool $basketItemSync,
@@ -76,7 +78,7 @@ class GeneralSettings
         string $payByLinkTitle = 'Adyen Pay By Link',
         string $defaultLinkExpirationTime = '7'
     ) {
-        $this->validate($captureDelay, $retentionPeriod);
+        $this->validate($captureDelay, $retentionPeriod, $defaultLinkExpirationTime);
 
         $this->basketItemSync = $basketItemSync;
         $this->captureType = $captureType;
@@ -163,7 +165,7 @@ class GeneralSettings
     /**
      * @return int
      */
-    public function getDefaultLinkExpirationTime()
+    public function getDefaultLinkExpirationTime(): int
     {
         return $this->defaultLinkExpirationTime;
     }
@@ -175,8 +177,9 @@ class GeneralSettings
      *
      * @throws InvalidCaptureDelayException
      * @throws InvalidRetentionPeriodException
+     * @throws InvalidDefaultExpirationTimeException
      */
-    private function validate(string $captureDelay, string $retentionPeriod): void
+    private function validate(string $captureDelay, string $retentionPeriod, string $defaultLinkExpirationTime): void
     {
         if (!ctype_digit($captureDelay) || $captureDelay < 1 || $captureDelay > 7) {
             throw new InvalidCaptureDelayException(
@@ -187,6 +190,12 @@ class GeneralSettings
         if (!ctype_digit($retentionPeriod) || $retentionPeriod < 60) {
             throw new InvalidRetentionPeriodException(
                 new TranslatableLabel('Minimum number of retention period is 60.', 'generalSettings.retentionPeriodError')
+            );
+        }
+
+        if (!ctype_digit($defaultLinkExpirationTime) || $defaultLinkExpirationTime < 1) {
+            throw new InvalidDefaultExpirationTimeException(
+                new TranslatableLabel('Default link expiration time must me greater than 1.', 'generalSettings.defaultLinkExpirationTime')
             );
         }
     }

@@ -453,7 +453,8 @@ class BootstrapComponent extends BaseBootstrapComponent
             new SingleInstance(static function () {
                 return new TransactionDetailsService(
                     ServiceRegister::getService(ConnectionService::class),
-                    ServiceRegister::getService(TransactionHistoryService::class)
+                    ServiceRegister::getService(TransactionHistoryService::class),
+                    ServiceRegister::getService(GeneralSettingsService::class)
                 );
             })
         );

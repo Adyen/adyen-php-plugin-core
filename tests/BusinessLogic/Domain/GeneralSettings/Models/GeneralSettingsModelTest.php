@@ -4,6 +4,7 @@ namespace Adyen\Core\Tests\BusinessLogic\Domain\GeneralSettings\Models;
 
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidCaptureDelayException;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidCaptureTypeException;
+use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidDefaultExpirationTimeException;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidRetentionPeriodException;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType as CaptureTypeModel;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\GeneralSettings as GeneralSettingsModel;
@@ -67,9 +68,34 @@ class GeneralSettingsModelTest extends BaseTestCase
         new GeneralSettingsModel(
             true,
             CaptureTypeModel::fromState('1'),
-            8,
+            1,
             's',
-            60
+            60,
+            true,
+            'test',
+            '0'
+        );
+        // assert
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testExpirationTimeException(): void
+    {
+        // arrange
+        $this->expectException(InvalidDefaultExpirationTimeException::class);
+
+        // act
+        new GeneralSettingsModel(
+            true,
+            CaptureTypeModel::delayed(),
+            2,
+            's',
+            60,
+            true,
+            'test',
+            '0'
         );
         // assert
     }

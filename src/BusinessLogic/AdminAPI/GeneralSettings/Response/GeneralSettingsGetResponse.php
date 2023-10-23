@@ -38,9 +38,9 @@ class GeneralSettingsGetResponse extends Response
             'captureDelay' => '',
             'shipmentStatus' => '',
             'retentionPeriod' => '60',
-            'enablePayByLink' => true,
+            'enablePayByLink' => false,
             'payByLinkTitle' => '',
-            'defaultLinkExpirationTime' => ''
+            'defaultLinkExpirationTime' => 1
         ];
     }
 

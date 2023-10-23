@@ -8,6 +8,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
+use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsService;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\PaymentMethod;
 use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
@@ -29,17 +30,24 @@ class TransactionDetailsService
      * @var TransactionHistoryService
      */
     private $historyService;
+    /**
+     * @var GeneralSettingsService
+     */
+    private $generalSettingsService;
 
     /**
      * @param ConnectionService $connectionService
      * @param TransactionHistoryService $historyService
+     * @param GeneralSettingsService $generalSettingsService
      */
     public function __construct(
         ConnectionService $connectionService,
-        TransactionHistoryService $historyService
+        TransactionHistoryService $historyService,
+        GeneralSettingsService $generalSettingsService
     ) {
         $this->connectionService = $connectionService;
         $this->historyService = $historyService;
+        $this->generalSettingsService = $generalSettingsService;
     }
 
     /**
@@ -295,6 +303,12 @@ class TransactionDetailsService
      */
     private function shouldDisplayPaymentLink(TransactionHistory $transactionHistory): bool
     {
+        $generalSettings = $this->generalSettingsService->getGeneralSettings();
+
+        if(!$generalSettings->isEnablePayByLink()) {
+            return false;
+        }
+
         if ($transactionHistory->collection()->isEmpty()) {
             return true;
         }

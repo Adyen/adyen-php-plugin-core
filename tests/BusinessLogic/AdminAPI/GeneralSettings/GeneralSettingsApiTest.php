@@ -158,7 +158,10 @@ class GeneralSettingsApiTest extends BaseTestCase
             'delayed',
             1,
             's',
-            60
+            60,
+            true,
+            'test',
+            '2'
         );
 
         // Act
@@ -181,7 +184,10 @@ class GeneralSettingsApiTest extends BaseTestCase
             'delayed',
             1,
             's',
-            60
+            60,
+            true,
+            'test',
+            '2'
         );
 
         // Act
