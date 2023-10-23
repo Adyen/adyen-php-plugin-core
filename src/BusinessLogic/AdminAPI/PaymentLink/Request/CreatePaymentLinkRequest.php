@@ -4,7 +4,9 @@ namespace Adyen\Core\BusinessLogic\AdminAPI\PaymentLink\Request;
 
 use Adyen\Core\BusinessLogic\AdminAPI\Request\Request;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Models\PaymentLinkRequestContext;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidCurrencyCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
 use DateTime;
 
 /**
@@ -15,39 +17,51 @@ use DateTime;
 class CreatePaymentLinkRequest extends Request
 {
     /**
-     * @var Amount
+     * @var string
      */
     private $amount;
     /**
      * @var string
      */
+    private $currency;
+    /**
+     * @var string
+     */
     private $reference;
-
     /**
      * @var DateTime
      */
     private $expiresAt;
 
     /**
-     * @param Amount $amount
+     * @param float $amount
+     * @param string $currency
      * @param string $reference
      * @param DateTime|null $expiresAt
      */
     public function __construct(
-        Amount $amount,
+        float $amount,
+        string $currency,
         string $reference,
         DateTime $expiresAt = null
     ) {
         $this->amount = $amount;
+        $this->currency = $currency;
         $this->reference = $reference;
         $this->expiresAt = $expiresAt;
     }
 
     /**
      * @return PaymentLinkRequestContext
+     *
+     * @throws InvalidCurrencyCode
      */
     public function transformToDomainModel(): object
     {
-        return new PaymentLinkRequestContext($this->amount, $this->reference, $this->expiresAt);
+        return new PaymentLinkRequestContext(
+            Amount::fromFloat($this->amount, Currency::fromIsoCode($this->currency)),
+            $this->reference,
+            $this->expiresAt
+        );
     }
 }

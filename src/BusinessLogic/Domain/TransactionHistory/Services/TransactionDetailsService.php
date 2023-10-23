@@ -316,8 +316,12 @@ class TransactionDetailsService
         $item = $transactionHistory->collection()->last();
 
         if ($item->getPaymentState() === 'failed' || $item->getPaymentState(
-            ) === 'cancelled' || !$transactionHistory->getPaymentLink()) {
+            ) === 'cancelled') {
             return true;
+        }
+
+        if(!$transactionHistory->getPaymentLink()) {
+            return false;
         }
 
         $now = TimeProvider::getInstance()->getCurrentLocalTime();

@@ -50,6 +50,7 @@ class PaymentLinkRequestApiTest extends BaseTestCase
      * @var MockPaymentService
      */
     private $paymentService;
+
     /**
      * @return void
      */
@@ -147,8 +148,7 @@ class PaymentLinkRequestApiTest extends BaseTestCase
     public function testSuccess(): void
     {
         // Arrange
-        $amount = Amount::fromFloat(456.12, Currency::getDefault());
-        $context = new CreatePaymentLinkRequest($amount, '1', new DateTime('2020-12-18'));
+        $context = new CreatePaymentLinkRequest(456.12, 'EUR', '1', new DateTime('2020-12-18'));
         $this->paymentService->setPaymentMethods($this->getPaymentMethods());
 
         // Act
@@ -157,7 +157,10 @@ class PaymentLinkRequestApiTest extends BaseTestCase
         // Assert
         self::assertTrue($response->isSuccessful());
         self::assertTrue($this->proxy->getIsCalled());
-        self::assertEquals($amount, $this->proxy->getLastRequest()->getAmount());
+        self::assertEquals(
+            Amount::fromFloat(456.12, Currency::getDefault()),
+            $this->proxy->getLastRequest()->getAmount()
+        );
         self::assertEquals('1', $this->proxy->getLastRequest()->getReference());
         self::assertEquals('1', $this->proxy->getLastRequest()->getMerchantAccount());
         self::assertCount(3, $this->proxy->getLastRequest()->getAllowedPaymentMethods());
@@ -176,7 +179,7 @@ class PaymentLinkRequestApiTest extends BaseTestCase
     {
         // Arrange
         $amount = Amount::fromFloat(456.12, Currency::getDefault());
-        $context = new CreatePaymentLinkRequest($amount, '1', new DateTime('2020-12-18'));
+        $context = new CreatePaymentLinkRequest(456.12, 'EUR', '1', new DateTime('2020-12-18'));
 
         // Act
         $response = AdminAPI::get()->paymentLink('storeId')->createPaymentLink($context);
@@ -208,7 +211,7 @@ class PaymentLinkRequestApiTest extends BaseTestCase
     {
         // Arrange
         $amount = Amount::fromFloat(456.12, Currency::getDefault());
-        $context = new CreatePaymentLinkRequest($amount, '1', new DateTime('2020-12-18'));
+        $context = new CreatePaymentLinkRequest(456.12, 'EUR', '1', new DateTime('2020-12-18'));
         $this->paymentService->setPaymentMethods(array_merge($this->getPaymentMethods(), $this->getOneyMethod()));
 
         // Act
@@ -232,7 +235,7 @@ class PaymentLinkRequestApiTest extends BaseTestCase
     {
         // Arrange
         $amount = Amount::fromFloat(456.12, Currency::getDefault());
-        $context = new CreatePaymentLinkRequest($amount, '1', new DateTime('2020-12-18'));
+        $context = new CreatePaymentLinkRequest(456.12, 'EUR', '1', new DateTime('2020-12-18'));
         $this->paymentService->setPaymentMethods(
             array_merge($this->getPaymentMethods(), $this->getUnsupportedMethod())
         );
