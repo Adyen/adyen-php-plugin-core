@@ -1110,6 +1110,20 @@ class BootstrapComponent extends BaseBootstrapComponent
             })
         );
 
+        ServiceRegister::registerService(
+            AllowedPaymentMethodsProcessor::class,
+            new SingleInstance(static function () {
+                return new AllowedPaymentMethodsProcessor(ServiceRegister::getService(PaymentService::class));
+            })
+        );
+
+        ServiceRegister::registerService(
+            ExpiresAtProcessor::class,
+            new SingleInstance(static function () {
+                return new ExpiresAtProcessor(ServiceRegister::getService(GeneralSettingsService::class));
+            })
+        );
+
         PaymentRequestProcessorsRegistry::registerGlobal(MerchantIdProcessor::class);
         PaymentRequestProcessorsRegistry::registerGlobal(AmountProcessor::class);
         PaymentRequestProcessorsRegistry::registerGlobal(ReferenceProcessor::class);
