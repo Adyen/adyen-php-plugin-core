@@ -4,6 +4,7 @@ namespace Adyen\Core\BusinessLogic\AdminAPI\GeneralSettings\Request;
 
 use Adyen\Core\BusinessLogic\AdminAPI\Request\Request;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidCaptureDelayException;
+use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidDefaultExpirationTimeException;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidRetentionPeriodException;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\GeneralSettings;
@@ -74,7 +75,7 @@ class GeneralSettingsRequest extends Request
         string $retentionPeriod = '60',
         bool $enablePayByLink = true,
         string $payByLinkTitle = '',
-        string $defaultLinkExpirationTime = ''
+        string $defaultLinkExpirationTime = '7'
     ) {
         $this->basketItemSync = $basketItemSync;
         $this->captureType = $captureType;
@@ -93,7 +94,8 @@ class GeneralSettingsRequest extends Request
      *
      * @throws InvalidCaptureDelayException
      * @throws InvalidRetentionPeriodException
-     * @throws InvalidCaptureTypeException
+     * @throws InvalidCaptureTypeException|
+     * @throws InvalidDefaultExpirationTimeException
      */
     public function transformToDomainModel(): object
     {
@@ -105,7 +107,7 @@ class GeneralSettingsRequest extends Request
             $this->retentionPeriod,
             $this->enablePayByLink,
             $this->payByLinkTitle,
-            $this->defaultLinkExpirationTime
+            !empty($this->defaultLinkExpirationTime) ? $this->defaultLinkExpirationTime : '7'
         );
     }
 }

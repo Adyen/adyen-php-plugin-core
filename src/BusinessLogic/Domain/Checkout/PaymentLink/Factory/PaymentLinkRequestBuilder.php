@@ -9,6 +9,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\BillingAddres
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\DeliveryAddress;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\LineItem;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ShopperName;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ShopperReference;
 
 /**
  * Class PaymentLinkRequestBuilder.
@@ -43,9 +44,9 @@ class PaymentLinkRequestBuilder
     private $countryCode = '';
 
     /**
-     * @var string
+     * @var ShopperReference
      */
-    private $shopperReference = '';
+    private $shopperReference;
 
     /**
      * @var string
@@ -179,11 +180,11 @@ class PaymentLinkRequestBuilder
     }
 
     /**
-     * @param string $shopperReference
+     * @param ShopperReference $shopperReference
      *
      * @return void
      */
-    public function setShopperReference(string $shopperReference): void
+    public function setShopperReference(ShopperReference $shopperReference): void
     {
         $this->shopperReference = $shopperReference;
     }

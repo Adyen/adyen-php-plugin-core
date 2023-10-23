@@ -11,6 +11,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\BillingAddress;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\DeliveryAddress;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ShopperReference;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\EmptyConnectionDataException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\EmptyStoreException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\InvalidModeException;
@@ -134,7 +135,7 @@ class ProxyTest extends BaseTestCase
                 Amount::fromFloat(123.23, Currency::fromIsoCode('EUR')),
                 ['ideal', 'mc', 'visa'],
                 'testCountryCode',
-                'testShopperReference',
+                ShopperReference::parse('testShopperReference'),
                 'testShopperEmail',
                 'testShopperLocale',
                 new BillingAddress('city1', 'country1', 'house1', 'code1', 'state1', 'street1'),
@@ -199,7 +200,7 @@ class ProxyTest extends BaseTestCase
                 Amount::fromFloat(123.23, Currency::fromIsoCode('EUR')),
                 ['ideal', 'mc', 'visa'],
                 'testCountryCode',
-                'testShopperReference',
+                ShopperReference::parse('testShopperReference'),
                 'testShopperEmail',
                 'testShopperLocale',
                 new BillingAddress('city1', 'country1', 'house1', 'code1', 'state1', 'street1'),

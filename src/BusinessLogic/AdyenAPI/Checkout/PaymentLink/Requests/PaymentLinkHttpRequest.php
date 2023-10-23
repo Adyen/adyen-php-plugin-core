@@ -55,7 +55,7 @@ class PaymentLinkHttpRequest extends HttpRequest
         }
 
         if ($this->request->getShopperReference() !== null) {
-            $body['shopperReference'] = $this->request->getShopperReference();
+            $body['shopperReference'] = (string)$this->request->getShopperReference();
         }
 
         if ($this->request->getShopperEmail() !== null) {
