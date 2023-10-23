@@ -81,7 +81,7 @@ class AdyenGivingSettingsApiTest extends BaseTestCase
         $response = AdminAPI::get()->adyenGivingSettings('1')->getAdyenGivingSettings();
 
         // Assert
-        self::assertTrue($response->isSuccessful());
+        self::assertTrue(false);
     }
 
     /**
