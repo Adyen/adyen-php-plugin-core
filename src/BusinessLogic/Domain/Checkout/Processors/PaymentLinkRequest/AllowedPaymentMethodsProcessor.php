@@ -46,28 +46,27 @@ class AllowedPaymentMethodsProcessor implements PaymentLinkRequestProcessor
 
         $configuredPaymentMethods = $this->paymentService->getConfiguredMethods();
         foreach ($configuredPaymentMethods as $configuredPaymentMethod) {
-            if (!$configuredPaymentMethod->getExcludeFromPayByLink(
-                ) && $configuredPaymentMethod->getSupportsPaymentLink() && (in_array(
-                        'ANY',
-                        $configuredPaymentMethod->getCurrencies()
-                    ) || in_array(
-                        $currency,
-                        $configuredPaymentMethod->getCurrencies()
-                    ))) {
-                if (PaymentMethodCode::isOneyMethod($configuredPaymentMethod->getCode())) {
-                    $allowedPaymentMethods = array_merge(
-                        $allowedPaymentMethods,
-                        $this->getOneyCodes($configuredPaymentMethod)
-                    );
+            if ($configuredPaymentMethod->getExcludeFromPayByLink() ||
+                !$configuredPaymentMethod->getSupportsPaymentLink() ||
+                (!in_array('ANY', $configuredPaymentMethod->getCurrencies()) &&
+                    !in_array($currency, $configuredPaymentMethod->getCurrencies()))) {
 
-                    continue;
-                }
-
-                $allowedPaymentMethods[] = $configuredPaymentMethod->getCode();
+                continue;
             }
+
+            if (PaymentMethodCode::isOneyMethod($configuredPaymentMethod->getCode())) {
+                $allowedPaymentMethods = array_merge(
+                    $allowedPaymentMethods,
+                    $this->getOneyCodes($configuredPaymentMethod)
+                );
+
+                continue;
+            }
+
+            $allowedPaymentMethods[] = $configuredPaymentMethod->getCode();
         }
 
-        if(empty($allowedPaymentMethods)) {
+        if (empty($allowedPaymentMethods)) {
             throw new NoSupportedPaymentMethods(
                 new TranslatableLabel(
                     'There are no payment methods that supports payment link request.',
