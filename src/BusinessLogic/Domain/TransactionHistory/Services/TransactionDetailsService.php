@@ -113,7 +113,7 @@ class TransactionDetailsService
                 'pspReference' => $item->getPspReference(),
                 'date' => $item->getDateAndTime(),
                 'status' => $item->getStatus(),
-                'paymentMethod' => $this->getLogo($item->getPaymentMethod()),
+                'paymentMethod' => !empty($item->getPaymentMethod()) ? $this->getLogo($item->getPaymentMethod()) : '',
                 'eventCode' => $item->getEventCode(),
                 'success' => true,
                 'merchantAccountCode' => $connectionSettings ?
@@ -177,7 +177,7 @@ class TransactionDetailsService
         Amount $captureAmount,
         Amount $authorizedAmount
     ): bool {
-        return $this->parseCode($code)->isCaptureSupported()
+        return !empty($code) && $this->parseCode($code)->isCaptureSupported()
             && !$this->getStatusByEventCode(
                 $transactionHistory,
                 'CANCELLATION'
@@ -200,7 +200,7 @@ class TransactionDetailsService
         Amount $captureAmount,
         Amount $authorizedAmount
     ): bool {
-        return $this->parseCode($code)->isPartialCaptureSupported()
+        return !empty($code) && $this->parseCode($code)->isPartialCaptureSupported()
             && !$this->getStatusByEventCode($transactionHistory, 'CANCELLATION')
             && $captureAmount->getPriceInCurrencyUnits() < $authorizedAmount->getPriceInCurrencyUnits();
     }
@@ -219,9 +219,8 @@ class TransactionDetailsService
         Amount $refundAmount,
         Amount $captureAmount
     ): bool {
-        $result = $this->parseCode($code)->isPartialRefundSupported();
-
-        return $result && $refundAmount->getPriceInCurrencyUnits()
+        return !empty($code) && $this->parseCode($code)->isPartialRefundSupported(
+            ) && $refundAmount->getPriceInCurrencyUnits()
             < $captureAmount->getPriceInCurrencyUnits();
     }
 
@@ -239,9 +238,7 @@ class TransactionDetailsService
         Amount $refundAmount,
         Amount $captureAmount
     ): bool {
-        $result = $this->parseCode($code)->isRefundSupported();
-
-        return $result && $refundAmount->getPriceInCurrencyUnits()
+        return !empty($code) && $this->parseCode($code)->isRefundSupported() && $refundAmount->getPriceInCurrencyUnits()
             < $captureAmount->getPriceInCurrencyUnits();
     }
 
@@ -305,7 +302,7 @@ class TransactionDetailsService
     {
         $generalSettings = $this->generalSettingsService->getGeneralSettings();
 
-        if(!$generalSettings->isEnablePayByLink()) {
+        if (!$generalSettings->isEnablePayByLink()) {
             return false;
         }
 
@@ -315,12 +312,11 @@ class TransactionDetailsService
 
         $item = $transactionHistory->collection()->last();
 
-        if ($item->getPaymentState() === 'failed' || $item->getPaymentState(
-            ) === 'cancelled') {
+        if ($item->getPaymentState() === 'failed' || $item->getPaymentState() === 'cancelled') {
             return true;
         }
 
-        if(!$transactionHistory->getPaymentLink()) {
+        if (!$transactionHistory->getPaymentLink()) {
             return false;
         }
 
