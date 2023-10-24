@@ -89,8 +89,8 @@ class PaymentLinkService
         );
         $history->add(
             new HistoryItem(
-                'payment_link' . ++$paymentLinkCount . $history->getOriginalPspReference(
-                ) ? '_' . $history->getOriginalPspReference() : '',
+                'payment_link' . ++$paymentLinkCount .
+                ($history->getOriginalPspReference() ? '_' . $history->getOriginalPspReference() : ''),
                 $history->getMerchantReference(),
                 ShopEvents::PAYMENT_LINK_CREATED,
                 $lastItem ? $lastItem->getPaymentState() : PaymentStates::STATE_NEW,
