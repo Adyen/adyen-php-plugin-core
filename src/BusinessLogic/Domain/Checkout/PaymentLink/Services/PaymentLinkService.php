@@ -89,14 +89,15 @@ class PaymentLinkService
         );
         $history->add(
             new HistoryItem(
-                'payment_link' . ++$paymentLinkCount . '_' . $history->getOriginalPspReference(),
+                'payment_link' . ++$paymentLinkCount .
+                ($history->getOriginalPspReference() ? '_' . $history->getOriginalPspReference() : ''),
                 $history->getMerchantReference(),
                 ShopEvents::PAYMENT_LINK_CREATED,
                 $lastItem ? $lastItem->getPaymentState() : PaymentStates::STATE_NEW,
                 TimeProvider::getInstance()->getCurrentLocalTime()->format(DateTimeInterface::ATOM),
                 true,
                 $amount,
-                'Payment link',
+                '',
                 $history->getRiskScore() ?? 0,
                 $history->isLive() ?? true
             )
