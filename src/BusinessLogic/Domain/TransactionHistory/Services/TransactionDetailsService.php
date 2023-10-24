@@ -325,6 +325,6 @@ class TransactionDetailsService
             $transactionHistory->getPaymentLink()->getExpiresAt()
         );
 
-        return $now->getTimestamp() > $expires->getTimestamp();
+        return $now->getTimestamp() < $expires->getTimestamp();
     }
 }
