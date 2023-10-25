@@ -117,8 +117,11 @@ class TransactionHistory
             );
         }
 
-        if ($this->historyItemCollection->isEmpty()) {
+        if ($item->getEventCode() === 'AUTHORISATION' && $item->getPspReference() !== $this->originalPspReference) {
             $this->originalPspReference = $item->getPspReference();
+        }
+
+        if ($this->historyItemCollection->isEmpty()) {
             $this->merchantReference = $item->getMerchantReference();
             $this->paymentMethod = $item->getPaymentMethod();
             $this->isLive = $item->isLive();
@@ -141,7 +144,9 @@ class TransactionHistory
      */
     public function getTotalAmountForEventCode(string $eventCode): Amount
     {
-        return $this->historyItemCollection->filterByEventCode($eventCode)->filterByStatus(true)->getTotalAmount($this->currency);
+        return $this->historyItemCollection->filterByEventCode($eventCode)->filterByStatus(true)->getTotalAmount(
+            $this->currency
+        );
     }
 
     /**
@@ -165,9 +170,12 @@ class TransactionHistory
             return Amount::fromInt(0, $this->currency);
         }
 
-        $authorisedDate = TimeProvider::getInstance()->deserializeDateString($authorisedItem->getDateAndTime())->getTimestamp();
+        $authorisedDate = TimeProvider::getInstance()->deserializeDateString(
+            $authorisedItem->getDateAndTime()
+        )->getTimestamp();
 
-        if ($authorisedDate + $this->captureDelay * 3600 < TimeProvider::getInstance()->getCurrentLocalTime()->getTimestamp()) {
+        if ($authorisedDate + $this->captureDelay * 3600 < TimeProvider::getInstance()->getCurrentLocalTime(
+            )->getTimestamp()) {
             return $this->getTotalAmountForEventCode('AUTHORISATION');
         }
 

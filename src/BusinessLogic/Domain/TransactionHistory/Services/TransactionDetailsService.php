@@ -297,6 +297,8 @@ class TransactionDetailsService
      * @param TransactionHistory $transactionHistory
      *
      * @return bool
+     *
+     * @throws CurrencyMismatchException
      */
     private function shouldDisplayPaymentLink(TransactionHistory $transactionHistory): bool
     {
@@ -312,7 +314,9 @@ class TransactionDetailsService
 
         $item = $transactionHistory->collection()->last();
 
-        if ($item->getPaymentState() === 'failed' || $item->getPaymentState() === 'cancelled') {
+        if (($item->getPaymentState() === 'failed' ||
+            $item->getPaymentState() === 'cancelled' ||
+            $transactionHistory->getTotalAmountForEventCode('CANCELLATION')->getPriceInCurrencyUnits() > 0)) {
             return true;
         }
 
@@ -325,6 +329,6 @@ class TransactionDetailsService
             $transactionHistory->getPaymentLink()->getExpiresAt()
         );
 
-        return $now->getTimestamp() < $expires->getTimestamp();
+        return $item->getPaymentState() === 'new' && $now->getTimestamp() < $expires->getTimestamp();
     }
 }

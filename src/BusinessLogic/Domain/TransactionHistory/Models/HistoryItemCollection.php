@@ -54,7 +54,7 @@ class HistoryItemCollection
     public function filterByPspReference(string $pspReference): self
     {
         return new self  (
-            array_filter($this->historyItems, static function ($item) use ($pspReference) {
+            array_filter($this->filterAuthorisedItems(), static function ($item) use ($pspReference) {
                 return $item->getPspReference() === $pspReference;
             })
         );
@@ -68,7 +68,7 @@ class HistoryItemCollection
     public function filterByEventCode(string $eventCode): self
     {
         return new self  (
-            array_filter($this->historyItems, static function ($item) use ($eventCode) {
+            array_filter($this->filterAuthorisedItems(), static function ($item) use ($eventCode) {
                 return $item->getEventCode() === $eventCode;
             })
         );
@@ -82,7 +82,7 @@ class HistoryItemCollection
     public function filterByStatus(bool $status): self
     {
         return new self  (
-            array_filter($this->historyItems, static function ($item) use ($status) {
+            array_filter($this->filterAuthorisedItems(), static function ($item) use ($status) {
                 return $item->getStatus() === $status;
             })
         );
@@ -109,7 +109,7 @@ class HistoryItemCollection
      */
     public function first(): ?HistoryItem
     {
-        return !$this->isEmpty() ? current($this->historyItems) : null;
+        return !$this->isEmpty() ? current($this->filterAuthorisedItems()) : null;
     }
 
     /**
@@ -125,8 +125,32 @@ class HistoryItemCollection
             return Amount::fromInt(0, $currency);
         }
 
-        return array_reduce($this->historyItems, static function (?Amount $totalAmount, HistoryItem $item) {
+        return array_reduce($this->filterAuthorisedItems(), static function (?Amount $totalAmount, HistoryItem $item) {
             return $totalAmount ? $totalAmount->plus($item->getAmount()) : $item->getAmount();
         });
+    }
+
+    /**
+     * Find sub array in transaction history starting from last AUTHORISATION code.
+     *
+     * @return HistoryItem[]
+     */
+    private function filterAuthorisedItems(): array
+    {
+        $lastIndex = false;
+
+        foreach (array_reverse($this->historyItems) as $index => $item) {
+            if ($item->getEventCode() === 'AUTHORISATION') {
+                $lastIndex = count($this->historyItems) - $index - 1;
+
+                break;
+            }
+        }
+
+        if (!$lastIndex) {
+            return $this->historyItems;
+        }
+
+        return array_slice($this->historyItems, $lastIndex);;
     }
 }
