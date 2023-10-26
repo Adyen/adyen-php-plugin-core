@@ -304,7 +304,7 @@ class TransactionDetailsService
     {
         $generalSettings = $this->generalSettingsService->getGeneralSettings();
 
-        if (!$generalSettings->isEnablePayByLink()) {
+        if ($generalSettings && !$generalSettings->isEnablePayByLink()) {
             return false;
         }
 
