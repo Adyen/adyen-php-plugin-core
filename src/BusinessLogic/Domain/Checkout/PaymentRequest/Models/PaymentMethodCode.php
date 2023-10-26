@@ -528,8 +528,10 @@ class PaymentMethodCode
         self::XPONCARD,
         self::YOURGIFT,
         self::PROSODIE_ILLICADO,
+        self::PAYSAFECARD,
         //</editor-fold>
-        self::TWINT
+        self::TWINT,
+        self::BCMC_MOBILE
     ];
 
     private const SCHEME = 'scheme';
