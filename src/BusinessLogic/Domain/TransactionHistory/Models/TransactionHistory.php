@@ -119,6 +119,7 @@ class TransactionHistory
 
         if ($item->getEventCode() === 'AUTHORISATION' && $item->getPspReference() !== $this->originalPspReference) {
             $this->originalPspReference = $item->getPspReference();
+            $this->paymentLink = null;
         }
 
         if ($this->historyItemCollection->isEmpty()) {
