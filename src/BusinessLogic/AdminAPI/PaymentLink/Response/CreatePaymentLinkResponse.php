@@ -12,10 +12,23 @@ use Adyen\Core\BusinessLogic\AdminAPI\Response\Response;
 class CreatePaymentLinkResponse extends Response
 {
     /**
+     * @var string
+     */
+    private $paymentLink;
+
+    /**
+     * @param string $paymentLink
+     */
+    public function __construct(string $paymentLink)
+    {
+        $this->paymentLink = $paymentLink;
+    }
+
+    /**
      * @return array
      */
     public function toArray(): array
     {
-        return ['success' => true];
+        return ['success' => true, 'paymentLink' => $this->paymentLink];
     }
 }
