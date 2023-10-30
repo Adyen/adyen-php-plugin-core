@@ -104,9 +104,6 @@ class OrderStatusMappingService implements OrderStatusProvider
         $lastTransactionHistoryItem = $transactionHistory->collection()->last();
         $previousPaymentState = $lastTransactionHistoryItem ? $lastTransactionHistoryItem->getPaymentState() : '';
         $capturedAmount = $transactionHistory->getCapturedAmount()->getPriceInCurrencyUnits();
-        $authorisedAmount = $transactionHistory->getTotalAmountForEventCode(
-            EventCodes::AUTHORISATION
-        )->getPriceInCurrencyUnits();
         $refundedAmount = $transactionHistory->getTotalAmountForEventCode(EventCodes::REFUND)->getPriceInCurrencyUnits(
         );
 
