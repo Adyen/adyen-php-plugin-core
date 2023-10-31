@@ -2,8 +2,10 @@
 
 namespace Adyen\Core\BusinessLogic\DataAccess\Payment\Entities;
 
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidPaymentMethodCodeException;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\PaymentMethodDataEmptyException;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\Exceptions\InvalidTokenTypeException;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\AmazonPay;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\ApplePay;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\CardConfig;
@@ -14,6 +16,7 @@ use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\Oney;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\PaymentMethodAdditionalData;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\PayPal;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\PaymentMethod as PaymentMethodModel;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\TokenType;
 use Adyen\Core\Infrastructure\Exceptions\BaseException;
 use Adyen\Core\Infrastructure\ORM\Configuration\EntityConfiguration;
 use Adyen\Core\Infrastructure\ORM\Configuration\IndexMap;
@@ -66,6 +69,8 @@ class PaymentMethod extends Entity
      *
      * @throws BaseException
      * @throws PaymentMethodDataEmptyException
+     * @throws InvalidPaymentMethodCodeException
+     * @throws InvalidTokenTypeException
      */
     public function inflate(array $data): void
     {
@@ -88,7 +93,9 @@ class PaymentMethod extends Entity
             static::getDataValue($paymentMethodData, 'surchargeLimit', null),
             static::getDataValue($paymentMethodData, 'documentationUrl'),
             $this->transformAdditionalData($paymentMethodData),
-            static::getDataValue($paymentMethodData, 'excludeFromPayByLink')
+            static::getDataValue($paymentMethodData, 'excludeFromPayByLink'),
+            static::getDataValue($paymentMethodData, 'enableTokenization'),
+            $this->transformTokenType($paymentMethodData)
         );
     }
 
@@ -113,7 +120,9 @@ class PaymentMethod extends Entity
             'documentationUrl' => $this->paymentMethod->getDocumentationUrl(),
             'countries' => $this->paymentMethod->getCountries(),
             'currencies' => $this->paymentMethod->getCurrencies(),
-            'excludeFromPayByLink' => $this->paymentMethod->getExcludeFromPayByLink()
+            'excludeFromPayByLink' => $this->paymentMethod->getExcludeFromPayByLink(),
+            'enableTokenization' => $this->paymentMethod->getEnableTokenization(),
+            'tokenType' => $this->paymentMethod->getTokenType() ? $this->paymentMethod->getTokenType()->getType() : null
         ];
 
         if ($this->paymentMethod->getAdditionalData()) {
@@ -351,5 +360,17 @@ class PaymentMethod extends Entity
         }
 
         return null;
+    }
+
+    /**
+     * @throws InvalidTokenTypeException
+     */
+    private function transformTokenType(array $data): ?TokenType
+    {
+        if (empty($data['tokenType'])) {
+            return null;
+        }
+
+        return TokenType::fromState($data['tokenType']);
     }
 }

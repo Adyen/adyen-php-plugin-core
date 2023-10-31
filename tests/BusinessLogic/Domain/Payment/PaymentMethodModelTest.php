@@ -2,7 +2,9 @@
 
 namespace Adyen\Core\Tests\BusinessLogic\Domain\Payment;
 
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\Exceptions\InvalidTokenTypeException;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\PaymentMethod;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\TokenType;
 use Adyen\Core\Tests\BusinessLogic\Common\BaseTestCase;
 
 /**
@@ -39,5 +41,30 @@ class PaymentMethodModelTest extends BaseTestCase
         $paymentMethod->setSurchargeLimit(5);
 
         self::assertEquals(105, $paymentMethod->getTotalSurchargeFor(100));
+    }
+    public function testTokenTypeException()
+    {
+        // arrange
+        $this->expectException(InvalidTokenTypeException::class);
+        new PaymentMethod(
+            'test123',
+            'scheme',
+            'Test',
+            '',
+            '',
+            [],
+            [],
+            '',
+            '',
+            '',
+            '',
+            null,
+            '',
+        '',
+            null,
+        false,
+            true,
+            TokenType::fromState('test')
+        );
     }
 }

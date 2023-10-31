@@ -454,9 +454,7 @@ class PaymentMethodCode
         self::KLARNA,
         self::KLARNA_ACCOUNT,
         self::KLARNA_PAYNOW,
-        self::KLARNA_ACCOUNT,
         self::MULTIBANCO,
-        self::ACH,
         self::SEPA,
         self::DIRECTDEBIT_GB,
         self::BLIK,
@@ -470,9 +468,7 @@ class PaymentMethodCode
         self::EBANKING_FI,
         self::MOLPAY_EBANKING_TH,
         self::DIRECT_EBANKING,
-        self::APPLEPAY,
         self::TRUSTLY,
-        self::ALIPAY,
         self::BANCONTACT_CARD,
         self::GOOGLEPAY,
         self::GCASH,
@@ -532,6 +528,29 @@ class PaymentMethodCode
         //</editor-fold>
         self::TWINT,
         self::BCMC_MOBILE
+    ];
+    public const RECURRING_PAYMENTS_SUPPORTED = [
+        self::ACH,
+        self::APPLEPAY,
+        self::DIRECTDEBIT_GB,
+        self::BCMC_MOBILE,
+        self::SCHEME,
+        self::EPS,
+        self::GCASH,
+        self::GIROPAY,
+        self::PAY_WITH_GOOGLE,
+        self::IDEAL,
+        self::KLARNA,
+        self::KLARNA_ACCOUNT,
+        self::KLARNA_PAYNOW,
+        self::MOMO_WALLET,
+        self::PAYPAL,
+        self::SEPA,
+        self::DIRECT_EBANKING,
+        self::TRUSTLY,
+        self::TWINT,
+        self::VIPPS,
+        self::ZIP
     ];
 
     private const SCHEME = 'scheme';
@@ -1026,5 +1045,9 @@ class PaymentMethodCode
     public function isPaymentLinkSupported(): bool
     {
         return in_array($this->type, self::PAYMENT_LINK_SUPPORTED, true);
+    }
+    public function isRecurringPaymentSupported(): bool
+    {
+        return in_array($this->type, self::RECURRING_PAYMENTS_SUPPORTED, true);
     }
 }

@@ -10,6 +10,7 @@ use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\InvalidCardConfigurationE
 use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\NegativeValuesNotAllowedException;
 use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\PaymentMethodDataEmptyException;
 use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\StringValuesNotAllowedException;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\Exceptions\InvalidTokenTypeException;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\AmazonPay;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\ApplePay;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\CardConfig;
@@ -20,6 +21,7 @@ use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\Oney;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\PaymentMethodAdditionalData;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\PayPal;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\PaymentMethod;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\TokenType;
 
 /**
  * Class PaymentMethodRequest
@@ -148,6 +150,15 @@ class PaymentMethodRequest extends Request
      * @var bool
      */
     private $excludeFromPayByLink;
+    /**
+     * @var bool
+     */
+    private $enableTokenization;
+
+    /**
+     * @var string
+     */
+    private $tokenType;
 
     /**
      * @param string $methodId
@@ -180,6 +191,8 @@ class PaymentMethodRequest extends Request
      * @param string $gatewayMerchantId
      * @param string[] $supportedInstallments
      * @param bool $excludeFromPayByLink
+     * @param bool $enableTokenization
+     * @param string $tokenType
      */
     private function __construct(
         string $methodId = '',
@@ -211,7 +224,9 @@ class PaymentMethodRequest extends Request
         string $bankIssuer = '',
         string $gatewayMerchantId = '',
         array $supportedInstallments = [],
-        bool $excludeFromPayByLink = false
+        bool $excludeFromPayByLink = false,
+        bool $enableTokenization = false,
+        string $tokenType = ''
     ) {
         $this->methodId = $methodId;
         $this->logo = $logo;
@@ -243,6 +258,8 @@ class PaymentMethodRequest extends Request
         $this->gatewayMerchantId = $gatewayMerchantId;
         $this->supportedInstallments = $supportedInstallments;
         $this->excludeFromPayByLink = $excludeFromPayByLink;
+        $this->enableTokenization = $enableTokenization;
+        $this->tokenType = $tokenType;
     }
 
     /**
@@ -290,7 +307,9 @@ class PaymentMethodRequest extends Request
             $rawData['additionalData']['gatewayMerchantId'] ?? '',
             !empty($rawData['additionalData']['supportedInstallments']) ?
                 $rawData['additionalData']['supportedInstallments'] : [],
-            !empty($rawData['excludeFromPayByLink']) && $rawData['excludeFromPayByLink'] === 'true'
+            !empty($rawData['excludeFromPayByLink']) && $rawData['excludeFromPayByLink'] === 'true',
+            !empty($rawData['enableTokenization']) && $rawData['enableTokenization'] === 'true',
+            $rawData['tokenType'] ?? ''
         );
     }
 
@@ -303,6 +322,7 @@ class PaymentMethodRequest extends Request
      * @throws PaymentMethodDataEmptyException
      * @throws StringValuesNotAllowedException|
      * @throws InvalidPaymentMethodCodeException
+     * @throws InvalidTokenTypeException
      */
     public function transformToDomainModel(): object
     {
@@ -322,7 +342,9 @@ class PaymentMethodRequest extends Request
             $this->surchargeLimit,
             '',
             $this->transformAdditionalData(),
-            $this->excludeFromPayByLink
+            $this->excludeFromPayByLink,
+            $this->enableTokenization,
+            !empty($this->tokenType) ? TokenType::fromState($this->tokenType) : null
         );
     }
 

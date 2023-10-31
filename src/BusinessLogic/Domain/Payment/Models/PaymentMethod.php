@@ -89,6 +89,21 @@ class PaymentMethod
     private $supportsPaymentLink;
 
     /**
+     * @var bool
+     */
+    private $enableTokenization;
+
+    /**
+     * @var TokenType|null
+     */
+    private $tokenType;
+
+    /**
+     * @var bool
+     */
+    private $supportsRecurringPayments;
+
+    /**
      * @param string $methodId
      * @param string $code
      * @param string $name
@@ -105,9 +120,11 @@ class PaymentMethod
      * @param string $documentationUrl
      * @param PaymentMethodAdditionalData|null $additionalData
      * @param bool $excludeFromPayByLink
+     * @param bool $enableTokenization
+     * @param TokenType|null $tokenType
      *
-     * @throws PaymentMethodDataEmptyException
      * @throws InvalidPaymentMethodCodeException
+     * @throws PaymentMethodDataEmptyException
      */
     public function __construct(
         string $methodId,
@@ -125,7 +142,9 @@ class PaymentMethod
         ?float $surchargeLimit = null,
         string $documentationUrl = '',
         ?PaymentMethodAdditionalData $additionalData = null,
-        bool $excludeFromPayByLink = false
+        bool $excludeFromPayByLink = false,
+        bool $enableTokenization = false,
+        ?TokenType $tokenType = null
     ) {
         if (
             empty($methodId) ||
@@ -162,6 +181,9 @@ class PaymentMethod
         $this->additionalData = $additionalData;
         $this->excludeFromPayByLink = $excludeFromPayByLink;
         $this->supportsPaymentLink = PaymentMethodCode::parse($code)->isPaymentLinkSupported();
+        $this->enableTokenization = $enableTokenization;
+        $this->tokenType = $tokenType;
+        $this->supportsRecurringPayments = PaymentMethodCode::parse($code)->isRecurringPaymentSupported();
     }
 
     /**
@@ -486,6 +508,60 @@ class PaymentMethod
     public function setSupportsPaymentLink(bool $supportsPaymentLink): void
     {
         $this->supportsPaymentLink = $supportsPaymentLink;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getEnableTokenization(): bool
+    {
+        return $this->enableTokenization;
+    }
+
+    /**
+     * @param bool $enableTokenization
+     *
+     * @return void
+     */
+    public function setEnableTokenization(bool $enableTokenization): void
+    {
+        $this->enableTokenization = $enableTokenization;
+    }
+
+    /**
+     * @return TokenType|null
+     */
+    public function getTokenType(): ?TokenType
+    {
+        return $this->tokenType;
+    }
+
+    /**
+     * @param TokenType|null $tokenType
+     *
+     * @return void
+     */
+    public function setTokenType(?TokenType $tokenType): void
+    {
+        $this->tokenType = $tokenType;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getSupportsRecurringPayments(): bool
+    {
+        return $this->supportsRecurringPayments;
+    }
+
+    /**
+     * @param bool $supportsTokenization
+     *
+     * @return void
+     */
+    public function setSupportsRecurringPayments(bool $supportsTokenization): void
+    {
+        $this->supportsRecurringPayments = $supportsTokenization;
     }
 
     /**

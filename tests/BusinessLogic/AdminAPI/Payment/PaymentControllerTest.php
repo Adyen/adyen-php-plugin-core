@@ -18,6 +18,7 @@ use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\ApplePay
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\CardConfig;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\PaymentMethod as PaymentMethodModel;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\PaymentMethodResponse as PaymentMethodResponseModel;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\TokenType;
 use Adyen\Core\BusinessLogic\Domain\Payment\Proxies\PaymentProxy;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
 use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
@@ -323,6 +324,7 @@ class PaymentControllerTest extends BaseTestCase
             'type',
             'description'
         );
+        $configuration->setTokenType(TokenType::subscription());
         $request = PaymentMethodRequest::parse(
             [
                 'methodId' => '1234',
@@ -333,7 +335,8 @@ class PaymentControllerTest extends BaseTestCase
                 'countries' => [],
                 'type' => 'type',
                 'description' => 'description',
-                'code' => 'zip'
+                'code' => 'zip',
+                'tokenType' => 'Subscription'
             ]
         );
 
@@ -360,6 +363,7 @@ class PaymentControllerTest extends BaseTestCase
             'type',
             'description'
         );
+
         $entity = new PaymentMethod();
         $entity->setPaymentMethod($configuration);
         $entity->setMethodId('1234');
@@ -377,6 +381,7 @@ class PaymentControllerTest extends BaseTestCase
             'type1',
             'description2'
         );
+        $newConfig->setTokenType(TokenType::cardOnFile());
         $request = PaymentMethodRequest::parse(
             [
                 'methodId' => '1234',
@@ -388,6 +393,7 @@ class PaymentControllerTest extends BaseTestCase
                 'code' => 'zip',
                 'type' => 'type1',
                 'description' => 'description2',
+                'tokenType' => 'CardOnFile'
             ]
         );
 
