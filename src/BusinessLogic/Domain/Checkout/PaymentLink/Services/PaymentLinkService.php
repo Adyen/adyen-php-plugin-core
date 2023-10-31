@@ -64,7 +64,10 @@ class PaymentLinkService
     {
         $request = $this->paymentLinkRequestFactory->create($context);
         $paymentLink = $this->paymentLinkProxy->createPaymentLink($request);
-        $transactionHistory = $this->transactionHistoryService->getTransactionHistory($context->getReference());
+        $transactionHistory = $this->transactionHistoryService->getTransactionHistory(
+            $context->getReference(),
+            $context->getAmount()->getCurrency()
+        );
         $this->addHistoryItem($transactionHistory, $context->getAmount(), $paymentLink);
 
         return $paymentLink;

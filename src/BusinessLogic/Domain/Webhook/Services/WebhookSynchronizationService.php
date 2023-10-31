@@ -8,7 +8,6 @@ use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Models\Webhook;
-use Adyen\Webhook\EventCodes;
 
 /**
  * Class WebhookSynchronizationService
@@ -74,6 +73,12 @@ class WebhookSynchronizationService
         $transactionHistory = $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference());
         $newState = $this->orderStatusProvider->getNewPaymentState($webhook, $transactionHistory);
 
+        if ($webhook->isSuccess() &&
+            $webhook->getEventCode() === 'AUTHORISATION' &&
+            $webhook->getPspReference() !== $transactionHistory->getOriginalPspReference()) {
+            $this->orderService->updateOrderPayment($webhook);
+        }
+
         $transactionHistory->add(
             new HistoryItem(
                 $webhook->getPspReference(),
@@ -88,17 +93,11 @@ class WebhookSynchronizationService
                 $webhook->isLive()
             )
         );
-        $this->transactionHistoryService->setTransactionHistory($transactionHistory);
 
+        $this->transactionHistoryService->setTransactionHistory($transactionHistory);
         $newStateId = $this->orderStatusProvider->getOrderStatus($newState);
         if (!empty($newStateId)) {
             $this->orderService->updateOrderStatus($webhook, $newStateId);
-        }
-
-        if ($webhook->isSuccess() &&
-            $webhook->getEventCode() === EventCodes::AUTHORISATION &&
-            $webhook->getPspReference() !== $transactionHistory->getOriginalPspReference()) {
-            $this->orderService->updateOrderPayment($webhook);
         }
     }
 
