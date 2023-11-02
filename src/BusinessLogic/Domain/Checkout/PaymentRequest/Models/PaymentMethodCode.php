@@ -534,7 +534,6 @@ class PaymentMethodCode
         self::APPLEPAY,
         self::DIRECTDEBIT_GB,
         self::BCMC_MOBILE,
-        self::SCHEME,
         self::EPS,
         self::GCASH,
         self::GIROPAY,

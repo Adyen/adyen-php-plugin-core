@@ -31,6 +31,7 @@ use Adyen\Core\Tests\BusinessLogic\CheckoutAPI\CheckoutConfig\MockComponents\Moc
 use Adyen\Core\Tests\BusinessLogic\CheckoutAPI\CheckoutConfig\MockComponents\MockStoredDetailsProxy;
 use Adyen\Core\Tests\BusinessLogic\Common\BaseTestCase;
 use Adyen\Core\Tests\Infrastructure\Common\TestServiceRegister;
+use Exception;
 
 /**
  * Class PaymentCheckoutConfigApiTest
@@ -68,13 +69,15 @@ class PaymentCheckoutConfigApiTest extends BaseTestCase
         TestServiceRegister::registerService(
             CheckoutConfigController::class,
             new SingleInstance(function () {
-                return new CheckoutConfigController(new PaymentCheckoutConfigService(
-                    $this->connectionSettingsRepo,
-                    $this->paymentMethodConfigRepo,
-                    $this->paymentsProxy,
-                    $this->storedDetailsProxy,
-                    TestServiceRegister::getService(ConnectionService::class)
-                ));
+                return new CheckoutConfigController(
+                    new PaymentCheckoutConfigService(
+                        $this->connectionSettingsRepo,
+                        $this->paymentMethodConfigRepo,
+                        $this->paymentsProxy,
+                        $this->storedDetailsProxy,
+                        TestServiceRegister::getService(ConnectionService::class)
+                    )
+                );
             })
         );
     }
@@ -115,7 +118,12 @@ class PaymentCheckoutConfigApiTest extends BaseTestCase
         // Arrange
         StoreContext::doWithStore('store1', function () {
             $this->connectionSettingsRepo->setConnectionSettings(
-                new ConnectionSettings('store1', 'test', new ConnectionData('01234567', '1234', '', 'test-client-key'), null)
+                new ConnectionSettings(
+                    'store1',
+                    'test',
+                    new ConnectionData('01234567', '1234', '', 'test-client-key'),
+                    null
+                )
             );
         });
         $request = new PaymentCheckoutConfigRequest(
@@ -143,13 +151,20 @@ class PaymentCheckoutConfigApiTest extends BaseTestCase
         // Arrange
         StoreContext::doWithStore('store1', function () {
             $this->connectionSettingsRepo->setConnectionSettings(
-                new ConnectionSettings('store1', 'test', new ConnectionData('01234567', '1234', '', 'test-client-key'), null)
+                new ConnectionSettings(
+                    'store1',
+                    'test',
+                    new ConnectionData('01234567', '1234', '', 'test-client-key'),
+                    null
+                )
             );
         });
-        $this->paymentsProxy->setMockResult(new AvailablePaymentMethodsResponse(
-            [new PaymentMethodResponse('test', 'scheme')],
-            [new PaymentMethodResponse('test', 'scheme')]
-        ));
+        $this->paymentsProxy->setMockResult(
+            new AvailablePaymentMethodsResponse(
+                [new PaymentMethodResponse('test', 'scheme')],
+                [new PaymentMethodResponse('test', 'scheme')]
+            )
+        );
         $request = new PaymentCheckoutConfigRequest(
             Amount::fromFloat(123.23, Currency::getDefault())
         );
@@ -175,7 +190,12 @@ class PaymentCheckoutConfigApiTest extends BaseTestCase
 
         StoreContext::doWithStore('store1', function () use ($expectedMethodConfig) {
             $this->connectionSettingsRepo->setConnectionSettings(
-                new ConnectionSettings('store1', 'test', new ConnectionData('01234567', '1234', '', 'test-client-key'), null)
+                new ConnectionSettings(
+                    'store1',
+                    'test',
+                    new ConnectionData('01234567', '1234', '', 'test-client-key'),
+                    null
+                )
             );
             $this->paymentMethodConfigRepo->saveMethodConfiguration($expectedMethodConfig);
         });
@@ -211,13 +231,23 @@ class PaymentCheckoutConfigApiTest extends BaseTestCase
 
         StoreContext::doWithStore('store1', function () use ($disabledExpressCheckoutMethodConfig) {
             $this->connectionSettingsRepo->setConnectionSettings(
-                new ConnectionSettings('store1', 'test', new ConnectionData('01234567', '1234', '', 'test-client-key'), null)
+                new ConnectionSettings(
+                    'store1',
+                    'test',
+                    new ConnectionData('01234567', '1234', '', 'test-client-key'),
+                    null
+                )
             );
             $this->paymentMethodConfigRepo->saveMethodConfiguration($disabledExpressCheckoutMethodConfig);
         });
         StoreContext::doWithStore('store1', function () use ($enabledExpressCheckoutMethodConfig) {
             $this->connectionSettingsRepo->setConnectionSettings(
-                new ConnectionSettings('store1', 'test', new ConnectionData('01234567', '1234', '', 'test-client-key'), null)
+                new ConnectionSettings(
+                    'store1',
+                    'test',
+                    new ConnectionData('01234567', '1234', '', 'test-client-key'),
+                    null
+                )
             );
             $this->paymentMethodConfigRepo->saveMethodConfiguration($enabledExpressCheckoutMethodConfig);
         });
@@ -241,7 +271,9 @@ class PaymentCheckoutConfigApiTest extends BaseTestCase
         /** @var ConnectionSettingsRepository $repo */
         $repo = TestServiceRegister::getService(ConnectionSettingsRepository::class);
         $repo->setConnectionSettings(
-            new ConnectionSettings('store1', 'test', new ConnectionData('01234567', '1234', '', 'test-client-key'), null)
+            new ConnectionSettings(
+                'store1', 'test', new ConnectionData('01234567', '1234', '', 'test-client-key'), null
+            )
         );
 
         // act
@@ -288,5 +320,110 @@ class PaymentCheckoutConfigApiTest extends BaseTestCase
         // assert
         self::assertFalse($response->isSuccessful());
         self::assertEquals('Connection settings not found.', $response->toArray()['errorMessage']);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testStoredRecurringPayments(): void
+    {
+        // Arrange
+        StoreContext::doWithStore('store1', function () {
+            $this->connectionSettingsRepo->setConnectionSettings(
+                new ConnectionSettings(
+                    'store1',
+                    'test',
+                    new ConnectionData('01234567', '1234', '', 'test-client-key'),
+                    null
+                )
+            );
+        });
+        $this->paymentsProxy->setMockResult(
+            new AvailablePaymentMethodsResponse(
+                [
+                    new PaymentMethodResponse('test', 'scheme'),
+                    new PaymentMethodResponse('applepay', 'applepay'),
+                    new PaymentMethodResponse('ideal', 'ideal'),
+                    new PaymentMethodResponse('zip', 'zip')
+                ],
+                [new PaymentMethodResponse('test', 'scheme')]
+            )
+        );
+
+        $this->storedDetailsProxy->setStoredPaymentDetails(
+            [
+                new PaymentMethodResponse('applepay', 'applepay'),
+                new PaymentMethodResponse('ideal', 'ideal'),
+                new PaymentMethodResponse('zip', 'zip')
+            ]
+        );
+        $request = new PaymentCheckoutConfigRequest(
+            Amount::fromFloat(123.23, Currency::getDefault()), null, 'en-US', 'test'
+        );
+
+        // Act
+        $response = CheckoutAPI::get()->checkoutConfig('store1')->getPaymentCheckoutConfig($request);
+
+        // Assert
+        self::assertTrue($response->isSuccessful());
+        self::assertCount(4, $response->getStoredPaymentMethodResponse());
+        self::assertEquals(new PaymentMethodResponse('test', 'scheme'), $response->getStoredPaymentMethodResponse()[0]);
+        self::assertEquals(
+            new PaymentMethodResponse('applepay', 'applepay'),
+            $response->getStoredPaymentMethodResponse()[1]
+        );
+        self::assertEquals(new PaymentMethodResponse('ideal', 'ideal'), $response->getStoredPaymentMethodResponse()[2]);
+        self::assertEquals(new PaymentMethodResponse('zip', 'zip'), $response->getStoredPaymentMethodResponse()[3]);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testStoredRecurringPaymentsExcludeApplePay(): void
+    {
+        // Arrange
+        StoreContext::doWithStore('store1', function () {
+            $this->connectionSettingsRepo->setConnectionSettings(
+                new ConnectionSettings(
+                    'store1',
+                    'test',
+                    new ConnectionData('01234567', '1234', '', 'test-client-key'),
+                    null
+                )
+            );
+        });
+        $this->paymentsProxy->setMockResult(
+            new AvailablePaymentMethodsResponse(
+                [
+                    new PaymentMethodResponse('test', 'scheme'),
+                    new PaymentMethodResponse('applepay', 'applepay'),
+                    new PaymentMethodResponse('ideal', 'ideal'),
+                    new PaymentMethodResponse('zip', 'zip')
+                ],
+                [new PaymentMethodResponse('test', 'scheme')]
+            )
+        );
+
+        $this->storedDetailsProxy->setStoredPaymentDetails(
+            [
+                new PaymentMethodResponse('applepay', 'applepay'),
+                new PaymentMethodResponse('ideal', 'ideal'),
+                new PaymentMethodResponse('zip', 'zip')
+            ]
+        );
+        $request = new PaymentCheckoutConfigRequest(
+            Amount::fromFloat(123.23, Currency::getDefault()), null, 'en-US', 'test'
+        );
+        $_SERVER['HTTP_USER_AGENT'] = 'Chrome';
+
+        // Act
+        $response = CheckoutAPI::get()->checkoutConfig('store1')->getPaymentCheckoutConfig($request);
+
+        // Assert
+        self::assertTrue($response->isSuccessful());
+        self::assertCount(3, $response->getStoredPaymentMethodResponse());
+        self::assertEquals(new PaymentMethodResponse('test', 'scheme'), $response->getStoredPaymentMethodResponse()[0]);
+        self::assertEquals(new PaymentMethodResponse('ideal', 'ideal'), $response->getStoredPaymentMethodResponse()[1]);
+        self::assertEquals(new PaymentMethodResponse('zip', 'zip'), $response->getStoredPaymentMethodResponse()[2]);
     }
 }

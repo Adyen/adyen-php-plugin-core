@@ -1,0 +1,163 @@
+{
+  "creationDate": "2023-10-12T11:03:08+02:00",
+  "details": [
+    {
+      "RecurringDetail": {
+        "additionalData": {
+          "cardBin": "557700"
+        },
+        "alias": "A303322496694188",
+        "aliasType": "Default",
+        "billingAddress": {
+          "city": "Berlin",
+          "country": "DE",
+          "houseNumberOrName": "",
+          "postalCode": "10115",
+          "stateOrProvince": "",
+          "street": "Historic Downtown"
+        },
+        "card": {
+          "expiryMonth": "3",
+          "expiryYear": "2030",
+          "holderName": "Checkout Shopper PlaceHolder",
+          "number": "0004"
+        },
+        "contractTypes": [
+          "ONECLICK",
+          "RECURRING"
+        ],
+        "creationDate": "2023-10-12T11:30:05+02:00",
+        "firstPspReference": "R88PLQ4JJVTFWR82",
+        "name": "31",
+        "networkTxReference": "PVZO73LF410121012",
+        "paymentMethodVariant": "mc",
+        "recurringDetailReference": "JS72TZKHW6KXWD82",
+        "variant": "mc"
+      }
+    },
+    {
+      "RecurringDetail": {
+        "bank": {
+          "bic": "TESTNL01",
+          "countryCode": "NL",
+          "iban": "NL13TEST0123456789",
+          "ownerName": "A. Klaassen"
+        },
+        "billingAddress": {
+          "city": "Amsterdam",
+          "country": "NL",
+          "houseNumberOrName": "",
+          "postalCode": "1111 AA",
+          "stateOrProvince": "",
+          "street": "Test"
+        },
+        "contractTypes": [
+          "ONECLICK",
+          "RECURRING"
+        ],
+        "creationDate": "2023-10-31T17:57:37+01:00",
+        "firstPspReference": "ZLMGGP2WZGNG5S82",
+        "paymentMethodVariant": "idealtestissuer",
+        "recurringDetailReference": "X52X8J3TH3M84H82",
+        "variant": "ideal"
+      }
+    },
+    {
+      "RecurringDetail": {
+        "bank": {
+          "bic": "TESTNL05",
+          "countryCode": "NL",
+          "iban": "NL81TEST0536169128",
+          "ownerName": "E. Klaassen"
+        },
+        "billingAddress": {
+          "city": "Amsterdam",
+          "country": "NL",
+          "houseNumberOrName": "",
+          "postalCode": "1111 AA",
+          "stateOrProvince": "",
+          "street": "Test"
+        },
+        "contractTypes": [
+          "ONECLICK",
+          "RECURRING"
+        ],
+        "creationDate": "2023-11-01T13:12:31+01:00",
+        "firstPspReference": "D39HB59S8HXXGN82",
+        "paymentMethodVariant": "idealtestissuer5",
+        "recurringDetailReference": "NKZZWMRTH3M84H82",
+        "variant": "ideal"
+      }
+    },
+    {
+      "RecurringDetail": {
+        "additionalData": {
+          "cardBin": "411111"
+        },
+        "alias": "P945817922433147",
+        "aliasType": "Default",
+        "billingAddress": {
+          "city": "Berlin",
+          "country": "DE",
+          "houseNumberOrName": "",
+          "postalCode": "10115",
+          "stateOrProvince": "",
+          "street": "Historic Downtown"
+        },
+        "card": {
+          "expiryMonth": "3",
+          "expiryYear": "2030",
+          "holderName": "Checkout Shopper PlaceHolder",
+          "number": "1142"
+        },
+        "contractTypes": [
+          "ONECLICK",
+          "RECURRING"
+        ],
+        "creationDate": "2023-11-01T14:48:10+01:00",
+        "firstPspReference": "LRN6H6BRBTGLNK82",
+        "name": "138",
+        "networkTxReference": "776144018254440",
+        "paymentMethodVariant": "visa",
+        "recurringDetailReference": "QBV6MBTTH3M84H82",
+        "variant": "visa"
+      }
+    },
+    {
+      "RecurringDetail": {
+        "additionalData": {
+          "cardBin": "370000"
+        },
+        "alias": "B948134597699975",
+        "aliasType": "Default",
+        "billingAddress": {
+          "city": "Berlin",
+          "country": "DE",
+          "houseNumberOrName": "",
+          "postalCode": "10115",
+          "stateOrProvince": "",
+          "street": "Historic Downtown"
+        },
+        "card": {
+          "expiryMonth": "3",
+          "expiryYear": "2030",
+          "holderName": "Checkout Shopper PlaceHolder",
+          "number": "0002"
+        },
+        "contractTypes": [
+          "ONECLICK",
+          "RECURRING"
+        ],
+        "creationDate": "2023-11-01T14:50:00+01:00",
+        "firstPspReference": "LB6R4B76KVTFWR82",
+        "name": "140",
+        "networkTxReference": "571598674749128",
+        "paymentMethodVariant": "amex",
+        "recurringDetailReference": "H4N8JCTTH3M84H82",
+        "variant": "amex"
+      }
+    }
+  ],
+  "lastKnownShopperEmail": "sale@test.com",
+  "shopperReference": "1-7-8-8.presta.sale.eu.ngrok.io_1_3"
+}

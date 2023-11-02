@@ -2,6 +2,7 @@
 
 namespace Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Proxies;
 
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ShopperReference;
 use Exception;
 
@@ -24,4 +25,16 @@ interface StoredDetailsProxy
      * @throws Exception
      */
     public function disable(ShopperReference $shopperReference, string $detailReference, string $merchant): void;
+
+    /**
+     * Gets list of the stored payment details for a shopper, if there are any available.
+     *
+     * @param ShopperReference $shopperReference
+     * @param string $merchant
+     *
+     * @return PaymentMethodResponse[]
+     *
+     * @throws Exception
+     */
+    public function getStoredPaymentDetails(ShopperReference $shopperReference, string $merchant): array;
 }
