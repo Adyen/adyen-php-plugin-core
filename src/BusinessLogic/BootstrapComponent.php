@@ -62,6 +62,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\AdyenGiving\Services\DonationsServi
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Factory\PaymentRequestFactory;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\AmountProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\ApplicationInfoProcessor;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\AuthenticationDataProcessor;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\CaptureDelayHoursProcessor;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Processors\CaptureProcessor;
@@ -100,10 +101,8 @@ use Adyen\Core\BusinessLogic\Domain\InfoSettings\Services\ValidationService;
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\Integration\Payment\ShopPaymentService;
 use Adyen\Core\BusinessLogic\Domain\Integration\Processors\AddressProcessor;
-use Adyen\Core\BusinessLogic\Domain\Integration\Processors\ApplicationInfoProcessor;
 use Adyen\Core\BusinessLogic\Domain\Integration\Processors\BasketItemsProcessor;
 use Adyen\Core\BusinessLogic\Domain\Integration\Processors\BirthdayProcessor;
-use Adyen\Core\BusinessLogic\Domain\Integration\Processors\DeviceFingerprintProcessor;
 use Adyen\Core\BusinessLogic\Domain\Integration\Processors\L2L3DataProcessor;
 use Adyen\Core\BusinessLogic\Domain\Integration\Processors\LineItemsProcessor;
 use Adyen\Core\BusinessLogic\Domain\Integration\Processors\ShopperEmailProcessor;
@@ -1068,6 +1067,15 @@ class BootstrapComponent extends BaseBootstrapComponent
             })
         );
 
+        ServiceRegister::registerService(
+            ApplicationInfoProcessor::class,
+            new SingleInstance(static function () {
+                return new ApplicationInfoProcessor(
+                    ServiceRegister::getService(Configuration::CLASS_NAME)
+                );
+            })
+        );
+
         PaymentRequestProcessorsRegistry::registerGlobal(MerchantIdProcessor::class);
         PaymentRequestProcessorsRegistry::registerGlobal(AmountProcessor::class);
         PaymentRequestProcessorsRegistry::registerGlobal(ReferenceProcessor::class);
@@ -1126,10 +1134,14 @@ class BootstrapComponent extends BaseBootstrapComponent
             LineItemsProcessor::class
         );
         PaymentRequestProcessorsRegistry::registerByPaymentType(PaymentMethodCode::klarna(), LineItemsProcessor::class);
-        PaymentRequestProcessorsRegistry::registerByPaymentType(PaymentMethodCode::klarnaPayNow(),
-            LineItemsProcessor::class);
-        PaymentRequestProcessorsRegistry::registerByPaymentType(PaymentMethodCode::klarnaAccount(),
-            LineItemsProcessor::class);
+        PaymentRequestProcessorsRegistry::registerByPaymentType(
+            PaymentMethodCode::klarnaPayNow(),
+            LineItemsProcessor::class
+        );
+        PaymentRequestProcessorsRegistry::registerByPaymentType(
+            PaymentMethodCode::klarnaAccount(),
+            LineItemsProcessor::class
+        );
         PaymentRequestProcessorsRegistry::registerByPaymentType(PaymentMethodCode::zip(), LineItemsProcessor::class);
         PaymentRequestProcessorsRegistry::registerByPaymentType(
             PaymentMethodCode::scheme(),
