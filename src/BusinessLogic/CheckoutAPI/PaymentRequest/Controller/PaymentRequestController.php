@@ -11,6 +11,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethod
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\StartTransactionRequestContext;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePaymentDetailsRequest;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Services\PaymentRequestService;
+use Exception;
 
 /**
  * Class PaymentRequestController
@@ -24,6 +25,9 @@ class PaymentRequestController
      */
     private $service;
 
+    /**
+     * @param PaymentRequestService $service
+     */
     public function __construct(PaymentRequestService $service)
     {
         $this->service = $service;
@@ -31,21 +35,32 @@ class PaymentRequestController
 
     /**
      * @throws InvalidPaymentMethodCodeException
+     * @throws Exception
      */
     public function startTransaction(StartTransactionRequest $request): StartTransactionResponse
     {
-        return new StartTransactionResponse($this->service->startTransaction(
-            new StartTransactionRequestContext(
-                PaymentMethodCode::parse($request->getPaymentMethodType()),
-                $request->getAmount(),
-                $request->getReference(),
-                $request->getReturnUrl(),
-                new DataBag($request->getStateData()),
-                new DataBag($request->getSessionData())
+        return new StartTransactionResponse(
+            $this->service->startTransaction(
+                new StartTransactionRequestContext(
+                    PaymentMethodCode::parse($request->getPaymentMethodType()),
+                    $request->getAmount(),
+                    $request->getReference(),
+                    $request->getReturnUrl(),
+                    new DataBag($request->getStateData()),
+                    new DataBag($request->getSessionData()),
+                    $request->getShopperReference()
+                )
             )
-        ));
+        );
     }
 
+    /**
+     * @param array $rawRequest
+     *
+     * @return UpdatePaymentDetailsResponse
+     *
+     * @throws Exception
+     */
     public function updatePaymentDetails(array $rawRequest): UpdatePaymentDetailsResponse
     {
         return new UpdatePaymentDetailsResponse(

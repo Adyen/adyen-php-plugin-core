@@ -61,7 +61,9 @@ class PaymentMethodResponse extends Response
                 $this->transformAdditionalDataToArray(
                     $this->paymentMethod->getAdditionalData()
                 ) : [],
-            'excludeFromPayByLink' => $this->paymentMethod->getExcludeFromPayByLink()
+            'excludeFromPayByLink' => $this->paymentMethod->getExcludeFromPayByLink(),
+            'enableTokenization' => $this->paymentMethod->getEnableTokenization(),
+            'tokenType' => $this->paymentMethod->getTokenType() ? $this->paymentMethod->getTokenType()->getType() : ''
         ];
     }
 

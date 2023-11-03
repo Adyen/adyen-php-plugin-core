@@ -225,12 +225,10 @@ class PaymentCheckoutConfigService
 
             $paymentMethodsResponse = new AvailablePaymentMethodsResponse(
                 $paymentMethodsResponse->getPaymentMethodsResponse(),
-                array_merge(
-                    $paymentMethodsResponse->getStoredPaymentMethodsResponse(),
-                    $this->filterRecurringPaymentMethods(
-                        $recurringPaymentMethods,
-                        $paymentMethodsResponse->getPaymentMethodsResponse()
-                    )
+                $paymentMethodsResponse->getStoredPaymentMethodsResponse(),
+                $this->filterRecurringPaymentMethods(
+                    $recurringPaymentMethods,
+                    $paymentMethodsResponse->getPaymentMethodsResponse()
                 )
             );
         }
@@ -259,11 +257,13 @@ class PaymentCheckoutConfigService
             $paymentMethodsMap[$paymentMethod->getType()] = $paymentMethod;
         }
 
-        return array_filter(
-            $recurringPaymentMethods,
-            static function ($paymentMethodResponse) use ($paymentMethodsMap) {
-                return isset($paymentMethodsMap[$paymentMethodResponse->getType()]);
-            }
+        return array_values(
+            array_filter(
+                $recurringPaymentMethods,
+                static function ($paymentMethodResponse) use ($paymentMethodsMap) {
+                    return isset($paymentMethodsMap[$paymentMethodResponse->getType()]);
+                }
+            )
         );
     }
 }

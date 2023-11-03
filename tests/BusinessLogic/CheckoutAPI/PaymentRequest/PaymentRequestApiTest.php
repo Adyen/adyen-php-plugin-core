@@ -9,6 +9,7 @@ use Adyen\Core\BusinessLogic\CheckoutAPI\PaymentRequest\Request\StartTransaction
 use Adyen\Core\BusinessLogic\CheckoutAPI\PaymentRequest\Response\StartTransactionResponse;
 use Adyen\Core\BusinessLogic\DataAccess\Connection\Repositories\ConnectionSettingsRepository;
 use Adyen\Core\BusinessLogic\Domain\Checkout\AdyenGiving\Repositories\DonationsDataRepository;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidPaymentMethodCodeException;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\MissingActiveApiConnectionData;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Factory\PaymentRequestFactory;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
@@ -16,6 +17,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Curren
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ResultCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\StartTransactionResult;
+use Adyen\Core\BusinessLogic\Domain\Connection\Repositories\ConnectionSettingsRepository as ConnectionSettingsRepositoryInterface;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Services\PaymentRequestService;
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\AmountProcessor;
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\MerchantIdProcessor;
@@ -27,9 +29,11 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\ReferenceProcessor;
 use Adyen\Core\BusinessLogic\Domain\Connection\Enums\Mode;
 use Adyen\Core\BusinessLogic\Domain\Connection\Models\ConnectionData;
 use Adyen\Core\BusinessLogic\Domain\Connection\Models\ConnectionSettings;
+use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Adyen\Core\Infrastructure\ServiceRegister;
 use Adyen\Core\Tests\BusinessLogic\AdminAPI\Store\MockComponents\MockConnectionSettingsRepository;
+use Adyen\Core\Tests\BusinessLogic\CheckoutAPI\CheckoutConfig\MockComponents\MockStoredDetailsProxy;
 use Adyen\Core\Tests\BusinessLogic\CheckoutAPI\PaymentRequest\MockComponents\MockPaymentRequestProcessor;
 use Adyen\Core\Tests\BusinessLogic\CheckoutAPI\PaymentRequest\MockComponents\MockStartTransactionProxy;
 use Adyen\Core\Tests\BusinessLogic\Common\BaseTestCase;
@@ -61,12 +65,14 @@ class PaymentRequestApiTest extends BaseTestCase
         TestServiceRegister::registerService(
             PaymentRequestController::class,
             new SingleInstance(function () {
-                return new PaymentRequestController(new PaymentRequestService(
-                    $this->paymentsProxy,
-                    new PaymentRequestFactory(),
-                    TestServiceRegister::getService(DonationsDataRepository::class),
-                    TestServiceRegister::getService(TransactionHistoryService::class)
-                ));
+                return new PaymentRequestController(
+                    new PaymentRequestService(
+                        $this->paymentsProxy,
+                        new PaymentRequestFactory(),
+                        TestServiceRegister::getService(DonationsDataRepository::class),
+                        TestServiceRegister::getService(TransactionHistoryService::class)
+                    )
+                );
             })
         );
 
@@ -104,7 +110,11 @@ class PaymentRequestApiTest extends BaseTestCase
         TestServiceRegister::registerService(
             PaymentMethodStateDataProcessor::class,
             new SingleInstance(static function () {
-                return new PaymentMethodStateDataProcessor();
+                return new PaymentMethodStateDataProcessor(
+                    ServiceRegister::getService(PaymentMethodConfigRepository::class),
+                    ServiceRegister::getService(ConnectionSettingsRepositoryInterface::class),
+                    new MockStoredDetailsProxy()
+                );
             })
         );
         TestServiceRegister::registerService(
@@ -120,14 +130,16 @@ class PaymentRequestApiTest extends BaseTestCase
         PaymentRequestProcessorsRegistry::registerGlobal(MerchantIdProcessor::class);
         PaymentRequestProcessorsRegistry::registerGlobal(PaymentMethodStateDataProcessor::class);
         PaymentRequestProcessorsRegistry::registerGlobal(OriginStateDataProcessor::class);
-
     }
 
     /**
      * @dataProvider successfulResultCodesProvider
      *
+     * @param ResultCode $successfullyResultCode
+     *
      * @return void
-     * @throws \Exception
+     *
+     * @throws InvalidPaymentMethodCodeException
      */
     public function testSuccessfulPaymentTransactionStarting(ResultCode $successfullyResultCode): void
     {
@@ -165,8 +177,11 @@ class PaymentRequestApiTest extends BaseTestCase
     /**
      * @dataProvider unsuccessfulResultCodesProvider
      *
+     * @param ResultCode $unsuccessfullyResultCode
+     *
      * @return void
-     * @throws \Exception
+     *
+     * @throws InvalidPaymentMethodCodeException
      */
     public function testUnsuccessfulUpdatePaymentDetails(ResultCode $unsuccessfullyResultCode): void
     {
@@ -231,17 +246,21 @@ class PaymentRequestApiTest extends BaseTestCase
         $storeId = 'store1';
         $expectedMerchantId = 'TestMerchantIdECOM';
 
-        $this->connectionSettingsRepo->setConnectionSettings(new ConnectionSettings(
-            $storeId,
-            Mode::MODE_TEST,
-            new ConnectionData('1', $expectedMerchantId),
-            null
-        ));
+        $this->connectionSettingsRepo->setConnectionSettings(
+            new ConnectionSettings(
+                $storeId,
+                Mode::MODE_TEST,
+                new ConnectionData('1', $expectedMerchantId),
+                null
+            )
+        );
 
         // Act
-        $response = CheckoutAPI::get()->paymentRequest($storeId)->startTransaction(new StartTransactionRequest(
-            'scheme', Amount::fromFloat(456.12, Currency::getDefault()), 'ref1', 'https://example.com', []
-        ));
+        $response = CheckoutAPI::get()->paymentRequest($storeId)->startTransaction(
+            new StartTransactionRequest(
+                'scheme', Amount::fromFloat(456.12, Currency::getDefault()), 'ref1', 'https://example.com', []
+            )
+        );
 
         // Assert
         self::assertTrue($response->isSuccessful());
@@ -286,17 +305,21 @@ class PaymentRequestApiTest extends BaseTestCase
             })
         );
         PaymentRequestProcessorsRegistry::registerByPaymentType(
-            PaymentMethodCode::parse('scheme'), MockPaymentRequestProcessor::class
+            PaymentMethodCode::parse('scheme'),
+            MockPaymentRequestProcessor::class
         );
         PaymentRequestProcessorsRegistry::registerByPaymentType(
-            PaymentMethodCode::parse('afterpay_default'), 'OutOfScopeProcessor'
+            PaymentMethodCode::parse('afterpay_default'),
+            'OutOfScopeProcessor'
         );
 
         // Act
         $response = CheckoutAPI::get()->paymentRequest('store1')
-            ->startTransaction(new StartTransactionRequest(
-                'scheme', Amount::fromFloat(456.12, Currency::getDefault()), 'ref1', 'https://example.com', []
-            ));
+            ->startTransaction(
+                new StartTransactionRequest(
+                    'scheme', Amount::fromFloat(456.12, Currency::getDefault()), 'ref1', 'https://example.com', []
+                )
+            );
 
         // Assert
         self::assertTrue($response->isSuccessful());

@@ -82,8 +82,8 @@ class Proxy extends AuthorizedProxy implements StoredDetailsProxy
 
         return array_map(static function (array $method) {
             return new PaymentMethodResponse(
-                $method['RecurringDetail']['paymentMethodVariant'] ?? '',
                 $method['RecurringDetail']['variant'] ?? '',
+                    $method['RecurringDetail']['variant'] ?? '',
                 $method
             );
         }, $response);

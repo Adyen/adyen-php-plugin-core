@@ -366,14 +366,16 @@ class PaymentCheckoutConfigApiTest extends BaseTestCase
 
         // Assert
         self::assertTrue($response->isSuccessful());
-        self::assertCount(4, $response->getStoredPaymentMethodResponse());
-        self::assertEquals(new PaymentMethodResponse('test', 'scheme'), $response->getStoredPaymentMethodResponse()[0]);
+        self::assertCount(3, $response->getRecurringPaymentMethodResponse());
         self::assertEquals(
             new PaymentMethodResponse('applepay', 'applepay'),
-            $response->getStoredPaymentMethodResponse()[1]
+            $response->getRecurringPaymentMethodResponse()[0]
         );
-        self::assertEquals(new PaymentMethodResponse('ideal', 'ideal'), $response->getStoredPaymentMethodResponse()[2]);
-        self::assertEquals(new PaymentMethodResponse('zip', 'zip'), $response->getStoredPaymentMethodResponse()[3]);
+        self::assertEquals(
+            new PaymentMethodResponse('ideal', 'ideal'),
+            $response->getRecurringPaymentMethodResponse()[1]
+        );
+        self::assertEquals(new PaymentMethodResponse('zip', 'zip'), $response->getRecurringPaymentMethodResponse()[2]);
     }
 
     /**
@@ -421,9 +423,8 @@ class PaymentCheckoutConfigApiTest extends BaseTestCase
 
         // Assert
         self::assertTrue($response->isSuccessful());
-        self::assertCount(3, $response->getStoredPaymentMethodResponse());
-        self::assertEquals(new PaymentMethodResponse('test', 'scheme'), $response->getStoredPaymentMethodResponse()[0]);
-        self::assertEquals(new PaymentMethodResponse('ideal', 'ideal'), $response->getStoredPaymentMethodResponse()[1]);
-        self::assertEquals(new PaymentMethodResponse('zip', 'zip'), $response->getStoredPaymentMethodResponse()[2]);
+        self::assertCount(2, $response->getRecurringPaymentMethodResponse());
+        self::assertEquals(new PaymentMethodResponse('ideal', 'ideal'), $response->getRecurringPaymentMethodResponse()[0]);
+        self::assertEquals(new PaymentMethodResponse('zip', 'zip'), $response->getRecurringPaymentMethodResponse()[1]);
     }
 }

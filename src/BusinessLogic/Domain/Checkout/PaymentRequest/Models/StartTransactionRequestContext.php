@@ -35,14 +35,28 @@ class StartTransactionRequestContext
      * @var DataBag
      */
     private $stateData;
+    /**
+     * @var ShopperReference|null
+     */
+    private $shopperReference;
 
+    /**
+     * @param PaymentMethodCode $paymentMethodType
+     * @param Amount $amount
+     * @param string $reference
+     * @param string $returnUrl
+     * @param DataBag $stateData
+     * @param DataBag $checkoutSession
+     * @param ShopperReference|null $shopperReference
+     */
     public function __construct(
         PaymentMethodCode $paymentMethodType,
-        Amount            $amount,
-        string            $reference,
-        string            $returnUrl,
-        DataBag           $stateData,
-        DataBag           $checkoutSession
+        Amount $amount,
+        string $reference,
+        string $returnUrl,
+        DataBag $stateData,
+        DataBag $checkoutSession,
+        ?ShopperReference $shopperReference = null
     ) {
         $this->paymentMethodCode = $paymentMethodType;
         $this->amount = $amount;
@@ -50,6 +64,7 @@ class StartTransactionRequestContext
         $this->returnUrl = $returnUrl;
         $this->checkoutSession = $checkoutSession;
         $this->stateData = $stateData;
+        $this->shopperReference = $shopperReference;
     }
 
     /**
@@ -98,5 +113,13 @@ class StartTransactionRequestContext
     public function getCheckoutSession(): DataBag
     {
         return $this->checkoutSession;
+    }
+
+    /**
+     * @return ShopperReference|null
+     */
+    public function getShopperReference(): ?ShopperReference
+    {
+        return $this->shopperReference;
     }
 }

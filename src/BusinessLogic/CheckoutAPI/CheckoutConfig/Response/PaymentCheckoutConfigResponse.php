@@ -60,9 +60,20 @@ class PaymentCheckoutConfigResponse extends Response
         return $this->result->getAvailablePaymentMethodsResponse()->getPaymentMethodsResponse();
     }
 
+    /**
+     * @return PaymentMethodResponse[]
+     */
     public function getStoredPaymentMethodResponse(): array
     {
         return $this->result->getAvailablePaymentMethodsResponse()->getStoredPaymentMethodsResponse();
+    }
+
+    /**
+     * @return PaymentMethodResponse[]
+     */
+    public function getRecurringPaymentMethodResponse(): array
+    {
+        return $this->result->getAvailablePaymentMethodsResponse()->getRecurringPaymentMethodsResponse();
     }
 
     /**
