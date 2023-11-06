@@ -1116,6 +1116,15 @@ class BootstrapComponent extends BaseBootstrapComponent
         );
 
         ServiceRegister::registerService(
+            ApplicationInfoProcessor::class,
+            new SingleInstance(static function () {
+                return new ApplicationInfoProcessor(
+                    ServiceRegister::getService(Configuration::CLASS_NAME)
+                );
+            })
+        );
+
+        ServiceRegister::registerService(
             AllowedPaymentMethodsProcessor::class,
             new SingleInstance(static function () {
                 return new AllowedPaymentMethodsProcessor(ServiceRegister::getService(PaymentService::class));

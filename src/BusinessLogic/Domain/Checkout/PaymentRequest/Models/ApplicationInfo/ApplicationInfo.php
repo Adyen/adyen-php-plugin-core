@@ -21,15 +21,12 @@ class ApplicationInfo
 
     /**
      * @param ExternalPlatform|null $externalPlatform
-     * @param string|null $merchantApplicationVersion
+     * @param MerchantApplication|null $merchantApplication
      */
-    public function __construct(?ExternalPlatform $externalPlatform, ?string $merchantApplicationVersion)
+    public function __construct(?ExternalPlatform $externalPlatform, ?MerchantApplication $merchantApplication)
     {
         $this->externalPlatform = $externalPlatform;
-        $externalPlatform && $this->merchantApplication = new MerchantApplication(
-            'Adyen ' . $externalPlatform->getName(),
-            $merchantApplicationVersion
-        );
+        $this->merchantApplication = $merchantApplication;
     }
 
     /**
