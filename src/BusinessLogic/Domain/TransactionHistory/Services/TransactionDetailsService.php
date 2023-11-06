@@ -93,16 +93,16 @@ class TransactionDetailsService
         $url = $transactionHistory->getAdyenPaymentLinkFor(
             $transactionHistory->collection()->first()->getPspReference()
         );
-        $separateCapture = $isMerchantConnected && $this->isSeparateCaptureSupported(
+        $separateCapture = $isMerchantConnected && !empty($paymentMethod) && $this->isSeparateCaptureSupported(
                 $paymentMethod,
                 $transactionHistory,
                 $captureAmount,
                 $authorizationAmount
             );
-        $partialCapture = $isMerchantConnected &&
+        $partialCapture = $isMerchantConnected && !empty($paymentMethod) &&
             $this->isPartialCaptureSupported($paymentMethod, $transactionHistory, $captureAmount, $authorizationAmount);
         $refund = $isMerchantConnected && $this->isRefundSupported($paymentMethod, $refundAmount, $captureAmount);
-        $partialRefund = $isMerchantConnected && $this->isPartialRefundSupported(
+        $partialRefund = $isMerchantConnected && !empty($paymentMethod) && $this->isPartialRefundSupported(
                 $paymentMethod,
                 $refundAmount,
                 $captureAmount
