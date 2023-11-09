@@ -244,11 +244,13 @@ class OrderUpdateTask extends TransactionalTask
     private function checkIfOrderExists(): bool
     {
         $order = $this->getOrderService()->orderExists($this->webhook->getMerchantReference());
-
-        if (!$order) {
+        $retryCount = 0;
+        while (!$order && $retryCount < 5) {
             sleep(2);
+            $this->reportAlive();
 
             $order = $this->getOrderService()->orderExists($this->webhook->getMerchantReference());
+            $retryCount++;
         }
 
         return $order;
