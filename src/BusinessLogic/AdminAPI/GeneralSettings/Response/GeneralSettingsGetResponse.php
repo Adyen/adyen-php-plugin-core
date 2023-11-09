@@ -39,8 +39,8 @@ class GeneralSettingsGetResponse extends Response
             'shipmentStatus' => '',
             'retentionPeriod' => '60',
             'enablePayByLink' => false,
-            'payByLinkTitle' => '',
-            'defaultLinkExpirationTime' => 1
+            'payByLinkTitle' => 'Adyen Pay By Link',
+            'defaultLinkExpirationTime' => 7
         ];
     }
 

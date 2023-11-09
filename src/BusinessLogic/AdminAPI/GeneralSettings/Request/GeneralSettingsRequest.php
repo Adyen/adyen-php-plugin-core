@@ -106,7 +106,7 @@ class GeneralSettingsRequest extends Request
             $this->shipmentStatus,
             $this->retentionPeriod,
             $this->enablePayByLink,
-            $this->payByLinkTitle,
+            !empty($this->payByLinkTitle) ? $this->payByLinkTitle : 'Adyen Pay By Link',
             !empty($this->defaultLinkExpirationTime) ? $this->defaultLinkExpirationTime : '7'
         );
     }
