@@ -16,14 +16,14 @@ abstract class CreateSeedDataService
      */
     public function createInitialData(): void
     {
-        $this->updateDefaultShopName();
+        $this->updateBaseUrl();
         $this->createSubStores();
     }
 
     /**
      * @return void
      */
-    abstract public function updateDefaultShopName(): void;
+    abstract public function updateBaseUrl(): void;
 
     /**
      * @return void
