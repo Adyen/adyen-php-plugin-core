@@ -280,6 +280,17 @@ class TransactionHistory
      */
     public function getPaymentLink(): ?PaymentLink
     {
+        if (!$this->paymentLink) {
+            return $this->paymentLink;
+        }
+
+        $now = TimeProvider::getInstance()->getCurrentLocalTime();
+        $expiresAt = TimeProvider::getInstance()->deserializeDateString($this->paymentLink->getExpiresAt());
+
+        if ($now > $expiresAt) {
+            return null;
+        }
+
         return $this->paymentLink;
     }
 

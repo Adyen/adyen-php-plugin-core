@@ -320,15 +320,6 @@ class TransactionDetailsService
             return true;
         }
 
-        if (!$transactionHistory->getPaymentLink()) {
-            return false;
-        }
-
-        $now = TimeProvider::getInstance()->getCurrentLocalTime();
-        $expires = TimeProvider::getInstance()->deserializeDateString(
-            $transactionHistory->getPaymentLink()->getExpiresAt()
-        );
-
-        return $item->getPaymentState() === 'new' && $now->getTimestamp() < $expires->getTimestamp();
+        return $item->getPaymentState() === 'new';
     }
 }

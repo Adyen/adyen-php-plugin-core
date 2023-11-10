@@ -201,7 +201,7 @@ class TransactionRepositoryTest extends BaseTestCase
         // arrange
         $transaction = new TransactionModel('merchantReference', CaptureType::manual(), 0, Currency::getDefault(),
             $this->historyItems());
-        $transaction->setPaymentLink(new PaymentLink('url', 'expiresAt'));
+        $transaction->setPaymentLink(new PaymentLink('url', '9999-11-10T13:31:17+01:00'));
         $transactionEntity = new TransactionEntity();
         $transactionEntity->setTransactionHistory($transaction);
         $transactionEntity->setStoreId('1');
