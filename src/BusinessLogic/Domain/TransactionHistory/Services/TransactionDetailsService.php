@@ -48,8 +48,6 @@ class TransactionDetailsService
      * @return array
      *
      * @throws InvalidMerchantReferenceException
-     * @throws InvalidPaymentMethodCodeException
-     * @throws CurrencyMismatchException
      */
     public function getTransactionDetails(string $merchantReference, string $storeId): array
     {
@@ -157,8 +155,6 @@ class TransactionDetailsService
      * @param Amount $authorizedAmount
      *
      * @return bool
-     *
-     * @throws InvalidPaymentMethodCodeException
      */
     private function isSeparateCaptureSupported(
         string $code,
@@ -166,11 +162,15 @@ class TransactionDetailsService
         Amount $captureAmount,
         Amount $authorizedAmount
     ): bool {
-        return $this->parseCode($code)->isCaptureSupported()
-            && !$this->getStatusByEventCode(
-                $transactionHistory,
-                'CANCELLATION'
-            ) && $captureAmount->getPriceInCurrencyUnits() < $authorizedAmount->getPriceInCurrencyUnits();
+        try {
+            return !empty($code) && $this->parseCode($code)->isCaptureSupported()
+                && !$this->getStatusByEventCode(
+                    $transactionHistory,
+                    'CANCELLATION'
+                ) && $captureAmount->getPriceInCurrencyUnits() < $authorizedAmount->getPriceInCurrencyUnits();
+        } catch (InvalidPaymentMethodCodeException $exception) {
+            return false;
+        }
     }
 
     /**
@@ -180,8 +180,6 @@ class TransactionDetailsService
      * @param Amount $authorizedAmount
      *
      * @return bool
-     *
-     * @throws InvalidPaymentMethodCodeException
      */
     private function isPartialCaptureSupported(
         string $code,
@@ -189,9 +187,13 @@ class TransactionDetailsService
         Amount $captureAmount,
         Amount $authorizedAmount
     ): bool {
-        return $this->parseCode($code)->isPartialCaptureSupported()
-            && !$this->getStatusByEventCode($transactionHistory, 'CANCELLATION')
-            && $captureAmount->getPriceInCurrencyUnits() < $authorizedAmount->getPriceInCurrencyUnits();
+        try {
+            return !empty($code) && $this->parseCode($code)->isPartialCaptureSupported()
+                && !$this->getStatusByEventCode($transactionHistory, 'CANCELLATION')
+                && $captureAmount->getPriceInCurrencyUnits() < $authorizedAmount->getPriceInCurrencyUnits();
+        } catch (InvalidPaymentMethodCodeException $exception) {
+            return false;
+        }
     }
 
     /**
@@ -200,37 +202,40 @@ class TransactionDetailsService
      * @param Amount $captureAmount
      *
      * @return bool
-     *
-     * @throws InvalidPaymentMethodCodeException
      */
     private function isPartialRefundSupported(
         string $code,
         Amount $refundAmount,
         Amount $captureAmount
     ): bool {
-        $result = $this->parseCode($code)->isPartialRefundSupported();
-
-        return $result && $refundAmount->getPriceInCurrencyUnits()
-            < $captureAmount->getPriceInCurrencyUnits();
+        try {
+            return !empty($code) && $this->parseCode($code)->isPartialRefundSupported(
+                ) && $refundAmount->getPriceInCurrencyUnits()
+                < $captureAmount->getPriceInCurrencyUnits();
+        } catch (InvalidPaymentMethodCodeException $exception) {
+            return false;
+        }
     }
 
     /**
      * @param string $code
      * @param Amount $refundAmount
      * @param Amount $captureAmount
-     * @return bool
      *
-     * @throws InvalidPaymentMethodCodeException
+     * @return bool
      */
     private function isRefundSupported(
         string $code,
         Amount $refundAmount,
         Amount $captureAmount
     ): bool {
-        $result = $this->parseCode($code)->isRefundSupported();
-
-        return $result && $refundAmount->getPriceInCurrencyUnits()
-            < $captureAmount->getPriceInCurrencyUnits();
+        try {
+            return !empty($code) && $this->parseCode($code)->isRefundSupported(
+                ) && $refundAmount->getPriceInCurrencyUnits()
+                < $captureAmount->getPriceInCurrencyUnits();
+        } catch (InvalidPaymentMethodCodeException $exception) {
+            return false;
+        }
     }
 
     /**
