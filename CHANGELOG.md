@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [1.0.5 - 1.0.6](https://github.com/Adyen/adyen-php-plugin-core/compare/1.0.4...1.0.5) - 2023-11-14
+- Refactor retry mechanism in OrderUpdate task to handle exceptions
+- Fix Transaction details when payment code is invalid
+
 ## [1.0.4 - 1.0.5](https://github.com/Adyen/adyen-php-plugin-core/compare/1.0.4...1.0.5) - 2023-11-09
 - Add retry mechanism when checking if order exists in OrderUpdate task
 
