@@ -337,6 +337,70 @@ class PaymentCheckoutConfigApiTest extends BaseTestCase
                     null
                 )
             );
+
+            $this->paymentMethodConfigRepo->saveMethodConfiguration(
+                new PaymentMethod(
+                    'test',
+                    'applepay',
+                    'applepay',
+                    'hhtp://test.example.com',
+                    true,
+                    [],
+                    [],
+                    'cards',
+                    '',
+                    '',
+                    '',
+                    null,
+                    null,
+                    '',
+                    null,
+                    false,
+                    true
+                )
+            );
+            $this->paymentMethodConfigRepo->saveMethodConfiguration(
+                new PaymentMethod(
+                    'test1',
+                    'ideal',
+                    'ideal',
+                    'hhtp://test.example.com',
+                    true,
+                    [],
+                    [],
+                    'ideal',
+                    '',
+                    '',
+                    '',
+                    null,
+                    null,
+                    '',
+                    null,
+                    false,
+                    true
+                )
+            );
+            $this->paymentMethodConfigRepo->saveMethodConfiguration(
+                new PaymentMethod(
+                    'test2',
+                    'zip',
+                    'zip',
+                    'hhtp://test.example.com',
+                    true,
+                    [],
+                    [],
+                    'zip',
+                    '',
+                    '',
+                    '',
+                    null,
+                    null,
+                    '',
+                    null,
+                    false,
+                    true
+                )
+            );
         });
         $this->paymentsProxy->setMockResult(
             new AvailablePaymentMethodsResponse(
@@ -360,7 +424,6 @@ class PaymentCheckoutConfigApiTest extends BaseTestCase
         $request = new PaymentCheckoutConfigRequest(
             Amount::fromFloat(123.23, Currency::getDefault()), null, 'en-US', 'test'
         );
-
         // Act
         $response = CheckoutAPI::get()->checkoutConfig('store1')->getPaymentCheckoutConfig($request);
 
@@ -391,6 +454,69 @@ class PaymentCheckoutConfigApiTest extends BaseTestCase
                     'test',
                     new ConnectionData('01234567', '1234', '', 'test-client-key'),
                     null
+                )
+            );
+            $this->paymentMethodConfigRepo->saveMethodConfiguration(
+                new PaymentMethod(
+                    'test',
+                    'applepay',
+                    'applepay',
+                    'hhtp://test.example.com',
+                    true,
+                    [],
+                    [],
+                    'cards',
+                    '',
+                    '',
+                    '',
+                    null,
+                    null,
+                    '',
+                    null,
+                    false,
+                    true
+                )
+            );
+            $this->paymentMethodConfigRepo->saveMethodConfiguration(
+                new PaymentMethod(
+                    'test1',
+                    'ideal',
+                    'ideal',
+                    'hhtp://test.example.com',
+                    true,
+                    [],
+                    [],
+                    'ideal',
+                    '',
+                    '',
+                    '',
+                    null,
+                    null,
+                    '',
+                    null,
+                    false,
+                    true
+                )
+            );
+            $this->paymentMethodConfigRepo->saveMethodConfiguration(
+                new PaymentMethod(
+                    'test2',
+                    'zip',
+                    'zip',
+                    'hhtp://test.example.com',
+                    true,
+                    [],
+                    [],
+                    'zip',
+                    '',
+                    '',
+                    '',
+                    null,
+                    null,
+                    '',
+                    null,
+                    false,
+                    true
                 )
             );
         });
@@ -424,7 +550,10 @@ class PaymentCheckoutConfigApiTest extends BaseTestCase
         // Assert
         self::assertTrue($response->isSuccessful());
         self::assertCount(2, $response->getRecurringPaymentMethodResponse());
-        self::assertEquals(new PaymentMethodResponse('ideal', 'ideal'), $response->getRecurringPaymentMethodResponse()[0]);
+        self::assertEquals(
+            new PaymentMethodResponse('ideal', 'ideal'),
+            $response->getRecurringPaymentMethodResponse()[0]
+        );
         self::assertEquals(new PaymentMethodResponse('zip', 'zip'), $response->getRecurringPaymentMethodResponse()[1]);
     }
 }

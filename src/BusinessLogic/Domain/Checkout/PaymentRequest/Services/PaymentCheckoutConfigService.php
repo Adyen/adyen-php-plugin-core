@@ -228,7 +228,8 @@ class PaymentCheckoutConfigService
                 $paymentMethodsResponse->getStoredPaymentMethodsResponse(),
                 $this->filterRecurringPaymentMethods(
                     $recurringPaymentMethods,
-                    $paymentMethodsResponse->getPaymentMethodsResponse()
+                    $paymentMethodsResponse->getPaymentMethodsResponse(),
+                    $paymentMethodsConfiguration
                 )
             );
         }
@@ -244,12 +245,14 @@ class PaymentCheckoutConfigService
     /**
      * @param PaymentMethodResponse[] $recurringPaymentMethods
      * @param PaymentMethodResponse[] $availablePaymentMethods
+     * @param PaymentMethod[] $paymentMethodsConfiguration
      *
      * @return PaymentMethodResponse[]
      */
     private function filterRecurringPaymentMethods(
         array $recurringPaymentMethods,
-        array $availablePaymentMethods
+        array $availablePaymentMethods,
+        array $paymentMethodsConfiguration
     ): array {
         $paymentMethodsMap = [];
 
@@ -259,11 +262,37 @@ class PaymentCheckoutConfigService
 
         return array_values(
             array_filter(
-                $recurringPaymentMethods,
+                $this->filterDisabledTokenizationPaymentMethods($recurringPaymentMethods, $paymentMethodsConfiguration),
                 static function ($paymentMethodResponse) use ($paymentMethodsMap) {
                     return isset($paymentMethodsMap[$paymentMethodResponse->getType()]);
                 }
             )
+        );
+    }
+
+    /**
+     * Return only payment methods that have enabled tokenization in payment method config.
+     *
+     * @param PaymentMethodResponse[] $recurringPaymentMethods
+     * @param PaymentMethod[] $paymentMethodsConfiguration
+     *
+     * @return array
+     */
+    private function filterDisabledTokenizationPaymentMethods(
+        array $recurringPaymentMethods,
+        array $paymentMethodsConfiguration
+    ): array {
+        return array_filter(
+            $recurringPaymentMethods,
+            function ($recurringPaymentMethod) use ($paymentMethodsConfiguration) {
+                foreach ($paymentMethodsConfiguration as $configuredPaymentMethod) {
+                    if ($configuredPaymentMethod->getCode() === $recurringPaymentMethod->getType() &&
+                        $configuredPaymentMethod->getEnableTokenization()) {
+                        return true;
+                    }
+                }
+                return false;
+            }
         );
     }
 }
