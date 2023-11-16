@@ -16,6 +16,8 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\StartTransact
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePaymentDetailsRequest;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePaymentDetailsResult;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Proxies\PaymentsProxy;
+use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
+use Adyen\Core\Infrastructure\Http\Exceptions\HttpRequestException;
 
 /**
  * Class Proxy
@@ -25,6 +27,13 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Proxies\PaymentsProx
 class Proxy extends AuthorizedProxy implements PaymentsProxy
 {
 
+    /**
+     * @param PaymentRequest $request
+     *
+     * @return StartTransactionResult
+     *
+     * @throws HttpRequestException
+     */
     public function startPaymentTransaction(PaymentRequest $request): StartTransactionResult
     {
         $response = $this->post(new PaymentHttpRequest($request))->decodeBodyToArray();
@@ -37,6 +46,13 @@ class Proxy extends AuthorizedProxy implements PaymentsProxy
         );
     }
 
+    /**
+     * @param UpdatePaymentDetailsRequest $request
+     *
+     * @return UpdatePaymentDetailsResult
+     *
+     * @throws HttpRequestException
+     */
     public function updatePaymentDetails(UpdatePaymentDetailsRequest $request): UpdatePaymentDetailsResult
     {
         $response = $this->post(new UpdatePaymentDetailsHttpRequest($request))->decodeBodyToArray();
@@ -50,6 +66,13 @@ class Proxy extends AuthorizedProxy implements PaymentsProxy
         );
     }
 
+    /**
+     * @param PaymentMethodsRequest $request
+     *
+     * @return AvailablePaymentMethodsResponse
+     *
+     * @throws HttpRequestException
+     */
     public function getAvailablePaymentMethods(PaymentMethodsRequest $request): AvailablePaymentMethodsResponse
     {
         $response = $this->post(new PaymentMethodsHttpRequest($request))->decodeBodyToArray();
@@ -59,7 +82,7 @@ class Proxy extends AuthorizedProxy implements PaymentsProxy
                 $this->transformPaymentMethodsResponse($response['paymentMethods'] ?? []),
                 $request
             ),
-            $this->transformPaymentMethodsResponse($response['storedPaymentMethods'] ?? [])
+            $this->transformStoredCreditCardsResponse($response['storedPaymentMethods'] ?? [])
         );
     }
 
@@ -80,6 +103,29 @@ class Proxy extends AuthorizedProxy implements PaymentsProxy
                 $method
             );
         }, $response);
+    }
+
+    /**
+     * Return only credit cards from response, since all other stored methods are fetched through /listRecurringDetails request.
+     *
+     * @param array $response
+     *
+     * @return array
+     */
+    private function transformStoredCreditCardsResponse(array $response): array
+    {
+        return array_values(array_map(static function (array $method) {
+            $type = $method['type'] ?? '';
+            $brand = $method['brand'] ?? '';
+
+            return new PaymentMethodResponse(
+                $method['name'] ?? '',
+                PaymentMethodCode::isGiftCard($type) ? $brand : $type,
+                $method
+            );
+        }, array_filter($response, static function (array $method) {
+            return $method['type'] === PaymentService::CREDIT_CARD_CODE;
+        })));
     }
 
     /**
