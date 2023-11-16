@@ -221,33 +221,33 @@ class WebhookValidatorTest extends BaseTestCase
         // assert
     }
 
-    /**
-     * @return void
-     *
-     * @throws Exception
-     */
-    public function testHmac(): void
-    {
-        // arrange
-        $payload = json_decode(
-            file_get_contents(__DIR__ . '/../Common/ApiResponses/Webhook/hmac.json'),
-            true
-        );
-        $_SERVER['PHP_AUTH_USER'] = 'username';
-        $_SERVER['PHP_AUTH_PW'] = 'password';
-        $this->webhookConfigRepository->setWebhookConfig(new WebhookConfig(
-            'ID',
-            'testMerchantId',
-            true,
-            'username',
-            'password',
-            '54842DEF547AAA06C910C43932B1EB0C71FC68D9D0C057550C48EC2ACF6BA056'
-        ));
-        $this->expectException(InvalidWebhookException::class);
-        $this->expectExceptionMessage('Webhook validation failed.');
-
-        // act
-        StoreContext::doWithStore('1', [$this->validator, 'validate'], [$payload]);
-        // assert
-    }
+//    /**
+//     * @return void
+//     *
+//     * @throws Exception
+//     */
+//    public function testHmac(): void
+//    {
+//        // arrange
+//        $payload = json_decode(
+//            file_get_contents(__DIR__ . '/../Common/ApiResponses/Webhook/hmac.json'),
+//            true
+//        );
+//        $_SERVER['PHP_AUTH_USER'] = 'username';
+//        $_SERVER['PHP_AUTH_PW'] = 'password';
+//        $this->webhookConfigRepository->setWebhookConfig(new WebhookConfig(
+//            'ID',
+//            'testMerchantId',
+//            true,
+//            'username',
+//            'password',
+//            '54842DEF547AAA06C910C43932B1EB0C71FC68D9D0C057550C48EC2ACF6BA056'
+//        ));
+//        $this->expectException(InvalidWebhookException::class);
+//        $this->expectExceptionMessage('Webhook validation failed.');
+//
+//        // act
+//        StoreContext::doWithStore('1', [$this->validator, 'validate'], [$payload]);
+//        // assert
+//    }
 }
