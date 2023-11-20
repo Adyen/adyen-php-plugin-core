@@ -238,17 +238,37 @@ class OrderUpdateTask extends TransactionalTask
 
     /**
      * Returns true if order is created in shop system. If it is not created sleep for 2 seconds and check again.
+     * Repeat this checking for 5 times.
+     *
+     * @param int $retryCount
      *
      * @return bool
+     *
+     * @throws Exception
      */
-    private function checkIfOrderExists(): bool
+    private function checkIfOrderExists(int $retryCount = 0): bool
     {
-        $order = $this->getOrderService()->orderExists($this->webhook->getMerchantReference());
+        $order = false;
 
-        if (!$order) {
-            sleep(2);
-
+        try {
             $order = $this->getOrderService()->orderExists($this->webhook->getMerchantReference());
+            while (!$order && $retryCount < 5) {
+                sleep(2);
+                $this->reportAlive();
+
+                $order = $this->getOrderService()->orderExists($this->webhook->getMerchantReference());
+                $retryCount++;
+            }
+        } catch (Exception $exception) {
+            $retryCount++;
+            if ($retryCount < 5) {
+                sleep(2);
+                $this->reportAlive();
+
+                return $this->checkIfOrderExists($retryCount);
+            }
+
+            throw $exception;
         }
 
         return $order;
