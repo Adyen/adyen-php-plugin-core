@@ -98,7 +98,7 @@ class CreateIntegrationDataService
     {
         $jsonString = file_get_contents(
             './custom/plugins/AdyenPayment/vendor/adyen/integration-core/src/BusinessLogic' .
-            '/E2ETest/Data/test_data.json',
+            '/E2ETest/Data/integration_config_test_data.json',
             FILE_USE_INCLUDE_PATH
         );
 

@@ -1,10 +1,10 @@
 {
-  "authorizationData" : {
+  "authorizationData": {
     "storeId": 1,
-    "mode" : "test",
-    "testAPiKey" : "{test_api_key}",
+    "mode": "test",
+    "testAPiKey": "{test_api_key}",
     "testMerchantId": "LogeecomECOM",
-    "liveAPiKey" : "",
+    "liveAPiKey": "",
     "liveMerchantId": ""
   },
   "creditCard": {
@@ -22,6 +22,21 @@
       "singleClickPayment": true,
       "sendBasket": true,
       "installments": false
+    }
+  },
+  "ideal": {
+    "methodId": "PM32265223222D5HQM75V6FFG",
+    "code": "ideal",
+    "logo": "https://checkoutshopper-live.adyen.com/checkoutshopper/images/logos/ideal.svg",
+    "name": "iDEAL",
+    "description": "Adyen iDEAL",
+    "surchargeType": "none",
+    "percentSurcharge": "",
+    "fixedSurcharge": "",
+    "surchargeLimit": "",
+    "additionalData": {
+      "showLogos": true,
+      "bankIssuer": ""
     }
   },
   "klarnaPayNow": {
