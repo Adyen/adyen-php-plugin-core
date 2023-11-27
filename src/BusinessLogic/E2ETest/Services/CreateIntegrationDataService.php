@@ -30,6 +30,45 @@ use Adyen\Core\BusinessLogic\Domain\Webhook\Exceptions\MerchantDoesNotExistExcep
  */
 class CreateIntegrationDataService
 {
+    const CREDIT_CARD = 'creditCard';
+    const IDEAL = 'ideal';
+    const KLARNA_PAY_NOW = 'klarnaPayNow';
+    const KLARNA_PAY_LATER = 'klarnaPayLater';
+    const KLARNA_PAY_OVERTIME = 'klarnaPayOverTime';
+    const TWINT = 'twint';
+    const BANCONTACT_MODILE = 'bancontact';
+    const PAYPAL = 'payPal';
+    const APPLE_PAY = 'applePay';
+
+    /**
+     * @var string
+     */
+    private $testFilePath;
+
+    public function __construct(string $testFilePath)
+    {
+        $this->testFilePath = $testFilePath;
+    }
+
+    /**
+     * Creates all payment methods from test data file
+     *
+     * @return void
+     * @throws PaymentMethodDataEmptyException
+     */
+    public function createAllPaymentMethodsFromTestData(): void
+    {
+        $this->createPaymentMethodConfiguration(self::CREDIT_CARD);
+        $this->createPaymentMethodConfiguration(self::IDEAL);
+        $this->createPaymentMethodConfiguration(self::KLARNA_PAY_NOW);
+        $this->createPaymentMethodConfiguration(self::KLARNA_PAY_LATER);
+        $this->createPaymentMethodConfiguration(self::KLARNA_PAY_OVERTIME);
+        $this->createPaymentMethodConfiguration(self::TWINT);
+        $this->createPaymentMethodConfiguration(self::BANCONTACT_MODILE);
+        $this->createPaymentMethodConfiguration(self::PAYPAL);
+        $this->createPaymentMethodConfiguration(self::APPLE_PAY);
+    }
+
     /**
      * Creates ConnectionSettings and WebhookConfig in database
      *
@@ -83,7 +122,7 @@ class CreateIntegrationDataService
      *
      * @throws PaymentMethodDataEmptyException
      */
-    public function createPaymentMethodConfiguration(string $paymentMethod)
+    public function createPaymentMethodConfiguration(string $paymentMethod): void
     {
         $method = PaymentMethodRequest::parse($this->readFromJSONFile()[$paymentMethod] ?? []);
         AdminAPI::get()->payment(1)->saveMethodConfiguration($method);
@@ -97,7 +136,7 @@ class CreateIntegrationDataService
     protected function readFromJSONFile(): array
     {
         $jsonString = file_get_contents(
-            './custom/plugins/AdyenPayment/vendor/adyen/integration-core/src/BusinessLogic' .
+            $this->testFilePath . '/vendor/adyen/integration-core/src/BusinessLogic' .
             '/E2ETest/Data/integration_config_test_data.json',
             FILE_USE_INCLUDE_PATH
         );
