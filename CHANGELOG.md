@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [1.0.6 - 1.0.7](https://github.com/Adyen/adyen-php-plugin-core/compare/1.0.6...1.0.7) - 2023-11-28
+- Refactor message when unsupported webhook event code is processed 
+- Add compatability for HTTP Authorisation with PHP in CGI-mode
+
 ## [1.0.5 - 1.0.6](https://github.com/Adyen/adyen-php-plugin-core/compare/1.0.5...1.0.6) - 2023-11-14
 - Refactor retry mechanism in OrderUpdate task to handle exceptions
 - Fix Transaction details when payment code is invalid
