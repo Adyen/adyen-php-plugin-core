@@ -72,7 +72,9 @@ class WebhookValidator
         }
 
         if (!$hmacSignature->isHmacSupportedEventCode($notificationRequestItem)) {
-            throw new InvalidWebhookException('Webhook validation failed. Unsupported event code');
+            throw new InvalidWebhookException(
+                'Webhook validation failed. Unsupported event code: ' . (string)$notificationRequestItem['eventCode']
+            );
         }
 
         if (!$notificationReceiver->validateHmac($notificationRequestItem, $webhookConfig->getHmac())
