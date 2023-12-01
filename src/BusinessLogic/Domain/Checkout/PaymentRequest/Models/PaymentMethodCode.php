@@ -542,11 +542,8 @@ class PaymentMethodCode
         self::KLARNA,
         self::KLARNA_ACCOUNT,
         self::KLARNA_PAYNOW,
-        self::MOMO_WALLET,
-        self::PAYPAL,
         self::SEPA,
         self::DIRECT_EBANKING,
-        self::TRUSTLY,
         self::TWINT,
         self::VIPPS,
         self::ZIP
