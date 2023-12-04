@@ -128,5 +128,11 @@
       "merchantName": "LogeecomECOM",
       "displayButtonOn": true
     }
+  },
+  "generalSettings": {
+    "basketItemSync": false,
+    "capture": "manual",
+    "captureDelay": 1,
+    "retentionPeriod": "60"
   }
 }

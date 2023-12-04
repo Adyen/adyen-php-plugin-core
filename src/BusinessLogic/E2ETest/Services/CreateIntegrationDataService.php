@@ -4,6 +4,7 @@ namespace Adyen\Core\BusinessLogic\E2ETest\Services;
 
 use Adyen\Core\BusinessLogic\AdminAPI\AdminAPI;
 use Adyen\Core\BusinessLogic\AdminAPI\Connection\Request\ConnectionRequest;
+use Adyen\Core\BusinessLogic\AdminAPI\GeneralSettings\Request\GeneralSettingsRequest;
 use Adyen\Core\BusinessLogic\AdminAPI\Payment\Request\PaymentMethodRequest;
 use Adyen\Core\BusinessLogic\AdyenAPI\Exceptions\ConnectionSettingsNotFoundException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\ApiCredentialsDoNotExistException;
@@ -17,6 +18,9 @@ use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\InvalidModeException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\MerchantIdChangedException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\ModeChangedException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\UserDoesNotHaveNecessaryRolesException;
+use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidCaptureDelayException;
+use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidCaptureTypeException;
+use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidRetentionPeriodException;
 use Adyen\Core\BusinessLogic\Domain\Merchant\Exceptions\ClientKeyGenerationFailedException;
 use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\PaymentMethodDataEmptyException;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Exceptions\FailedToGenerateHmacException;
@@ -115,6 +119,38 @@ class CreateIntegrationDataService
             $authorizationData['liveMerchantId']
         );
         AdminAPI::get()->connection(1)->connect($connectionRequest);
+    }
+
+    /**
+     * Creates GeneralSettings in database
+     *
+     * @param string $captureType
+     * @param string $captureDelay
+     * @param string $shipmentStatus
+     * @return void
+     * @throws InvalidCaptureDelayException
+     * @throws InvalidCaptureTypeException
+     * @throws InvalidRetentionPeriodException
+     */
+    public function createGeneralSettingsConfiguration(
+        string $captureType,
+        string $captureDelay,
+        string $shipmentStatus
+    ): void
+    {
+        $generalSettingsData = $this->readFromJSONFile()['generalSettings'] ?? [];
+        if (count($generalSettingsData) === 0) {
+            return;
+        }
+
+        $generalSettingsRequest = new GeneralSettingsRequest(
+            $generalSettingsData['basketItemSync'] ?? false,
+            $captureType,
+            $captureDelay !== '' ? $captureDelay : 1,
+            $shipmentStatus,
+            $generalSettingsData['retentionPeriod'] ?? ''
+        );
+        AdminAPI::get()->generalSettings(1)->saveGeneralSettings($generalSettingsRequest);
     }
 
     /**
