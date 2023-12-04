@@ -11,7 +11,7 @@ use Adyen\Core\Infrastructure\Logger\Interfaces\ShopLoggerAdapter;
 use Adyen\Core\Infrastructure\Logger\Logger;
 use Adyen\Core\Infrastructure\Logger\LoggerConfiguration;
 use Adyen\Core\Infrastructure\ORM\RepositoryRegistry;
-use Adyen\Core\Infrastructure\Serializer\Concrete\NativeSerializer;
+use Adyen\Core\Infrastructure\Serializer\Concrete\JsonSerializer;
 use Adyen\Core\Infrastructure\Serializer\Serializer;
 use Adyen\Core\Infrastructure\Utility\Events\EventBus;
 use Adyen\Core\Infrastructure\Utility\TimeProvider;
@@ -72,7 +72,7 @@ abstract class BaseInfrastructureTestWithServices extends TestCase
         $this->shopConfig = new TestShopConfiguration();
         $this->shopLogger = new TestShopLogger();
         $this->defaultLogger = new TestDefaultLogger();
-        $this->serializer = new NativeSerializer();
+        $this->serializer = new JsonSerializer();
 
         new TestServiceRegister(
             array(

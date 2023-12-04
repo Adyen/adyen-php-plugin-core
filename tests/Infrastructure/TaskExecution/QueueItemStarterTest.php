@@ -11,7 +11,7 @@ use Adyen\Core\Infrastructure\Logger\Interfaces\DefaultLoggerAdapter;
 use Adyen\Core\Infrastructure\Logger\Interfaces\ShopLoggerAdapter;
 use Adyen\Core\Infrastructure\Logger\Logger;
 use Adyen\Core\Infrastructure\ORM\RepositoryRegistry;
-use Adyen\Core\Infrastructure\Serializer\Concrete\NativeSerializer;
+use Adyen\Core\Infrastructure\Serializer\Concrete\JsonSerializer;
 use Adyen\Core\Infrastructure\Serializer\Serializer;
 use Adyen\Core\Infrastructure\TaskExecution\Events\QueueItemStateTransitionEventBus;
 use Adyen\Core\Infrastructure\TaskExecution\Interfaces\TaskRunnerWakeup;
@@ -67,7 +67,7 @@ class QueueItemStarterTest extends TestCase
         $shopLogger = new TestShopLogger();
         $configurationManager = new TestConfigurationManager();
         $shopConfiguration = new TestShopConfiguration();
-        $serializer = new NativeSerializer();
+        $serializer = new JsonSerializer();
 
         new TestServiceRegister(
             array(

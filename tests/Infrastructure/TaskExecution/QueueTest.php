@@ -8,7 +8,7 @@ use Adyen\Core\Infrastructure\Configuration\Configuration;
 use Adyen\Core\Infrastructure\Configuration\ConfigurationManager;
 use Adyen\Core\Infrastructure\ORM\QueryFilter\QueryFilter;
 use Adyen\Core\Infrastructure\ORM\RepositoryRegistry;
-use Adyen\Core\Infrastructure\Serializer\Concrete\NativeSerializer;
+use Adyen\Core\Infrastructure\Serializer\Concrete\JsonSerializer;
 use Adyen\Core\Infrastructure\Serializer\Serializer;
 use Adyen\Core\Infrastructure\TaskExecution\Events\QueueItemStateTransitionEventBus;
 use Adyen\Core\Infrastructure\TaskExecution\Exceptions\QueueStorageUnavailableException;
@@ -85,7 +85,7 @@ class QueueTest extends TestCase
                     return EventBus::getInstance();
                 },
                 Serializer::CLASS_NAME => function () {
-                    return new NativeSerializer();
+                    return new JsonSerializer();
                 },
                 QueueService::CLASS_NAME => function () use ($me) {
                     return $me->queue;

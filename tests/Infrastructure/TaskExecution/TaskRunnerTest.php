@@ -11,7 +11,7 @@ use Adyen\Core\Infrastructure\Logger\Interfaces\DefaultLoggerAdapter;
 use Adyen\Core\Infrastructure\Logger\Interfaces\ShopLoggerAdapter;
 use Adyen\Core\Infrastructure\Logger\Logger;
 use Adyen\Core\Infrastructure\ORM\RepositoryRegistry;
-use Adyen\Core\Infrastructure\Serializer\Concrete\NativeSerializer;
+use Adyen\Core\Infrastructure\Serializer\Concrete\JsonSerializer;
 use Adyen\Core\Infrastructure\Serializer\Serializer;
 use Adyen\Core\Infrastructure\TaskExecution\AsyncProcessStarterService;
 use Adyen\Core\Infrastructure\TaskExecution\Events\QueueItemStateTransitionEventBus;
@@ -131,7 +131,7 @@ class TaskRunnerTest extends TestCase
                     return new TestHttpClient();
                 },
                 Serializer::CLASS_NAME => function () {
-                    return new NativeSerializer();
+                    return new JsonSerializer();
                 },
                 QueueItemStateTransitionEventBus::CLASS_NAME => function () {
                     return QueueItemStateTransitionEventBus::getInstance();

@@ -90,6 +90,9 @@ class OrchestratorTest extends TestCase
     {
         // Arrange
         $task = new FooOrchestrator();
+        TestServiceRegister::registerService(Serializer::CLASS_NAME, function () {
+            return new JsonSerializer();
+        });
 
         // Act
         $task->execute();
@@ -102,6 +105,9 @@ class OrchestratorTest extends TestCase
     {
         // Arrange
         $task = new FooOrchestrator();
+        TestServiceRegister::registerService(Serializer::CLASS_NAME, function () {
+            return new JsonSerializer();
+        });
 
         // Act
         $task->execute();
@@ -128,6 +134,9 @@ class OrchestratorTest extends TestCase
     {
         // Arrange
         $queue = ServiceRegister::getService(QueueService::CLASS_NAME);
+        TestServiceRegister::registerService(Serializer::CLASS_NAME, function () {
+            return new JsonSerializer();
+        });
         $item = $queue->enqueue('test', new FooOrchestrator());
         $queue->start($item);
 
@@ -145,6 +154,9 @@ class OrchestratorTest extends TestCase
     {
         // Arrange
         $queue = ServiceRegister::getService(QueueService::CLASS_NAME);
+        TestServiceRegister::registerService(Serializer::CLASS_NAME, function () {
+            return new JsonSerializer();
+        });
         $item = $queue->enqueue('test', new FooOrchestrator());
         $queue->start($item);
 

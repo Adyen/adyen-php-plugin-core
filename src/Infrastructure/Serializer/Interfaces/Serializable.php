@@ -7,7 +7,7 @@ namespace Adyen\Core\Infrastructure\Serializer\Interfaces;
  *
  * @package Adyen\Core\Infrastructure\Serializer\Interfaces
  */
-interface Serializable extends \Serializable
+interface Serializable
 {
     /**
      * Transforms array into an serializable object,

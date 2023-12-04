@@ -2,7 +2,7 @@
 
 namespace Adyen\Core\Tests\Infrastructure\TaskExecution;
 
-use Adyen\Core\Infrastructure\Serializer\Concrete\NativeSerializer;
+use Adyen\Core\Infrastructure\Serializer\Concrete\JsonSerializer;
 use Adyen\Core\Infrastructure\Serializer\Serializer;
 use Adyen\Core\Infrastructure\TaskExecution\Exceptions\QueueItemDeserializationException;
 use Adyen\Core\Infrastructure\TaskExecution\Interfaces\Priority;
@@ -36,7 +36,7 @@ class QueueItemTest extends TestCase
                     return $timeProvider;
                 },
                 Serializer::CLASS_NAME => function() {
-                    return new NativeSerializer();
+                    return new JsonSerializer();
                 }
             )
         );

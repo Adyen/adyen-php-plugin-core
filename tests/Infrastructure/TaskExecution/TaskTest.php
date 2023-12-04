@@ -2,7 +2,7 @@
 
 namespace Adyen\Core\Tests\Infrastructure\TaskExecution;
 
-use Adyen\Core\Infrastructure\Serializer\Concrete\NativeSerializer;
+use Adyen\Core\Infrastructure\Serializer\Concrete\JsonSerializer;
 use Adyen\Core\Infrastructure\Serializer\Serializer;
 use Adyen\Core\Infrastructure\TaskExecution\TaskEvents\AliveAnnouncedTaskEvent;
 use Adyen\Core\Infrastructure\TaskExecution\TaskEvents\TaskProgressEvent;
@@ -35,7 +35,7 @@ class TaskTest extends TestCase
                     return $timeProvider;
                 },
                 Serializer::CLASS_NAME => function () {
-                    return new NativeSerializer();
+                    return new JsonSerializer();
                 },
             )
         );
@@ -74,7 +74,7 @@ class TaskTest extends TestCase
         /** @var FooTask $unserializedTask */
         $unserializedTask = Serializer::unserialize(Serializer::serialize($task));
 
-        $this->assertInstanceOf('\Serializable', $unserializedTask);
+        $this->assertInstanceOf('Adyen\Core\Infrastructure\Serializer\Interfaces\Serializable', $unserializedTask);
         $this->assertSame('test dependency', $unserializedTask->getDependency1());
         $this->assertSame(123, $unserializedTask->getDependency2());
     }
