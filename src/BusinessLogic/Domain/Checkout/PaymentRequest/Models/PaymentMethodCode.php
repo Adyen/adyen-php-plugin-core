@@ -533,20 +533,14 @@ class PaymentMethodCode
         self::ACH,
         self::APPLEPAY,
         self::DIRECTDEBIT_GB,
-        self::BCMC_MOBILE,
-        self::EPS,
         self::GCASH,
-        self::GIROPAY,
         self::PAY_WITH_GOOGLE,
         self::IDEAL,
         self::KLARNA,
         self::KLARNA_ACCOUNT,
         self::KLARNA_PAYNOW,
         self::SEPA,
-        self::DIRECT_EBANKING,
-        self::TWINT,
-        self::VIPPS,
-        self::ZIP
+        self::DIRECT_EBANKING
     ];
 
     private const SCHEME = 'scheme';
@@ -744,11 +738,13 @@ class PaymentMethodCode
     public static function parse(string $code): PaymentMethodCode
     {
         if (!in_array($code, self::SUPPORTED_PAYMENT_METHODS)) {
-            throw new InvalidPaymentMethodCodeException(new TranslatableLabel(
-                sprintf('Payment method code is invalid %s.', $code),
-                'checkout.invalidMethodCode',
-                [$code]
-            ));
+            throw new InvalidPaymentMethodCodeException(
+                new TranslatableLabel(
+                    sprintf('Payment method code is invalid %s.', $code),
+                    'checkout.invalidMethodCode',
+                    [$code]
+                )
+            );
         }
 
         return new self($code);
@@ -786,8 +782,10 @@ class PaymentMethodCode
      */
     public static function isOneyMethod(string $code): bool
     {
-        return in_array($code,
-            [self::ONEY_3X, self::ONEY_4X, self::ONEY_6X, self::ONEY_10X, self::ONEY_12X, self::ONEY]);
+        return in_array(
+            $code,
+            [self::ONEY_3X, self::ONEY_4X, self::ONEY_6X, self::ONEY_10X, self::ONEY_12X, self::ONEY]
+        );
     }
 
     /**
@@ -1038,10 +1036,12 @@ class PaymentMethodCode
     {
         return in_array($this->type, self::PARTIAL_REFUND_SUPPORTED, true);
     }
+
     public function isPaymentLinkSupported(): bool
     {
         return in_array($this->type, self::PAYMENT_LINK_SUPPORTED, true);
     }
+
     public function isRecurringPaymentSupported(): bool
     {
         return in_array($this->type, self::RECURRING_PAYMENTS_SUPPORTED, true);
