@@ -2,6 +2,7 @@
 
 namespace Adyen\Core\BusinessLogic\Domain\Payment\Models;
 
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidPaymentMethodCodeException;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Payment\Enum\PaymentMethodType;
 use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\PaymentMethodDataEmptyException;
@@ -77,6 +78,30 @@ class PaymentMethod
      * @var PaymentMethodAdditionalData
      */
     private $additionalData;
+    /**
+     * @var bool
+     */
+    private $excludeFromPayByLink;
+
+    /**
+     * @var bool
+     */
+    private $supportsPaymentLink;
+
+    /**
+     * @var bool
+     */
+    private $enableTokenization;
+
+    /**
+     * @var TokenType|null
+     */
+    private $tokenType;
+
+    /**
+     * @var bool
+     */
+    private $supportsRecurringPayments;
 
     /**
      * @param string $methodId
@@ -94,7 +119,11 @@ class PaymentMethod
      * @param float|null $surchargeLimit
      * @param string $documentationUrl
      * @param PaymentMethodAdditionalData|null $additionalData
+     * @param bool $excludeFromPayByLink
+     * @param bool $enableTokenization
+     * @param TokenType|null $tokenType
      *
+     * @throws InvalidPaymentMethodCodeException
      * @throws PaymentMethodDataEmptyException
      */
     public function __construct(
@@ -112,7 +141,10 @@ class PaymentMethod
         float $percentSurcharge = null,
         ?float $surchargeLimit = null,
         string $documentationUrl = '',
-        ?PaymentMethodAdditionalData $additionalData = null
+        ?PaymentMethodAdditionalData $additionalData = null,
+        bool $excludeFromPayByLink = false,
+        bool $enableTokenization = false,
+        ?TokenType $tokenType = null
     ) {
         if (
             empty($methodId) ||
@@ -147,6 +179,11 @@ class PaymentMethod
         $this->surchargeLimit = $surchargeLimit;
         $this->documentationUrl = $documentationUrl;
         $this->additionalData = $additionalData;
+        $this->excludeFromPayByLink = $excludeFromPayByLink;
+        $this->supportsPaymentLink = PaymentMethodCode::parse($code)->isPaymentLinkSupported();
+        $this->enableTokenization = $enableTokenization;
+        $this->tokenType = $tokenType;
+        $this->supportsRecurringPayments = PaymentMethodCode::parse($code)->isRecurringPaymentSupported();
     }
 
     /**
@@ -384,6 +421,24 @@ class PaymentMethod
     }
 
     /**
+     * @return bool
+     */
+    public function getExcludeFromPayByLink(): bool
+    {
+        return $this->excludeFromPayByLink;
+    }
+
+    /**
+     * @param bool $excludeFromPayByLink
+     *
+     * @return void
+     */
+    public function setExcludeFromPayByLink(bool $excludeFromPayByLink): void
+    {
+        $this->excludeFromPayByLink = $excludeFromPayByLink;
+    }
+
+    /**
      * Gets the total surcharge amount considering fixed, percentage surcharge, and surcharge limit.
      *
      * @param float $cartAmount The current checkout cart amount value to base percentage calculation on.
@@ -435,6 +490,78 @@ class PaymentMethod
     public function setAdditionalData(?PaymentMethodAdditionalData $additionalData): void
     {
         $this->additionalData = $additionalData;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getSupportsPaymentLink(): bool
+    {
+        return $this->supportsPaymentLink;
+    }
+
+    /**
+     * @param bool $supportsPaymentLink
+     *
+     * @return void
+     */
+    public function setSupportsPaymentLink(bool $supportsPaymentLink): void
+    {
+        $this->supportsPaymentLink = $supportsPaymentLink;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getEnableTokenization(): bool
+    {
+        return $this->enableTokenization;
+    }
+
+    /**
+     * @param bool $enableTokenization
+     *
+     * @return void
+     */
+    public function setEnableTokenization(bool $enableTokenization): void
+    {
+        $this->enableTokenization = $enableTokenization;
+    }
+
+    /**
+     * @return TokenType|null
+     */
+    public function getTokenType(): ?TokenType
+    {
+        return $this->tokenType;
+    }
+
+    /**
+     * @param TokenType|null $tokenType
+     *
+     * @return void
+     */
+    public function setTokenType(?TokenType $tokenType): void
+    {
+        $this->tokenType = $tokenType;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getSupportsRecurringPayments(): bool
+    {
+        return $this->supportsRecurringPayments;
+    }
+
+    /**
+     * @param bool $supportsTokenization
+     *
+     * @return void
+     */
+    public function setSupportsRecurringPayments(bool $supportsTokenization): void
+    {
+        $this->supportsRecurringPayments = $supportsTokenization;
     }
 
     /**

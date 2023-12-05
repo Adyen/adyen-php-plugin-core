@@ -28,6 +28,7 @@ class PaymentMethodCode
         self::MASTERCARD,
         self::TROY,
         self::VISA,
+        self::ONEY,
         self::ONEY_3X,
         self::ONEY_4X,
         self::ONEY_6X,
@@ -441,6 +442,106 @@ class PaymentMethodCode
         //</editor-fold>
         self::TWINT
     ];
+    public const PAYMENT_LINK_SUPPORTED = [
+        self::ACH,
+        self::AFTERPAYTOUCH,
+        self::ALIPAY,
+        self::APPLEPAY,
+        self::SCHEME,
+        self::ONEY,
+        self::CLEARPAY,
+        self::AFTERPAYTOUCH,
+        self::KLARNA,
+        self::KLARNA_ACCOUNT,
+        self::KLARNA_PAYNOW,
+        self::MULTIBANCO,
+        self::SEPA,
+        self::DIRECTDEBIT_GB,
+        self::BLIK,
+        self::EPS,
+        self::GIROPAY,
+        self::IDEAL,
+        self::MBWAY,
+        self::MOBILEPAY,
+        self::ONLINEBANKING_PL,
+        self::ONLINEBANKING_IN,
+        self::EBANKING_FI,
+        self::MOLPAY_EBANKING_TH,
+        self::DIRECT_EBANKING,
+        self::TRUSTLY,
+        self::BANCONTACT_CARD,
+        self::GOOGLEPAY,
+        self::GCASH,
+        self::MOMO_WALLET,
+        self::PAYPAL,
+        self::SWISH,
+        self::VIPPS,
+        self::ZIP,
+        self::WECHATPAYQR,
+        self::PAY_WITH_GOOGLE,
+        //<editor-fold desc="Gift cards" defaultstate="collapsed">
+        self::GIFTCARD,
+        self::AURIGA,
+        self::BABYGIFTCARD,
+        self::BLOEMENGIFTCARD,
+        self::CASHCOMGIFTCARD,
+        self::EAGLEEYE_VOUCHER,
+        self::ENTERCARD,
+        self::EXPERTGIFTCARD,
+        self::FASHIONCHEQUE,
+        self::FIJNCADEAU,
+        self::VALUELINK,
+        self::FLEUROPBLOEMENBON,
+        self::FONQGIFTCARD,
+        self::GALLGALL,
+        self::GIVEX,
+        self::HALLMARKCARD,
+        self::IGIVE,
+        self::IKANO,
+        self::KADOWERELD,
+        self::KIDSCADEAU,
+        self::KINDPAS,
+        self::LEISURECARD,
+        self::NATIONALEBIOSCOOPBON,
+        self::NETSCARD,
+        self::OBERTHUR,
+        self::PATHEGIFTCARD,
+        self::PAYEX,
+        self::PODIUMCARD,
+        self::RESURSGIFTCARD,
+        self::ROTTERDAMPAS,
+        self::GENERICGIFTCARD,
+        self::SCHOOLSPULLENPAS,
+        self::SPARNORD,
+        self::SPAREBANK,
+        self::SVS,
+        self::UNIVERSALGIFTCARD,
+        self::VVVCADEAUBON,
+        self::VVVGIFTCARD,
+        self::WEBSHOPGIFTCARD,
+        self::WINKELCHEQUE,
+        self::WINTERKLEDINGPAS,
+        self::XPONCARD,
+        self::YOURGIFT,
+        self::PROSODIE_ILLICADO,
+        self::PAYSAFECARD,
+        //</editor-fold>
+        self::TWINT,
+        self::BCMC_MOBILE
+    ];
+    public const RECURRING_PAYMENTS_SUPPORTED = [
+        self::ACH,
+        self::APPLEPAY,
+        self::DIRECTDEBIT_GB,
+        self::GCASH,
+        self::PAY_WITH_GOOGLE,
+        self::IDEAL,
+        self::KLARNA,
+        self::KLARNA_ACCOUNT,
+        self::KLARNA_PAYNOW,
+        self::SEPA,
+        self::DIRECT_EBANKING
+    ];
 
     private const SCHEME = 'scheme';
     private const AMERICAN_EXPRESS = 'amex';
@@ -637,11 +738,13 @@ class PaymentMethodCode
     public static function parse(string $code): PaymentMethodCode
     {
         if (!in_array($code, self::SUPPORTED_PAYMENT_METHODS)) {
-            throw new InvalidPaymentMethodCodeException(new TranslatableLabel(
-                sprintf('Payment method code is invalid %s.', $code),
-                'checkout.invalidMethodCode',
-                [$code]
-            ));
+            throw new InvalidPaymentMethodCodeException(
+                new TranslatableLabel(
+                    sprintf('Payment method code is invalid %s.', $code),
+                    'checkout.invalidMethodCode',
+                    [$code]
+                )
+            );
         }
 
         return new self($code);
@@ -679,8 +782,10 @@ class PaymentMethodCode
      */
     public static function isOneyMethod(string $code): bool
     {
-        return in_array($code,
-            [self::ONEY_3X, self::ONEY_4X, self::ONEY_6X, self::ONEY_10X, self::ONEY_12X, self::ONEY]);
+        return in_array(
+            $code,
+            [self::ONEY_3X, self::ONEY_4X, self::ONEY_6X, self::ONEY_10X, self::ONEY_12X, self::ONEY]
+        );
     }
 
     /**
@@ -930,5 +1035,15 @@ class PaymentMethodCode
     public function isPartialRefundSupported(): bool
     {
         return in_array($this->type, self::PARTIAL_REFUND_SUPPORTED, true);
+    }
+
+    public function isPaymentLinkSupported(): bool
+    {
+        return in_array($this->type, self::PAYMENT_LINK_SUPPORTED, true);
+    }
+
+    public function isRecurringPaymentSupported(): bool
+    {
+        return in_array($this->type, self::RECURRING_PAYMENTS_SUPPORTED, true);
     }
 }

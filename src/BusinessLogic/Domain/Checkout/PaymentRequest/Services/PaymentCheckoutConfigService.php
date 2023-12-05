@@ -8,6 +8,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\AvailablePaymentMethodsResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Country;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentCheckoutConfigResult;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodsRequest;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ShopperReference;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Proxies\PaymentsProxy;
@@ -155,6 +156,7 @@ class PaymentCheckoutConfigService
      *
      * @throws MissingActiveApiConnectionData
      * @throws MissingClientKeyConfiguration
+     * @throws Exception
      */
     protected function getPaymentCheckoutConfigForConfiguredMethods(
         array $paymentMethodsConfiguration,
@@ -183,16 +185,18 @@ class PaymentCheckoutConfigService
             );
         }
 
-        $paymentMethodsResponse = $this->paymentsProxy->getAvailablePaymentMethods(new PaymentMethodsRequest(
-            $connectionSettings->getActiveConnectionData()->getMerchantId(),
-            array_map(static function (PaymentMethod $paymentMethod) {
-                return $paymentMethod->getCode();
-            }, $paymentMethodsConfiguration),
-            $amount,
-            $country,
-            $shopperLocale,
-            $shopperReference
-        ));
+        $paymentMethodsResponse = $this->paymentsProxy->getAvailablePaymentMethods(
+            new PaymentMethodsRequest(
+                $connectionSettings->getActiveConnectionData()->getMerchantId(),
+                array_map(static function (PaymentMethod $paymentMethod) {
+                    return $paymentMethod->getCode();
+                }, $paymentMethodsConfiguration),
+                $amount,
+                $country,
+                $shopperLocale,
+                $shopperReference
+            )
+        );
 
         if (!empty($_SERVER['HTTP_USER_AGENT'])) {
             $userAgent = $_SERVER['HTTP_USER_AGENT'];
@@ -213,11 +217,82 @@ class PaymentCheckoutConfigService
             );
         }
 
+        if ($shopperReference) {
+            $recurringPaymentMethods = $this->storedDetailsProxy->getStoredPaymentDetails(
+                $shopperReference,
+                $connectionSettings->getActiveConnectionData()->getMerchantId()
+            );
+
+            $paymentMethodsResponse = new AvailablePaymentMethodsResponse(
+                $paymentMethodsResponse->getPaymentMethodsResponse(),
+                $paymentMethodsResponse->getStoredPaymentMethodsResponse(),
+                $this->filterRecurringPaymentMethods(
+                    $recurringPaymentMethods,
+                    $paymentMethodsResponse->getPaymentMethodsResponse(),
+                    $paymentMethodsConfiguration
+                )
+            );
+        }
+
         return new PaymentCheckoutConfigResult(
             $connectionSettings->getMode(),
             $clientKey,
             $paymentMethodsResponse,
             $paymentMethodsConfiguration
+        );
+    }
+
+    /**
+     * @param PaymentMethodResponse[] $recurringPaymentMethods
+     * @param PaymentMethodResponse[] $availablePaymentMethods
+     * @param PaymentMethod[] $paymentMethodsConfiguration
+     *
+     * @return PaymentMethodResponse[]
+     */
+    private function filterRecurringPaymentMethods(
+        array $recurringPaymentMethods,
+        array $availablePaymentMethods,
+        array $paymentMethodsConfiguration
+    ): array {
+        $paymentMethodsMap = [];
+
+        foreach ($availablePaymentMethods as $paymentMethod) {
+            $paymentMethodsMap[$paymentMethod->getType()] = $paymentMethod;
+        }
+
+        return array_values(
+            array_filter(
+                $this->filterDisabledTokenizationPaymentMethods($recurringPaymentMethods, $paymentMethodsConfiguration),
+                static function ($paymentMethodResponse) use ($paymentMethodsMap) {
+                    return isset($paymentMethodsMap[$paymentMethodResponse->getType()]);
+                }
+            )
+        );
+    }
+
+    /**
+     * Return only payment methods that have enabled tokenization in payment method config.
+     *
+     * @param PaymentMethodResponse[] $recurringPaymentMethods
+     * @param PaymentMethod[] $paymentMethodsConfiguration
+     *
+     * @return array
+     */
+    private function filterDisabledTokenizationPaymentMethods(
+        array $recurringPaymentMethods,
+        array $paymentMethodsConfiguration
+    ): array {
+        return array_filter(
+            $recurringPaymentMethods,
+            function ($recurringPaymentMethod) use ($paymentMethodsConfiguration) {
+                foreach ($paymentMethodsConfiguration as $configuredPaymentMethod) {
+                    if ($configuredPaymentMethod->getCode() === $recurringPaymentMethod->getType() &&
+                        $configuredPaymentMethod->getEnableTokenization()) {
+                        return true;
+                    }
+                }
+                return false;
+            }
         );
     }
 }

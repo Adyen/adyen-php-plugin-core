@@ -2,6 +2,8 @@
 
 namespace Adyen\Core\BusinessLogic\DataAccess\TransactionHistory\Entities;
 
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Models\PaymentLink;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Models\PaymentLink as DomainPaymentLink;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidCurrencyCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
@@ -75,6 +77,11 @@ class TransactionHistory extends Entity
             Currency::fromIsoCode(self::getDataValue($transactionHistory, 'currency')),
             $this->historyItemCollectionFromArray(self::getDataValue($transactionHistory, 'historyItemCollection'))
         );
+
+        $paymentLink = self::getDataValue($transactionHistory, 'paymentLink');
+        if (!empty($paymentLink)) {
+            $this->paymentLinkFromArray($paymentLink);
+        }
     }
 
     /**
@@ -153,7 +160,9 @@ class TransactionHistory extends Entity
             'isLive' => $this->transactionHistory->isLive(),
             'captureType' => $this->transactionHistory->getCaptureType()->getType(),
             'captureDelay' => $this->transactionHistory->getCaptureDelay(),
-            'currency' => $this->transactionHistory->getCurrency() ? $this->transactionHistory->getCurrency()->getIsoCode() : Currency::getDefault()->getIsoCode()
+            'currency' => $this->transactionHistory->getCurrency() ? $this->transactionHistory->getCurrency(
+            )->getIsoCode() : Currency::getDefault()->getIsoCode(),
+            'paymentLink' => $this->paymentLinkToArray($this->transactionHistory->getPaymentLink())
         ];
     }
 
@@ -234,5 +243,28 @@ class TransactionHistory extends Entity
     private function amountFromArray(array $amount): Amount
     {
         return Amount::fromInt($amount['value'], Currency::fromIsoCode($amount['currency']));
+    }
+
+    /**
+     * @param PaymentLink|null $paymentLink
+     *
+     * @return array
+     */
+    private function paymentLinkToArray(?PaymentLink $paymentLink): array
+    {
+        return $paymentLink ? [
+            'url' => $paymentLink->getUrl(),
+            'expiresAt' => $paymentLink->getExpiresAt()
+        ] : [];
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return void
+     */
+    private function paymentLinkFromArray(array $data): void
+    {
+        $this->transactionHistory->setPaymentLink(new DomainPaymentLink($data['url'], $data['expiresAt']));
     }
 }

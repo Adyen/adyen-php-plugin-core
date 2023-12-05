@@ -18,6 +18,7 @@ use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\ApplePay
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\CardConfig;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\PaymentMethod as PaymentMethodModel;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\PaymentMethodResponse as PaymentMethodResponseModel;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\TokenType;
 use Adyen\Core\BusinessLogic\Domain\Payment\Proxies\PaymentProxy;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
 use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
@@ -154,7 +155,7 @@ class PaymentControllerTest extends BaseTestCase
         $this->expectException(Exception::class);
 
         // act
-        $result = StoreContext::doWithStore('1', [$this->controller, 'getConfiguredPaymentMethods']);
+        StoreContext::doWithStore('1', [$this->controller, 'getConfiguredPaymentMethods']);
     }
 
     public function testGetMethodById(): void
@@ -162,7 +163,7 @@ class PaymentControllerTest extends BaseTestCase
         // arrange
         $pm1 = new PaymentMethodModel(
             '1234',
-            'code',
+            'zip',
             'name',
             'logo',
             true,
@@ -173,7 +174,7 @@ class PaymentControllerTest extends BaseTestCase
         $entity1 = new PaymentMethod();
         $entity1->setStoreId('1');
         $entity1->setMethodId('1234');
-        $entity1->setCode('code');
+        $entity1->setCode('zip');
         $entity1->setPaymentMethod($pm1);
         $this->repository->save($entity1);
 
@@ -314,7 +315,7 @@ class PaymentControllerTest extends BaseTestCase
         // arrange
         $configuration = new PaymentMethodModel(
             '1234',
-            'code',
+            'zip',
             'name',
             'logo',
             true,
@@ -323,6 +324,7 @@ class PaymentControllerTest extends BaseTestCase
             'type',
             'description'
         );
+        $configuration->setTokenType(TokenType::subscription());
         $request = PaymentMethodRequest::parse(
             [
                 'methodId' => '1234',
@@ -333,7 +335,8 @@ class PaymentControllerTest extends BaseTestCase
                 'countries' => [],
                 'type' => 'type',
                 'description' => 'description',
-                'code' => 'code'
+                'code' => 'zip',
+                'tokenType' => 'Subscription'
             ]
         );
 
@@ -351,7 +354,7 @@ class PaymentControllerTest extends BaseTestCase
         // arrange
         $configuration = new PaymentMethodModel(
             '1234',
-            'code',
+            'scheme',
             'name',
             'logo',
             true,
@@ -360,6 +363,7 @@ class PaymentControllerTest extends BaseTestCase
             'type',
             'description'
         );
+
         $entity = new PaymentMethod();
         $entity->setPaymentMethod($configuration);
         $entity->setMethodId('1234');
@@ -368,7 +372,7 @@ class PaymentControllerTest extends BaseTestCase
         $this->repository->save($entity);
         $newConfig = new PaymentMethodModel(
             '1234',
-            'code',
+            'zip',
             'name1',
             'logo',
             true,
@@ -377,6 +381,7 @@ class PaymentControllerTest extends BaseTestCase
             'type1',
             'description2'
         );
+        $newConfig->setTokenType(TokenType::cardOnFile());
         $request = PaymentMethodRequest::parse(
             [
                 'methodId' => '1234',
@@ -385,9 +390,10 @@ class PaymentControllerTest extends BaseTestCase
                 'status' => true,
                 'currencies' => [],
                 'countries' => [],
-                'code' => 'code',
+                'code' => 'zip',
                 'type' => 'type1',
                 'description' => 'description2',
+                'tokenType' => 'CardOnFile'
             ]
         );
 
@@ -405,7 +411,7 @@ class PaymentControllerTest extends BaseTestCase
         $this->expectException(Exception::class);
         $configuration = new PaymentMethodModel(
             '1234',
-            'code',
+            'zip',
             'name',
             'code',
             true,

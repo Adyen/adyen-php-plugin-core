@@ -3,6 +3,8 @@
 namespace Adyen\Core\BusinessLogic\CheckoutAPI\PaymentRequest\Request;
 
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ShopperReference;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\PaymentRequestProcessor;
 
 /**
  * Class PaymentRequest
@@ -37,6 +39,10 @@ class StartTransactionRequest
      * @var array
      */
     private $sessionData;
+    /**
+     * @var ShopperReference|null
+     */
+    private $shopperReference;
 
     /**
      * PaymentRequest constructor.
@@ -53,7 +59,8 @@ class StartTransactionRequest
         string $reference,
         string $returnUrl,
         array $stateData,
-        array $checkoutSession = []
+        array $checkoutSession = [],
+        ?ShopperReference $shopperReference = null
     ) {
         $this->paymentMethodType = $paymentMethodType;
         $this->amount = $amount;
@@ -61,6 +68,7 @@ class StartTransactionRequest
         $this->returnUrl = $returnUrl;
         $this->stateData = $stateData;
         $this->sessionData = $checkoutSession;
+        $this->shopperReference = $shopperReference;
     }
 
     /**
@@ -109,5 +117,13 @@ class StartTransactionRequest
     public function getSessionData(): array
     {
         return $this->sessionData;
+    }
+
+    /**
+     * @return ShopperReference|null
+     */
+    public function getShopperReference(): ?ShopperReference
+    {
+        return $this->shopperReference;
     }
 }

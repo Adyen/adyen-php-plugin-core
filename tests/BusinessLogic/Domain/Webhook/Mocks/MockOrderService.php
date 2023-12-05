@@ -59,4 +59,8 @@ class MockOrderService implements OrderService
     {
         return '';
     }
+
+    public function updateOrderPayment(Webhook $webhook): void
+    {
+    }
 }

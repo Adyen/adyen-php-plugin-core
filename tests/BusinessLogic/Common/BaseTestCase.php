@@ -7,6 +7,7 @@ use Adyen\Core\BusinessLogic\AdminAPI\InfoSettings\Controller\DebugController;
 use Adyen\Core\BusinessLogic\AdminAPI\InfoSettings\Controller\SystemInfoController;
 use Adyen\Core\BusinessLogic\AdminAPI\InfoSettings\Controller\WebhookValidationController;
 use Adyen\Core\BusinessLogic\AdminAPI\Payment\Controller\PaymentController;
+use Adyen\Core\BusinessLogic\AdminAPI\PaymentLink\Controller\PaymentLinkController;
 use Adyen\Core\BusinessLogic\AdminAPI\ShopNotifications\Controller\ShopNotificationsController;
 use Adyen\Core\BusinessLogic\AdminAPI\Versions\Controller\VersionInfoController;
 use Adyen\Core\BusinessLogic\AdminAPI\WebhookNotifications\Controller\WebhookNotificationController;
@@ -19,7 +20,6 @@ use Adyen\Core\BusinessLogic\DataAccess\AdyenGivingSettings\Repositories\AdyenGi
 use Adyen\Core\BusinessLogic\DataAccess\Connection\Entities\ConnectionSettings;
 use Adyen\Core\BusinessLogic\DataAccess\Connection\Entities\ConnectionSettings as ConnectionSettingsEntity;
 use Adyen\Core\BusinessLogic\DataAccess\Disconnect\Entities\DisconnectTime;
-use Adyen\Core\BusinessLogic\DataAccess\GeneralSettings\Entities\GeneralSettings;
 use Adyen\Core\BusinessLogic\DataAccess\GeneralSettings\Entities\GeneralSettings as GeneralSettingsEntity;
 use Adyen\Core\BusinessLogic\DataAccess\GeneralSettings\Repositories\GeneralSettingsRepository;
 use Adyen\Core\BusinessLogic\DataAccess\Notifications\Entities\Notification as NotificationEntity;
@@ -40,6 +40,9 @@ use Adyen\Core\BusinessLogic\Domain\Cancel\Proxies\CancelProxy;
 use Adyen\Core\BusinessLogic\Domain\Capture\Handlers\CaptureHandler;
 use Adyen\Core\BusinessLogic\Domain\Capture\Proxies\CaptureProxy;
 use Adyen\Core\BusinessLogic\Domain\Checkout\AdyenGiving\Repositories\DonationsDataRepository;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Factory\PaymentLinkRequestFactory;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Proxies\PaymentLinkProxy;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Services\PaymentLinkService;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Proxies\PaymentsProxy;
 use Adyen\Core\BusinessLogic\Domain\Connection\Proxies\ConnectionProxy;
 use Adyen\Core\BusinessLogic\Domain\Connection\Repositories\ConnectionSettingsRepository;
@@ -308,6 +311,13 @@ class BaseTestCase extends TestCase
                     TestServiceRegister::getService(PaymentsProxy::class)
                 );
             },
+            PaymentLinkService::class => function () {
+                return new PaymentLinkService(
+                    TestServiceRegister::getService(PaymentLinkProxy::class),
+                    new PaymentLinkRequestFactory(),
+                    TestServiceRegister::getService(TransactionHistoryService::class)
+                );
+            },
             ShopNotificationService::class => function () {
                 return new ShopNotificationService(
                     TestServiceRegister::getService(ShopNotificationRepositoryInterface::class),
@@ -333,6 +343,11 @@ class BaseTestCase extends TestCase
             DebugController::class => function () {
                 return new DebugController(
                     TestServiceRegister::getService(Configuration::class)
+                );
+            },
+            PaymentLinkController::class => function () {
+                return new PaymentLinkController(
+                    TestServiceRegister::getService(PaymentLinkService::class)
                 );
             },
             SystemInfoController::class => function () {

@@ -192,6 +192,10 @@ class PaymentService
      */
     protected function findManagementMethod(PaymentMethod $method, array $managementMethods): ?PaymentMethodResponse
     {
+        if ($method->getCode() === self::CREDIT_CARD_CODE) {
+            return $this->getCreditCardManagementMethodWithFilteredCurrencies($managementMethods);
+        }
+
         foreach ($managementMethods as $managementMethod) {
             if ($method->getCode() === $managementMethod->getCode() ||
                 ($this->isCardMethod($managementMethod) && $method->getCode() === self::CREDIT_CARD_CODE) ||
@@ -432,5 +436,52 @@ class PaymentService
     protected function getAllowedPaymentMethods(): array
     {
         return PaymentMethodCode::SUPPORTED_PAYMENT_METHODS;
+    }
+
+
+    /**
+     * @param array $managementMethods
+     *
+     * @return PaymentMethodResponse|null
+     */
+    private function getCreditCardManagementMethodWithFilteredCurrencies(array $managementMethods
+    ): ?PaymentMethodResponse {
+        $managementMethods = $this->getCreditCardManagementMethods($managementMethods);
+
+        if (empty($managementMethods)) {
+            return null;
+        }
+
+        $method = $managementMethods[0];
+
+        if (in_array('ANY', $method->getCurrencies())) {
+            return $method;
+        }
+
+        foreach (array_slice($managementMethods, 1) as $managementMethod) {
+            if (in_array('ANY', $managementMethod->getCurrencies())) {
+                return $managementMethod;
+            }
+
+            $method->setCurrencies(
+                array_unique(array_merge($method->getCurrencies(), $managementMethod->getCurrencies()))
+            );
+        }
+
+        return $method;
+    }
+
+    /**
+     * @param array $managementMethods
+     *
+     * @return array
+     */
+    private function getCreditCardManagementMethods(array $managementMethods): array
+    {
+        return array_values(
+            array_filter($managementMethods, function ($method) {
+                return $this->isCardMethod($method);
+            })
+        );
     }
 }

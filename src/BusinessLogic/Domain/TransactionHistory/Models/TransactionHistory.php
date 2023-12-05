@@ -2,6 +2,7 @@
 
 namespace Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models;
 
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Models\PaymentLink;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\CurrencyMismatchException;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
@@ -62,6 +63,11 @@ class TransactionHistory
     private $currency;
 
     /**
+     * @var PaymentLink|null
+     */
+    private $paymentLink;
+
+    /**
      * @param string $merchantReference
      * @param CaptureType $captureType
      * @param int $captureDelay
@@ -111,8 +117,12 @@ class TransactionHistory
             );
         }
 
-        if ($this->historyItemCollection->isEmpty()) {
+        if ($item->getEventCode() === 'AUTHORISATION' && $item->getPspReference() !== $this->originalPspReference) {
             $this->originalPspReference = $item->getPspReference();
+            $this->paymentLink = null;
+        }
+
+        if ($this->historyItemCollection->isEmpty()) {
             $this->merchantReference = $item->getMerchantReference();
             $this->paymentMethod = $item->getPaymentMethod();
             $this->isLive = $item->isLive();
@@ -135,7 +145,9 @@ class TransactionHistory
      */
     public function getTotalAmountForEventCode(string $eventCode): Amount
     {
-        return $this->historyItemCollection->filterByEventCode($eventCode)->filterByStatus(true)->getTotalAmount($this->currency);
+        return $this->historyItemCollection->filterByEventCode($eventCode)->filterByStatus(true)->getTotalAmount(
+            $this->currency
+        );
     }
 
     /**
@@ -159,9 +171,12 @@ class TransactionHistory
             return Amount::fromInt(0, $this->currency);
         }
 
-        $authorisedDate = TimeProvider::getInstance()->deserializeDateString($authorisedItem->getDateAndTime())->getTimestamp();
+        $authorisedDate = TimeProvider::getInstance()->deserializeDateString(
+            $authorisedItem->getDateAndTime()
+        )->getTimestamp();
 
-        if ($authorisedDate + $this->captureDelay * 3600 < TimeProvider::getInstance()->getCurrentLocalTime()->getTimestamp()) {
+        if ($authorisedDate + $this->captureDelay * 3600 < TimeProvider::getInstance()->getCurrentLocalTime(
+            )->getTimestamp()) {
             return $this->getTotalAmountForEventCode('AUTHORISATION');
         }
 
@@ -258,5 +273,34 @@ class TransactionHistory
     public function getCurrency(): ?Currency
     {
         return $this->currency;
+    }
+
+    /**
+     * @return PaymentLink|null
+     */
+    public function getPaymentLink(): ?PaymentLink
+    {
+        if (!$this->paymentLink) {
+            return $this->paymentLink;
+        }
+
+        $now = TimeProvider::getInstance()->getCurrentLocalTime();
+        $expiresAt = TimeProvider::getInstance()->deserializeDateString($this->paymentLink->getExpiresAt());
+
+        if ($now > $expiresAt) {
+            return null;
+        }
+
+        return $this->paymentLink;
+    }
+
+    /**
+     * @param PaymentLink|null $paymentLink
+     *
+     * @return void
+     */
+    public function setPaymentLink(?PaymentLink $paymentLink): void
+    {
+        $this->paymentLink = $paymentLink;
     }
 }

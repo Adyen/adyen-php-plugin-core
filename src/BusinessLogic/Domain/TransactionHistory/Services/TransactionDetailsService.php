@@ -8,10 +8,12 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
+use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsService;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\PaymentMethod;
 use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
+use Adyen\Core\Infrastructure\Utility\TimeProvider;
 
 /**
  * Class TransactionDetailsService
@@ -28,17 +30,24 @@ class TransactionDetailsService
      * @var TransactionHistoryService
      */
     private $historyService;
+    /**
+     * @var GeneralSettingsService
+     */
+    private $generalSettingsService;
 
     /**
      * @param ConnectionService $connectionService
      * @param TransactionHistoryService $historyService
+     * @param GeneralSettingsService $generalSettingsService
      */
     public function __construct(
         ConnectionService $connectionService,
-        TransactionHistoryService $historyService
+        TransactionHistoryService $historyService,
+        GeneralSettingsService $generalSettingsService
     ) {
         $this->connectionService = $connectionService;
         $this->historyService = $historyService;
+        $this->generalSettingsService = $generalSettingsService;
     }
 
     /**
@@ -48,6 +57,7 @@ class TransactionDetailsService
      * @return array
      *
      * @throws InvalidMerchantReferenceException
+     * @throws InvalidPaymentMethodCodeException
      */
     public function getTransactionDetails(string $merchantReference, string $storeId): array
     {
@@ -83,16 +93,16 @@ class TransactionDetailsService
         $url = $transactionHistory->getAdyenPaymentLinkFor(
             $transactionHistory->collection()->first()->getPspReference()
         );
-        $separateCapture = $isMerchantConnected && $this->isSeparateCaptureSupported(
+        $separateCapture = $isMerchantConnected && !empty($paymentMethod) && $this->isSeparateCaptureSupported(
                 $paymentMethod,
                 $transactionHistory,
                 $captureAmount,
                 $authorizationAmount
             );
-        $partialCapture = $isMerchantConnected &&
+        $partialCapture = $isMerchantConnected && !empty($paymentMethod) &&
             $this->isPartialCaptureSupported($paymentMethod, $transactionHistory, $captureAmount, $authorizationAmount);
         $refund = $isMerchantConnected && $this->isRefundSupported($paymentMethod, $refundAmount, $captureAmount);
-        $partialRefund = $isMerchantConnected && $this->isPartialRefundSupported(
+        $partialRefund = $isMerchantConnected && !empty($paymentMethod) && $this->isPartialRefundSupported(
                 $paymentMethod,
                 $refundAmount,
                 $captureAmount
@@ -103,7 +113,7 @@ class TransactionDetailsService
                 'pspReference' => $item->getPspReference(),
                 'date' => $item->getDateAndTime(),
                 'status' => $item->getStatus(),
-                'paymentMethod' => $this->getLogo($item->getPaymentMethod()),
+                'paymentMethod' => !empty($item->getPaymentMethod()) ? $this->getLogo($item->getPaymentMethod()) : '',
                 'eventCode' => $item->getEventCode(),
                 'success' => true,
                 'merchantAccountCode' => $connectionSettings ?
@@ -127,7 +137,10 @@ class TransactionDetailsService
                 'riskScore' => $transactionHistory->getRiskScore(),
                 'cancelSupported' => $isCaptureTypeKnown ? $cancel : true,
                 'paymentMethodType' => $item->getPaymentMethod(),
-                'paymentState' => $item->getPaymentState()
+                'paymentState' => $item->getPaymentState(),
+                'displayPaymentLink' => $this->shouldDisplayPaymentLink($transactionHistory),
+                'paymentLink' => $transactionHistory->getPaymentLink() ? $transactionHistory->getPaymentLink()->getUrl(
+                ) : ''
             ];
         }
 
@@ -287,5 +300,35 @@ class TransactionDetailsService
         }
 
         return PaymentMethodCode::parse($code);
+    }
+
+    /**
+     * @param TransactionHistory $transactionHistory
+     *
+     * @return bool
+     *
+     * @throws CurrencyMismatchException
+     */
+    private function shouldDisplayPaymentLink(TransactionHistory $transactionHistory): bool
+    {
+        $generalSettings = $this->generalSettingsService->getGeneralSettings();
+
+        if ($generalSettings && !$generalSettings->isEnablePayByLink()) {
+            return false;
+        }
+
+        if ($transactionHistory->collection()->isEmpty()) {
+            return true;
+        }
+
+        $item = $transactionHistory->collection()->last();
+
+        if (($item->getPaymentState() === 'failed' ||
+            $item->getPaymentState() === 'cancelled' ||
+            $transactionHistory->getTotalAmountForEventCode('CANCELLATION')->getPriceInCurrencyUnits() > 0)) {
+            return true;
+        }
+
+        return $item->getPaymentState() === 'new';
     }
 }

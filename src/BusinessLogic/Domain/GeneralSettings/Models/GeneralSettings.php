@@ -3,6 +3,7 @@
 namespace Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models;
 
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidCaptureDelayException;
+use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidDefaultExpirationTimeException;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidRetentionPeriodException;
 use Adyen\Core\BusinessLogic\Domain\Translations\Model\TranslatableLabel;
 
@@ -39,29 +40,54 @@ class GeneralSettings
     private $retentionPeriod;
 
     /**
+     * @var bool
+     */
+    private $enablePayByLink;
+
+    /**
+     * @var string
+     */
+    private $payByLinkTitle;
+
+    /**
+     * @var int
+     */
+    private $defaultLinkExpirationTime;
+
+    /**
      * @param bool $basketItemSync
      * @param CaptureType $captureType
      * @param string $captureDelay
      * @param string $shipmentStatus
      * @param string $retentionPeriod
+     * @param bool $enablePayByLink
+     * @param string $payByLinkTitle
+     * @param string $defaultLinkExpirationTime
      *
      * @throws InvalidCaptureDelayException
      * @throws InvalidRetentionPeriodException
+     * @throws InvalidDefaultExpirationTimeException
      */
     public function __construct(
         bool $basketItemSync,
         CaptureType $captureType,
         string $captureDelay = '1',
         string $shipmentStatus = '',
-        string $retentionPeriod = '60'
+        string $retentionPeriod = '60',
+        bool $enablePayByLink = true,
+        string $payByLinkTitle = 'Adyen Pay By Link',
+        string $defaultLinkExpirationTime = '7'
     ) {
-        $this->validate($captureDelay, $retentionPeriod);
+        $this->validate($captureDelay, $retentionPeriod, $defaultLinkExpirationTime);
 
         $this->basketItemSync = $basketItemSync;
         $this->captureType = $captureType;
         $this->captureDelay = $captureDelay;
         $this->shipmentStatus = $shipmentStatus;
         $this->retentionPeriod = $retentionPeriod;
+        $this->enablePayByLink = $enablePayByLink;
+        $this->payByLinkTitle = $payByLinkTitle;
+        $this->defaultLinkExpirationTime = $defaultLinkExpirationTime;
     }
 
     /**
@@ -121,14 +147,39 @@ class GeneralSettings
     }
 
     /**
+     * @return bool
+     */
+    public function isEnablePayByLink(): bool
+    {
+        return $this->enablePayByLink;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPayByLinkTitle(): string
+    {
+        return $this->payByLinkTitle;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDefaultLinkExpirationTime(): int
+    {
+        return $this->defaultLinkExpirationTime;
+    }
+
+    /**
      * Validates capture delay and retention period values.
      * Capture delay must be between 1 and 7.
      * Retention period must be at least 60.
      *
      * @throws InvalidCaptureDelayException
      * @throws InvalidRetentionPeriodException
+     * @throws InvalidDefaultExpirationTimeException
      */
-    private function validate(string $captureDelay, string $retentionPeriod): void
+    private function validate(string $captureDelay, string $retentionPeriod, string $defaultLinkExpirationTime): void
     {
         if (!ctype_digit($captureDelay) || $captureDelay < 1 || $captureDelay > 7) {
             throw new InvalidCaptureDelayException(
@@ -139,6 +190,12 @@ class GeneralSettings
         if (!ctype_digit($retentionPeriod) || $retentionPeriod < 60) {
             throw new InvalidRetentionPeriodException(
                 new TranslatableLabel('Minimum number of retention period is 60.', 'generalSettings.retentionPeriodError')
+            );
+        }
+
+        if (!ctype_digit($defaultLinkExpirationTime) || $defaultLinkExpirationTime < 1) {
+            throw new InvalidDefaultExpirationTimeException(
+                new TranslatableLabel('Default link expiration time must me greater than 1.', 'generalSettings.defaultLinkExpirationTime')
             );
         }
     }

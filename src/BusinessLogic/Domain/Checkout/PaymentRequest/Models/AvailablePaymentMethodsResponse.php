@@ -17,19 +17,26 @@ class AvailablePaymentMethodsResponse
      * @var PaymentMethodResponse[]
      */
     private $storedPaymentMethodsResponse;
+    /**
+     * @var PaymentMethodResponse[]
+     */
+    private $recurringPaymentMethodsResponse;
 
     /**
      * AvailablePaymentMethodsResponse constructor.
      *
      * @param PaymentMethodResponse[] $paymentMethodsResponse Available payment methods to show on the checkout
      * @param PaymentMethodResponse[] $storedPaymentMethodsResponse Available stored payment methods to show on the checkout
+     * @param PaymentMethodResponse[] $recurringPaymentMethodsResponse Available recurring payment methods to show on the checkout
      */
     public function __construct(
         array $paymentMethodsResponse = [],
-        array $storedPaymentMethodsResponse = []
+        array $storedPaymentMethodsResponse = [],
+        array $recurringPaymentMethodsResponse = []
     ) {
         $this->paymentMethodsResponse = $paymentMethodsResponse;
         $this->storedPaymentMethodsResponse = $storedPaymentMethodsResponse;
+        $this->recurringPaymentMethodsResponse = $recurringPaymentMethodsResponse;
     }
 
     /**
@@ -46,5 +53,13 @@ class AvailablePaymentMethodsResponse
     public function getStoredPaymentMethodsResponse(): array
     {
         return $this->storedPaymentMethodsResponse;
+    }
+
+    /**
+     * @return PaymentMethodResponse[]
+     */
+    public function getRecurringPaymentMethodsResponse(): array
+    {
+        return $this->recurringPaymentMethodsResponse;
     }
 }

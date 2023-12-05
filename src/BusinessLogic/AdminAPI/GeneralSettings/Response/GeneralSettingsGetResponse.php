@@ -33,11 +33,14 @@ class GeneralSettingsGetResponse extends Response
     public function toArray(): array
     {
         return $this->generalSettings ? $this->transformGeneralSettings() : [
-                'basketItemSync' => false,
-                'capture' => '',
-                'captureDelay' => '',
-                'shipmentStatus' => '',
-                'retentionPeriod' => '60'
+            'basketItemSync' => false,
+            'capture' => '',
+            'captureDelay' => '',
+            'shipmentStatus' => '',
+            'retentionPeriod' => '60',
+            'enablePayByLink' => false,
+            'payByLinkTitle' => 'Adyen Pay By Link',
+            'defaultLinkExpirationTime' => 7
         ];
     }
 
@@ -51,7 +54,10 @@ class GeneralSettingsGetResponse extends Response
             'capture' => $this->generalSettings->getCapture()->getType(),
             'captureDelay' => $this->generalSettings->getCaptureDelay(),
             'shipmentStatus' => $this->generalSettings->getShipmentStatus(),
-            'retentionPeriod' => $this->generalSettings->getRetentionPeriod()
+            'retentionPeriod' => $this->generalSettings->getRetentionPeriod(),
+            'enablePayByLink' => $this->generalSettings->isEnablePayByLink(),
+            'payByLinkTitle' => $this->generalSettings->getPayByLinkTitle(),
+            'defaultLinkExpirationTime' => $this->generalSettings->getDefaultLinkExpirationTime()
         ];
     }
 }

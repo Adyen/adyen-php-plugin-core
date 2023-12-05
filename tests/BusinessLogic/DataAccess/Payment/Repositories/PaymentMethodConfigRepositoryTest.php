@@ -38,7 +38,7 @@ class PaymentMethodConfigRepositoryTest extends BaseTestCase
         // arrange
         $pm1 = new PaymentMethodModel(
             '1234',
-            'code',
+            'zip',
             'name',
             'logo',
             true,
@@ -54,7 +54,7 @@ class PaymentMethodConfigRepositoryTest extends BaseTestCase
         $this->repository->save($entity1);
         $pm2 = new PaymentMethodModel(
             '2345',
-            'code',
+            'zip',
             'name1',
             'logo1',
             true,
@@ -66,7 +66,7 @@ class PaymentMethodConfigRepositoryTest extends BaseTestCase
         $entity2->setStoreId('1');
         $entity2->setMethodId('2345');
         $entity2->setPaymentMethod($pm2);
-        $entity2->setCode('code');
+        $entity2->setCode('zip');
         $this->repository->save($entity2);
 
         // act
@@ -81,7 +81,7 @@ class PaymentMethodConfigRepositoryTest extends BaseTestCase
         // arrange
         $pm1 = new PaymentMethodModel(
             '1234',
-            'code',
+            'scheme',
             'name',
             'logo',
             true,
@@ -98,7 +98,7 @@ class PaymentMethodConfigRepositoryTest extends BaseTestCase
         $this->repository->save($entity1);
         $pm2 = new PaymentMethodModel(
             '2345',
-            'code',
+            'zip',
             'name1',
             'logo1',
             true,

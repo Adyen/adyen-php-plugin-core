@@ -400,6 +400,8 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
 
     /**
      * @return TransactionHistory
+     *
+     * @throws InvalidMerchantReferenceException
      */
     private function transactionHistory(): TransactionHistory
     {
@@ -407,7 +409,7 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
                 new HistoryItem(
                     'originalPsp',
                     'merchantRef',
-                    'CODE1',
+                    EventCodes::AUTHORISATION,
                     'paymentState',
                     'date',
                     true,

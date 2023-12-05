@@ -39,4 +39,11 @@ interface OrderService
      * @return string
      */
     public function getOrderUrl(string $merchantReference): string;
+
+    /**
+     * @param Webhook $webhook
+     *
+     * @return void
+     */
+    public function updateOrderPayment(Webhook $webhook): void;
 }

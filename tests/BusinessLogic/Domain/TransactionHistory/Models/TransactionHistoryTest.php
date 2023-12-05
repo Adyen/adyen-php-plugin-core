@@ -5,10 +5,13 @@ namespace Adyen\Core\Tests\BusinessLogic\Domain\TransactionHistory\Models;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\CurrencyMismatchException;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
 use Adyen\Core\Tests\BusinessLogic\Common\BaseTestCase;
+use Adyen\Webhook\EventCodes;
+use Adyen\Webhook\PaymentStates;
 
 /**
  * Class TransactionHistoryTest
@@ -27,7 +30,7 @@ class TransactionHistoryTest extends BaseTestCase
         $item = new HistoryItem(
             'pspRef',
             'merchantRef',
-            'CODE',
+            EventCodes::AUTHORISATION,
             'paymentState',
             'date',
             true,
@@ -57,7 +60,7 @@ class TransactionHistoryTest extends BaseTestCase
         $item1 = new HistoryItem(
             'pspRef',
             'merchantRef',
-            'CODE',
+            EventCodes::AUTHORISATION,
             'paymentState',
             'date',
             true,

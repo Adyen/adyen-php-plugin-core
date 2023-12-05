@@ -104,9 +104,6 @@ class OrderStatusMappingService implements OrderStatusProvider
         $lastTransactionHistoryItem = $transactionHistory->collection()->last();
         $previousPaymentState = $lastTransactionHistoryItem ? $lastTransactionHistoryItem->getPaymentState() : '';
         $capturedAmount = $transactionHistory->getCapturedAmount()->getPriceInCurrencyUnits();
-        $authorisedAmount = $transactionHistory->getTotalAmountForEventCode(
-            EventCodes::AUTHORISATION
-        )->getPriceInCurrencyUnits();
         $refundedAmount = $transactionHistory->getTotalAmountForEventCode(EventCodes::REFUND)->getPriceInCurrencyUnits(
         );
 
@@ -140,6 +137,19 @@ class OrderStatusMappingService implements OrderStatusProvider
         if ($webhook->isSuccess() && $webhook->getEventCode(
             ) === EventCodes::CAPTURE && $previousPaymentState === PaymentStates::STATE_REFUNDED) {
             $newState = PaymentStates::STATE_PARTIALLY_REFUNDED;
+        }
+
+        if ($webhook->isSuccess() &&
+            $webhook->getEventCode() === EventCodes::AUTHORISATION &&
+            $webhook->getPspReference() !== $transactionHistory->getOriginalPspReference() &&
+            ($previousPaymentState === PaymentStates::STATE_FAILED || $previousPaymentState === PaymentStates::STATE_CANCELLED)) {
+            $newState = PaymentStates::STATE_PAID;;
+        }
+
+        if (!$webhook->isSuccess() &&
+            $webhook->getEventCode() === EventCodes::AUTHORISATION &&
+            $webhook->getPspReference() !== $transactionHistory->getOriginalPspReference()) {
+            $newState = PaymentStates::STATE_FAILED;;
         }
 
         return $newState;
