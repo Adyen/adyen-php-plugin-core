@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [1.0.7 - 1.1.0](https://github.com/Adyen/adyen-php-plugin-core/compare/1.0.7...1.1.0) - 2023-12-05
+- Breaking:
+  - Pay by link logic implemented
+  - Recurring payment logic implemented
+- Add compatability for PHP 8.1
+
 ## [1.0.6 - 1.0.7](https://github.com/Adyen/adyen-php-plugin-core/compare/1.0.6...1.0.7) - 2023-11-28
 - Refactor message when unsupported webhook event code is processed 
 - Add compatability for HTTP Authorisation with PHP in CGI-mode
