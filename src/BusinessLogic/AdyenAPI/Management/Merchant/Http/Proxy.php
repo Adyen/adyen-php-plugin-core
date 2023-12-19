@@ -21,18 +21,23 @@ class Proxy extends AuthorizedProxy implements MerchantProxy
      */
     public function getMerchants(): array
     {
-        $request = new HttpRequest('/merchants');
         try {
-            $response = $this->get($request);
+            $page = 1;
+            $response = $this->getMerchantsByPage($page);
+            $result = $this->transformBodyToMerchant($response['data'] ?? []);
+            while (!empty($response['data'])) {
+                $page++;
+                $response = $this->getMerchantsByPage($page);
+                /** @noinspection SlowArrayOperationsInLoopInspection */
+                $result = array_merge($result, $this->transformBodyToMerchant($response['data'] ?? []));
+            }
         } catch (HttpRequestException $e) {
             Logger::logError($e->getMessage());
 
             return [];
         }
 
-        $responseBody = $response->decodeBodyToArray();
-
-        return isset($responseBody['data']) ? $this->transformBodyToMerchant($responseBody['data']) : [];
+        return $result;
     }
 
     /**
@@ -89,5 +94,26 @@ class Proxy extends AuthorizedProxy implements MerchantProxy
         }
 
         return $merchants;
+    }
+
+    /**
+     * @param int $page
+     *
+     * @return array
+     *
+     * @throws HttpRequestException
+     */
+    private function getMerchantsByPage(int $page): array
+    {
+        $request = new HttpRequest(
+            '/merchants',
+            [],
+            [
+                'pageNumber' => $page,
+                'pageSize' => 100
+            ]
+        );
+
+        return $this->get($request)->decodeBodyToArray();
     }
 }
