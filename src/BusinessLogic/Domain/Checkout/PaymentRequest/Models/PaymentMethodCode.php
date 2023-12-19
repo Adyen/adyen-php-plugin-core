@@ -116,6 +116,7 @@ class PaymentMethodCode
         //</editor-fold>
         self::PAYSAFECARD,
         self::TWINT,
+        self::ALMA
     ];
 
     public const CAPTURE_SUPPORTED = [
@@ -203,6 +204,7 @@ class PaymentMethodCode
         self::PROSODIE_ILLICADO,
         //</editor-fold>
         self::TWINT,
+        self::ALMA
     ];
 
     public const PARTIAL_CAPTURE_SUPPORTED = [
@@ -235,6 +237,7 @@ class PaymentMethodCode
         self::VIPPS,
         self::ZIP,
         self::TWINT,
+        self::ALMA
     ];
 
     public const REFUND_SUPPORTED = [
@@ -338,7 +341,8 @@ class PaymentMethodCode
         self::PROSODIE_ILLICADO,
         //</editor-fold>
         self::PAYSAFECARD,
-        self::TWINT
+        self::TWINT,
+        self::ALMA
     ];
 
     public const PARTIAL_REFUND_SUPPORTED = [
@@ -440,7 +444,8 @@ class PaymentMethodCode
         self::YOURGIFT,
         self::PROSODIE_ILLICADO,
         //</editor-fold>
-        self::TWINT
+        self::TWINT,
+        self::ALMA
     ];
     public const PAYMENT_LINK_SUPPORTED = [
         self::ACH,
@@ -527,7 +532,8 @@ class PaymentMethodCode
         self::PAYSAFECARD,
         //</editor-fold>
         self::TWINT,
-        self::BCMC_MOBILE
+        self::BCMC_MOBILE,
+        self::ALMA
     ];
     public const RECURRING_PAYMENTS_SUPPORTED = [
         self::ACH,
@@ -599,6 +605,7 @@ class PaymentMethodCode
     private const VIPPS = 'vipps';
     private const ZIP = 'zip';
     private const WECHATPAYQR = 'wechatpayQR';
+    private const ALMA = 'alma';
 
     //<editor-fold desc="Gift cards" defaultstate="collapsed">
     private const GIFTCARD = 'giftcard';

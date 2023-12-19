@@ -21,6 +21,7 @@ interface PaymentMethodType
         'clearpay' => 'buyNowPayLater',
         'klarna' => 'buyNowPayLater',
         'klarna_account' => 'buyNowPayLater',
+        'alma' => 'buyNowPayLater',
         'multibanco' => 'cashOrAtm',
         'ach' => 'directDebit',
         'sepadirectdebit' => 'directDebit',
