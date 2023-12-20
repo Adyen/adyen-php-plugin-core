@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [1.1.0 - 1.1.1](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.0...1.1.1) - 2023-12-20
+- Add support for Alma payment method
+- Add pagination when fetching merchants
+
 ## [1.0.7 - 1.1.0](https://github.com/Adyen/adyen-php-plugin-core/compare/1.0.7...1.1.0) - 2023-12-05
 - Breaking:
   - Pay by link logic implemented
