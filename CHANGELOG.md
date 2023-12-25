@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [1.1.1 - 1.1.2](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.1...1.1.2) - 2023-12-25
+- Fix Adyen Recurring API URL
+
 ## [1.1.0 - 1.1.1](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.0...1.1.1) - 2023-12-20
 - Add support for Alma payment method
 - Add pagination when fetching merchants
