@@ -42,8 +42,6 @@ class Proxy extends AuthorizedProxy implements StoredDetailsProxy
      * @param string $merchant
      *
      * @return PaymentMethodResponse[]
-     *
-     * @throws HttpRequestException
      */
     public function getStoredPaymentDetails(ShopperReference $shopperReference, string $merchant): array
     {
@@ -59,7 +57,7 @@ class Proxy extends AuthorizedProxy implements StoredDetailsProxy
                 ' because ' . $e->getMessage()
             );
 
-            throw $e;
+            return [];
         }
     }
 
@@ -83,7 +81,7 @@ class Proxy extends AuthorizedProxy implements StoredDetailsProxy
         return array_map(static function (array $method) {
             return new PaymentMethodResponse(
                 $method['RecurringDetail']['variant'] ?? '',
-                    $method['RecurringDetail']['variant'] ?? '',
+                $method['RecurringDetail']['variant'] ?? '',
                 $method
             );
         }, $response);

@@ -26,7 +26,6 @@ class ProxyFactory
      * @return T
      *
      * @throws ConnectionSettingsNotFoundException
-     * @throws APIClientPrefixDoesNotExistException
      */
     public static function makeProxy(string $class)
     {
@@ -38,13 +37,7 @@ class ProxyFactory
 
         $url = self::RECURRING_API_TEST_URL;
         if ($connectionSettings->getMode() === Mode::MODE_LIVE) {
-            $clientPrefix = $connectionSettings->getLiveData()->getClientPrefix();
-
-            if (!$clientPrefix) {
-                throw new APIClientPrefixDoesNotExistException('Client key not found.');
-            }
-
-            $url = $clientPrefix . '-' . self::RECURRING_API_LIVE_URL;
+            $url = self::RECURRING_API_LIVE_URL;
         }
 
         return new $class(

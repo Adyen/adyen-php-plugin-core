@@ -93,6 +93,6 @@ class ProxyFactoryTest extends BaseTestCase
         // assert
         self::assertInstanceOf(MockProxy::class, $proxy);
         self::assertEquals('1234567890', $proxy->getApiKey());
-        self::assertEquals('https://live-key-' . ProxyFactory::RECURRING_API_LIVE_URL, $proxy->getUrl());
+        self::assertEquals('https://' . ProxyFactory::RECURRING_API_LIVE_URL, $proxy->getUrl());
     }
 }
