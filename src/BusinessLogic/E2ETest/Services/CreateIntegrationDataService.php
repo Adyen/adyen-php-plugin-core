@@ -7,6 +7,11 @@ use Adyen\Core\BusinessLogic\AdminAPI\Connection\Request\ConnectionRequest;
 use Adyen\Core\BusinessLogic\AdminAPI\GeneralSettings\Request\GeneralSettingsRequest;
 use Adyen\Core\BusinessLogic\AdminAPI\Payment\Request\PaymentMethodRequest;
 use Adyen\Core\BusinessLogic\AdyenAPI\Exceptions\ConnectionSettingsNotFoundException;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\DataBag;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\StartTransactionRequestContext;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\ApiCredentialsDoNotExistException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\ApiKeyCompanyLevelException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\EmptyConnectionDataException;
@@ -21,11 +26,21 @@ use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\UserDoesNotHaveNecessa
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidCaptureDelayException;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidCaptureTypeException;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidRetentionPeriodException;
+use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\Merchant\Exceptions\ClientKeyGenerationFailedException;
+use Adyen\Core\BusinessLogic\Domain\Multistore\StoreContext;
 use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\PaymentMethodDataEmptyException;
+use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Exceptions\FailedToGenerateHmacException;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Exceptions\FailedToRegisterWebhookException;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Exceptions\MerchantDoesNotExistException;
+use Adyen\Core\BusinessLogic\Domain\Webhook\Models\WebhookConfig;
+use Adyen\Core\BusinessLogic\Domain\Webhook\Repositories\WebhookConfigRepository;
+use Adyen\Core\Infrastructure\Configuration\ConfigurationManager;
+use Adyen\Core\Infrastructure\Http\Exceptions\HttpRequestException;
+use Adyen\Core\Infrastructure\ORM\Exceptions\QueryFilterInvalidParamException;
+use Adyen\Core\Infrastructure\ServiceRegister;
+use Exception;
 
 /**
  * Class CreateIntegrationDataService
@@ -124,18 +139,22 @@ class CreateIntegrationDataService
     /**
      * Creates GeneralSettings in database
      *
+     * @param bool $basketItemSync
      * @param string $captureType
      * @param string $captureDelay
      * @param string $shipmentStatus
+     * @param string $retentionPeriod
      * @return void
      * @throws InvalidCaptureDelayException
      * @throws InvalidCaptureTypeException
      * @throws InvalidRetentionPeriodException
      */
     public function createGeneralSettingsConfiguration(
-        string $captureType,
-        string $captureDelay,
-        string $shipmentStatus
+        bool   $basketItemSync = false,
+        string $captureType = '',
+        string $captureDelay = '',
+        string $shipmentStatus = '',
+        string $retentionPeriod = ''
     ): void
     {
         $generalSettingsData = $this->readFromJSONFile()['generalSettings'] ?? [];
@@ -144,11 +163,11 @@ class CreateIntegrationDataService
         }
 
         $generalSettingsRequest = new GeneralSettingsRequest(
-            $generalSettingsData['basketItemSync'] ?? false,
-            $captureType,
-            $captureDelay !== '' ? $captureDelay : 1,
+            $basketItemSync ?? $generalSettingsData['basketItemSync'],
+            $captureType ?? $generalSettingsData['capture'],
+            $captureDelay ?? $generalSettingsData['captureDelay'],
             $shipmentStatus,
-            $generalSettingsData['retentionPeriod'] ?? ''
+            $retentionPeriod ?? $generalSettingsData['retentionPeriod']
         );
         AdminAPI::get()->generalSettings(1)->saveGeneralSettings($generalSettingsRequest);
     }
@@ -165,6 +184,91 @@ class CreateIntegrationDataService
     }
 
     /**
+     * Saves test hostname in database
+     *
+     * @param string $url
+     * @return void
+     * @throws QueryFilterInvalidParamException
+     */
+    public function saveTestHostname(string $url): void
+    {
+        $host = parse_url($url)['host'];
+        $this->getConfigurationManager()->saveConfigValue('testHostname', $host);
+    }
+
+    /**
+     * Returns webhook config data
+     *
+     * @return array
+     * @throws HttpRequestException
+     * @throws Exception
+     */
+    public function getWebhookAuthorizationData(): array
+    {
+        /** @var WebhookConfig $webhookConfig */
+        $webhookConfig = StoreContext::doWithStore(1, function () {
+            return $this->getWebhookConfigRepository()->getWebhookConfig();
+        });
+
+        if (!$webhookConfig) {
+            throw new HttpRequestException(
+                'Hmac is undefined due to the unsuccessful creation of the webhook and hmac on the Adyen API.'
+            );
+        }
+
+        $authData['username'] = $webhookConfig->getUsername();
+        $authData['password'] = $webhookConfig->getPassword();
+        $authData['hmac'] = $webhookConfig->getHmac();
+
+        return $authData;
+    }
+
+    /**
+     * Creates transaction history
+     *
+     * @param string $merchantReference
+     * @param float $totalAmount
+     * @param string $currency
+     * @param CaptureType $captureType
+     * @return void
+     * @throws Exception
+     */
+    private function createTransactionHistoryForOrder(
+        string      $merchantReference,
+        float       $totalAmount,
+        string      $currency,
+        CaptureType $captureType
+    ): void
+    {
+        StoreContext::doWithStore('1', static function () use (
+            $merchantReference,
+            $totalAmount,
+            $currency,
+            $captureType
+        ) {
+            $transactionContext = new StartTransactionRequestContext(
+                PaymentMethodCode::parse('scheme'),
+                Amount::fromFloat(
+                    $totalAmount,
+                    Currency::fromIsoCode(
+                        $currency
+                    )
+                ),
+                $merchantReference,
+                '',
+                new DataBag([]),
+                new DataBag([])
+            );
+            /** @var TransactionHistoryService $transactionHistoryService */
+            $transactionHistoryService = ServiceRegister::getService(TransactionHistoryService::class);
+            $transactionHistoryService->createTransactionHistory($transactionContext->getReference(),
+                $transactionContext->getAmount()->getCurrency(),
+                $captureType
+            );
+        });
+    }
+
+    /**
      * Reads from json file
      *
      * @return array
@@ -178,5 +282,23 @@ class CreateIntegrationDataService
         );
 
         return json_decode($jsonString, true);
+    }
+
+    /**
+     * @return ConfigurationManager
+     */
+    private function getConfigurationManager(): ConfigurationManager
+    {
+        return ServiceRegister::getService(ConfigurationManager::CLASS_NAME);
+    }
+
+    /**
+     * Returns WebhookConfigRepository instance
+     *
+     * @return WebhookConfigRepository
+     */
+    private function getWebhookConfigRepository(): WebhookConfigRepository
+    {
+        return ServiceRegister::getService(WebhookConfigRepository::class);
     }
 }
