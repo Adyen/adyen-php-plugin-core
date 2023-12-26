@@ -164,10 +164,10 @@ class CreateIntegrationDataService
 
         $generalSettingsRequest = new GeneralSettingsRequest(
             $basketItemSync ?? $generalSettingsData['basketItemSync'],
-            $captureType ?? $generalSettingsData['capture'],
-            $captureDelay ?? $generalSettingsData['captureDelay'],
+            $captureType !== '' ? $captureType : $generalSettingsData['capture'],
+            $captureDelay !== '' ? $captureDelay : $generalSettingsData['captureDelay'],
             $shipmentStatus,
-            $retentionPeriod ?? $generalSettingsData['retentionPeriod']
+            $retentionPeriod !== '' ? $retentionPeriod : $generalSettingsData['retentionPeriod']
         );
         AdminAPI::get()->generalSettings(1)->saveGeneralSettings($generalSettingsRequest);
     }
