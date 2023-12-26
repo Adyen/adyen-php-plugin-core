@@ -233,7 +233,7 @@ class CreateIntegrationDataService
      * @return void
      * @throws Exception
      */
-    private function createTransactionHistoryForOrder(
+    public function createTransactionHistoryForOrder(
         string      $merchantReference,
         float       $totalAmount,
         string      $currency,
