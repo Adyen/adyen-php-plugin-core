@@ -6,7 +6,7 @@
   "require": {
     "php": ">=7.2",
     "ext-json": "*",
-    "adyen/php-webhook-module": "dev-develop",
+    "adyen/php-webhook-module": "0.3.0",
     "ext-ctype": "*"
   },
   "autoload": {

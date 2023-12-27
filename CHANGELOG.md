@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [1.1.2 - 1.1.3](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.2...1.1.3) - 2023-12-27
+- Add event codes when webhook is registered
+
 ## [1.1.1 - 1.1.2](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.1...1.1.2) - 2023-12-25
 - Fix Adyen Recurring API URL
 
