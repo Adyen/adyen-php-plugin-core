@@ -16,6 +16,7 @@ use Adyen\Core\Tests\BusinessLogic\Common\BaseTestCase;
 use Adyen\Core\Tests\Infrastructure\Common\TestComponents\ORM\TestRepositoryRegistry;
 use Adyen\Core\Tests\Infrastructure\Common\TestComponents\TestHttpClient;
 use Adyen\Core\Tests\Infrastructure\Common\TestServiceRegister;
+use Adyen\Webhook\Receiver\HmacSignature;
 
 class ProxyTest extends BaseTestCase
 {
@@ -135,7 +136,10 @@ class ProxyTest extends BaseTestCase
                 'username' => 'username',
                 'password' => 'password',
                 'active' => true,
-                'communicationFormat' => 'json'
+                'communicationFormat' => 'json',
+                'additionalSettings' => [
+                    'includeEventCodes' => HmacSignature::getEditableSupportedEventCodes()
+                ]
             ],
             json_decode($lastRequest['body'], true)
         );

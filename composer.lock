@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8ac202ccc543ab997448ee86ba067929",
+    "content-hash": "63cfa9421a5eb6ab73e423a37c0c2cf8",
     "packages": [
         {
             "name": "adyen/php-webhook-module",
-            "version": "0.2.0",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "git@github.com:logeecom/adyen-php-webhook-module.git",
-                "reference": "0b94d935c98b8e91a4c6f5586657ed1de71bbd9d"
+                "reference": "cd114b3163a694400d9543686d0ad1a335184060"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/logeecom/adyen-php-webhook-module/zipball/0b94d935c98b8e91a4c6f5586657ed1de71bbd9d",
-                "reference": "0b94d935c98b8e91a4c6f5586657ed1de71bbd9d",
+                "url": "https://api.github.com/repos/logeecom/adyen-php-webhook-module/zipball/cd114b3163a694400d9543686d0ad1a335184060",
+                "reference": "cd114b3163a694400d9543686d0ad1a335184060",
                 "shasum": ""
             },
             "require": {
@@ -27,6 +27,7 @@
                 "phpunit/phpunit": "^9.5.0",
                 "squizlabs/php_codesniffer": "^3.5"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -47,7 +48,7 @@
                 }
             ],
             "description": "Webhook module for Adyen Payment Integrations",
-            "time": "2023-11-27T12:06:55+00:00"
+            "time": "2023-12-27T14:43:41+00:00"
         }
     ],
     "packages-dev": [
@@ -1930,7 +1931,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "adyen/php-webhook-module": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

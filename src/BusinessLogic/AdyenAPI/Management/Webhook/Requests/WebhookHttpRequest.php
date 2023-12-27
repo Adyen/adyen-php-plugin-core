@@ -4,6 +4,7 @@ namespace Adyen\Core\BusinessLogic\AdyenAPI\Management\Webhook\Requests;
 
 use Adyen\Core\BusinessLogic\AdyenAPI\Http\Requests\HttpRequest;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Models\WebhookRequest;
+use Adyen\Webhook\Receiver\HmacSignature;
 
 /**
  * Class WebhookHttpRequest
@@ -36,7 +37,10 @@ class WebhookHttpRequest extends HttpRequest
             'username' => $this->request->getUsername(),
             'password' => $this->request->getPassword(),
             'active' => true,
-            'communicationFormat' => self::COMMUNICATION_FORMAT
+            'communicationFormat' => self::COMMUNICATION_FORMAT,
+            'additionalSettings' => [
+                'includeEventCodes' => HmacSignature::getEditableSupportedEventCodes()
+            ]
         ];
     }
 }
