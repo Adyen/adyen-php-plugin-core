@@ -28,7 +28,7 @@ class Proxy extends AuthorizedProxy implements WebhookProxy
     {
         $request = new WebhookHttpRequest($webhook, "/merchants/$merchantId/webhooks", ['type' => self::WEBHOOK_TYPE]);
 
-        try{
+        try {
             $response = $this->post($request)->decodeBodyToArray();
         } catch (Exception $e) {
             return $this->retry($merchantId, $webhook, $e);
@@ -291,14 +291,17 @@ class Proxy extends AuthorizedProxy implements WebhookProxy
     private function testWebhookBody(): array
     {
         return [
-            "notification" => [
-                "paymentMethod" => "visa",
-                "eventCode" => "AUTHORISATION",
-                "amount" => "10",
-                "reason" => "Authorize visa payment",
-                "success" => true
+            'notification' => [
+                'paymentMethod' => 'visa',
+                'eventCode' => 'AUTHORISATION',
+                'amount' => [
+                    'currency' => 'EUR',
+                    'value' => 1000
+                ],
+                'reason' => 'Authorize visa payment',
+                'success' => true
             ],
-            "types" => ["CUSTOM", "AUTHORISATION"]
+            'types' => ['CUSTOM', 'AUTHORISATION']
         ];
     }
 }

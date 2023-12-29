@@ -512,6 +512,6 @@ class ProxyTest extends BaseTestCase
      */
     private function expectedTestBody(): string
     {
-        return "{\"notification\":{\"paymentMethod\":\"visa\",\"eventCode\":\"AUTHORISATION\",\"amount\":\"10\",\"reason\":\"Authorize visa payment\",\"success\":true},\"types\":[\"CUSTOM\",\"AUTHORISATION\"]}";
+        return "{\"notification\":{\"paymentMethod\":\"visa\",\"eventCode\":\"AUTHORISATION\",\"amount\":{\"currency\":\"EUR\",\"value\":1000},\"reason\":\"Authorize visa payment\",\"success\":true},\"types\":[\"CUSTOM\",\"AUTHORISATION\"]}";
     }
 }
