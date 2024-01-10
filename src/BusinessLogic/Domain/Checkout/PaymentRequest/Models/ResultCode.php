@@ -133,6 +133,11 @@ class ResultCode
         return $this->resultCode === self::RECEIVED;
     }
 
+    public function isPending(): bool
+    {
+        return $this->resultCode === self::PENDING;
+    }
+
     /**
      * @return string
      */

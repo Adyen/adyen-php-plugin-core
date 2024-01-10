@@ -69,6 +69,11 @@ class StartTransactionResponse extends Response
         return $this->result->getResultCode()->isRecieved();
     }
 
+    public function isPending(): bool
+    {
+        return $this->result->getResultCode()->isPending();
+    }
+
     public function toArray(): array
     {
         $responseData = [
