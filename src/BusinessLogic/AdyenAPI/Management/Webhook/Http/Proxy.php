@@ -301,7 +301,7 @@ class Proxy extends AuthorizedProxy implements WebhookProxy
                 'reason' => 'Authorize visa payment',
                 'success' => true
             ],
-            'types' => ['CUSTOM', 'AUTHORISATION']
+            'types' => ['CUSTOM']
         ];
     }
 }
