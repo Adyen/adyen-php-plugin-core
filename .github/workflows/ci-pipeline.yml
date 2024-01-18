@@ -2,7 +2,7 @@
 on:
   push:
     branches:
-      - feature/ci-pipeline
+      - main
 jobs: 
   run_unit_tests:
     strategy:
