@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [1.1.4 - 1.1.5](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.4...1.1.5) - 2024-01-11
+- Fix webhook test request body
+- Add method for checking if payment response is in pending status
+
 ## [1.1.3 - 1.1.4](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.3...1.1.4) - 2023-12-29
 - Fix webhook test request body
 
