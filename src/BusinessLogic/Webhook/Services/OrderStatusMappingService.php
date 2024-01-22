@@ -103,9 +103,8 @@ class OrderStatusMappingService implements OrderStatusProvider
     {
         $lastTransactionHistoryItem = $transactionHistory->collection()->last();
         $previousPaymentState = $lastTransactionHistoryItem ? $lastTransactionHistoryItem->getPaymentState() : '';
-        $capturedAmount = $transactionHistory->getCapturedAmount()->getPriceInCurrencyUnits();
-        $refundedAmount = $transactionHistory->getTotalAmountForEventCode(EventCodes::REFUND)->getPriceInCurrencyUnits(
-        );
+        $capturedAmount = $transactionHistory->getCapturedAmount();
+        $refundedAmount = $transactionHistory->getTotalAmountForEventCode(EventCodes::REFUND);
 
         if (empty($previousPaymentState)) {
             $previousPaymentState = PaymentStates::STATE_NEW;
@@ -128,9 +127,8 @@ class OrderStatusMappingService implements OrderStatusProvider
             $newState = PaymentStates::STATE_CANCELLED;
         }
 
-        if ($webhook->isSuccess() && $webhook->getEventCode(
-            ) === EventCodes::REFUND && $refundedAmount + $webhook->getAmount()->getPriceInCurrencyUnits(
-            ) < $capturedAmount) {
+        if ($webhook->isSuccess() && $webhook->getEventCode() === EventCodes::REFUND &&
+            $refundedAmount->plus($webhook->getAmount())->getValue() < $capturedAmount->getValue()) {
             $newState = PaymentStates::STATE_PARTIALLY_REFUNDED;
         }
 
