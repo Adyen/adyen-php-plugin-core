@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [1.1.5 - 1.1.6](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.5...1.1.6) - 20204-01-22
+- Set default value for default payment link expiration time.
+- Fix amount comparisons - switch to comparing in minor units.
+
 ## [1.1.4 - 1.1.5](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.4...1.1.5) - 2024-01-11
 - Fix webhook test request body
 - Add method for checking if payment response is in pending status
