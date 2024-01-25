@@ -88,28 +88,28 @@ class WebhookApiTest extends BaseTestCase
         self::assertTrue($response->isSuccessful());
     }
 
-//    /**
-//     * @return void
-//     *
-//     * @throws InvalidCurrencyCode
-//     * @throws WebhookConfigDoesntExistException
-//     * @throws AuthenticationException
-//     * @throws HMACKeyValidationException
-//     * @throws InvalidDataException
-//     * @throws MerchantAccountCodeException
-//     */
-//    public function testIsResponseFail(): void
-//    {
-//        // Arrange
-//        $this->payload = json_decode(
-//            file_get_contents(__DIR__ . '/../Common/ApiResponses/Webhook/invalidCredentials.json'),
-//            true
-//        );
-//        // Act
-//        $response = WebhookAPI::get()->webhookHandler('1')->handleRequest(
-//            $this->payload
-//        );
-//        // Assert
-//        self::assertFalse($response->isSuccessful());
-//    }
+    /**
+     * @return void
+     *
+     * @throws InvalidCurrencyCode
+     * @throws WebhookConfigDoesntExistException
+     * @throws AuthenticationException
+     * @throws HMACKeyValidationException
+     * @throws InvalidDataException
+     * @throws MerchantAccountCodeException
+     */
+    public function testIsResponseFail(): void
+    {
+        // Arrange
+        $this->payload = json_decode(
+            file_get_contents(__DIR__ . '/../Common/ApiResponses/Webhook/invalidCredentials.json'),
+            true
+        );
+        // Act
+        $response = WebhookAPI::get()->webhookHandler('1')->handleRequest(
+            $this->payload
+        );
+        // Assert
+        self::assertFalse($response->isSuccessful());
+    }
 }

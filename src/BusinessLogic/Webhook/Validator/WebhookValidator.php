@@ -77,9 +77,9 @@ class WebhookValidator
             );
         }
 
-//        if (!$notificationReceiver->validateHmac($notificationRequestItem, $webhookConfig->getHmac())
-//        ) {
-//            throw new InvalidWebhookException('Webhook validation failed. Invalid hmac signature.');
-//        }
+        if (!$notificationReceiver->validateHmac($notificationRequestItem, $webhookConfig->getHmac())
+        ) {
+            throw new InvalidWebhookException('Webhook validation failed. Invalid hmac signature.');
+        }
     }
 }
