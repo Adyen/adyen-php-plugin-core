@@ -54,7 +54,7 @@ class GeneralSettings extends Entity
             self::getDataValue($generalSettings, 'retentionPeriod'),
             self::getDataValue($generalSettings, 'enablePayByLink'),
             self::getDataValue($generalSettings, 'payByLinkTitle'),
-            self::getDataValue($generalSettings, 'defaultLinkExpirationTime')
+            self::getDataValue($generalSettings, 'defaultLinkExpirationTime', 7)
         );
     }
 
