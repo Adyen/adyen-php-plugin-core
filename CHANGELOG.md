@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
+- Add setCurrencies method to PaymentMethodResponse
+- Update User-Agent header in CurlHttpClient
 
 ## [1.1.5 - 1.1.6](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.5...1.1.6) - 20204-01-22
 - Set default value for default payment link expiration time.

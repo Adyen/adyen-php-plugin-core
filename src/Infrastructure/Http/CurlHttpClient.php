@@ -231,8 +231,8 @@ class CurlHttpClient extends HttpClient
         $this->curlOptions[CURLOPT_SSL_VERIFYPEER] = static::SSL_STRICT_MODE;
         $this->curlOptions[CURLOPT_SSL_VERIFYHOST] = static::SSL_STRICT_MODE;
         // Set default user agent, because for some shops if user agent is missing, request will not work.
-        $this->curlOptions[CURLOPT_USERAGENT] =
-            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36';
+        $this->curlOptions[CURLOPT_USERAGENT] = 'Adyen-Integration-Core-HTTPClient/1.0 Adyen-'
+            . $this->getConfigService()->getIntegrationName() . 'Module';
     }
 
     /**
