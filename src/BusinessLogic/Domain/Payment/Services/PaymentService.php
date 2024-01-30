@@ -445,7 +445,8 @@ class PaymentService
      * @return PaymentMethodResponse|null
      */
     private function getCreditCardManagementMethodWithFilteredCurrencies(array $managementMethods
-    ): ?PaymentMethodResponse {
+    ): ?PaymentMethodResponse
+    {
         $managementMethods = $this->getCreditCardManagementMethods($managementMethods);
 
         if (empty($managementMethods)) {
@@ -474,7 +475,7 @@ class PaymentService
     /**
      * @param array $managementMethods
      *
-     * @return array
+     * @return PaymentMethodResponse[]
      */
     private function getCreditCardManagementMethods(array $managementMethods): array
     {

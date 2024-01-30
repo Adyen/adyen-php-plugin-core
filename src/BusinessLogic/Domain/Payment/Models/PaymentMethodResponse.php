@@ -133,6 +133,16 @@ class PaymentMethodResponse
     }
 
     /**
+     * @param array $currencies
+     *
+     * @return void
+     */
+    public function setCurrencies(array $currencies): void
+    {
+        $this->currencies = $currencies;
+    }
+
+    /**
      * @return string
      */
     public function getLogo(): string
