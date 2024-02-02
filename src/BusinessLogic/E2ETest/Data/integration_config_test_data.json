@@ -1,0 +1,138 @@
+{
+  "authorizationData": {
+    "storeId": 1,
+    "mode": "test",
+    "testAPiKey": "{test_api_key}",
+    "testMerchantId": "LogeecomECOM",
+    "liveAPiKey": "",
+    "liveMerchantId": ""
+  },
+  "creditCard": {
+    "methodId": "PM3224P22322225FNZ7B8G5D2",
+    "code": "scheme",
+    "logo": "https://checkoutshopper-live.adyen.com/checkoutshopper/images/logos/card.svg",
+    "name": "Credit Card",
+    "description": "Adyen Credit Card",
+    "surchargeType": "none",
+    "percentSurcharge": "",
+    "fixedSurcharge": "",
+    "surchargeLimit": "",
+    "additionalData": {
+      "showLogos": true,
+      "singleClickPayment": true,
+      "sendBasket": true,
+      "installments": false
+    }
+  },
+  "ideal": {
+    "methodId": "PM32265223222D5HQM75V6FFG",
+    "code": "ideal",
+    "logo": "https://checkoutshopper-live.adyen.com/checkoutshopper/images/logos/ideal.svg",
+    "name": "iDEAL",
+    "description": "Adyen iDEAL",
+    "surchargeType": "none",
+    "percentSurcharge": "",
+    "fixedSurcharge": "",
+    "surchargeLimit": "",
+    "additionalData": {
+      "showLogos": true,
+      "bankIssuer": ""
+    }
+  },
+  "klarnaPayNow": {
+    "methodId": "PM3224P22322225FNZ7B8G4LV",
+    "code": "klarna_paynow",
+    "logo": "https://checkoutshopper-live.adyen.com/checkoutshopper/images/logos/klarna_paynow.svg",
+    "name": "Pay now with Klarna.",
+    "description": "Adyen Pay now with Klarna.",
+    "surchargeType": "none",
+    "percentSurcharge": "",
+    "fixedSurcharge": "",
+    "surchargeLimit": "",
+    "additionalData": {}
+  },
+  "klarnaPayLater": {
+    "methodId": "PM3224P22322225FNZ7B8G5B4",
+    "code": "klarna",
+    "logo": "https://checkoutshopper-live.adyen.com/checkoutshopper/images/logos/klarna.svg",
+    "name": "Pay later with Klarna.",
+    "description": "Adyen Pay later with Klarna.",
+    "surchargeType": "none",
+    "percentSurcharge": "",
+    "fixedSurcharge": "",
+    "surchargeLimit": "",
+    "additionalData": {}
+  },
+  "klarnaPayOverTime": {
+    "methodId": "PM3224P22322225FNZ7B8G586",
+    "code": "klarna_account",
+    "logo": "https://checkoutshopper-live.adyen.com/checkoutshopper/images/logos/klarna_account.svg",
+    "name": "Pay over time with Klarna.",
+    "description": "Adyen Pay over time with Klarna.",
+    "surchargeType": "none",
+    "percentSurcharge": "",
+    "fixedSurcharge": "",
+    "surchargeLimit": "",
+    "additionalData": {}
+  },
+  "twint": {
+    "methodId": "PM322PW223224L5GMTCKMGGBJ",
+    "code": "twint",
+    "logo": "https://checkoutshopper-live.adyen.com/checkoutshopper/images/logos/twint.svg",
+    "name": "TWINT",
+    "description": "Adyen TWINT",
+    "surchargeType": "none",
+    "percentSurcharge": "",
+    "fixedSurcharge": "",
+    "surchargeLimit": "",
+    "additionalData": {}
+  },
+  "bancontact": {
+    "methodId": "PM3224Q22322235HPDL5J4S88",
+    "code": "bcmc_mobile",
+    "logo": "https://checkoutshopper-live.adyen.com/checkoutshopper/images/logos/bcmc_mobile.svg",
+    "name": "Payconiq by Bancontact",
+    "description": "Adyen Payconiq by Bancontact",
+    "surchargeType": "none",
+    "percentSurcharge": "",
+    "fixedSurcharge": "",
+    "surchargeLimit": "",
+    "additionalData": {}
+  },
+  "payPal": {
+    "methodId": "PM3224R223224K5G2Z8W5GKH2",
+    "code": "paypal",
+    "logo": "https://checkoutshopper-live.adyen.com/checkoutshopper/images/logos/paypal.svg",
+    "name": "PayPal",
+    "description": "Adyen PayPal",
+    "surchargeType": "none",
+    "percentSurcharge": "",
+    "fixedSurcharge": "",
+    "surchargeLimit": "",
+    "additionalData": {
+      "displayButtonOn": true
+    }
+  },
+  "applePay": {
+    "methodId": "PM322PW223224W5HW558VGL7C",
+    "code": "applepay",
+    "logo": "https://checkoutshopper-live.adyen.com/checkoutshopper/images/logos/applepay.svg",
+    "name": "Apple Pay",
+    "description": "Adyen Apple Pay",
+    "surchargeType": "none",
+    "percentSurcharge": "",
+    "fixedSurcharge": "",
+    "surchargeLimit": "",
+    "additionalData": {
+      "merchantId": "000000000203160",
+      "merchantName": "LogeecomECOM",
+      "displayButtonOn": true
+    }
+  },
+  "generalSettings": {
+    "basketItemSync": false,
+    "capture": "manual",
+    "captureDelay": 1,
+    "retentionPeriod": "60"
+  }
+}

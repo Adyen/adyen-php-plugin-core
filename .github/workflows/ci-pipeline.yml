@@ -1,0 +1,27 @@
+﻿name: CI Pipeline
+on:
+  push:
+    branches:
+      - main
+jobs: 
+  run_unit_tests:
+    strategy:
+      fail-fast: false
+      matrix: 
+        php_version: ['7.2','7.4']
+        
+    name: Run Unit Tests for ${{ matrix.php_version }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php_version }}
+      - name: Install Composer Dependencies
+        run: composer install
+      - name: Execute Unit Tests
+        run: php vendor/bin/phpunit --configuration=phpunit.xml
+    
