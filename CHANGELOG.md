@@ -5,12 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [1.1.7 - 1.1.8](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.7...1.1.8) - 2024-02-02
+- Add necessary services and test data for the E2E tests
 
-## [1.1.6 - 1.1.7](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.6...1.1.7) - 20204-01-30
+## [1.1.6 - 1.1.7](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.6...1.1.7) - 2024-01-30
 - Add setCurrencies method to PaymentMethodResponse
 - Update User-Agent header in CurlHttpClient
 
-## [1.1.5 - 1.1.6](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.5...1.1.6) - 20204-01-22
+## [1.1.5 - 1.1.6](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.5...1.1.6) - 2024-01-22
 - Set default value for default payment link expiration time.
 - Fix amount comparisons - switch to comparing in minor units.
 
