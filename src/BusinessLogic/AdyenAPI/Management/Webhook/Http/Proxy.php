@@ -18,8 +18,12 @@ use Exception;
  */
 class Proxy extends AuthorizedProxy implements WebhookProxy
 {
+    /** @var int */
     private static $retries = 0;
+    /** @var string */
     public const WEBHOOK_TYPE = 'standard';
+    /** @var string */
+    public const TEST_WEBHOOK = 'testWebhook';
 
     /**
      * @inheritDoc
@@ -293,6 +297,7 @@ class Proxy extends AuthorizedProxy implements WebhookProxy
         return [
             'notification' => [
                 'paymentMethod' => 'visa',
+                'merchantReference' => self::TEST_WEBHOOK,
                 'eventCode' => 'AUTHORISATION',
                 'amount' => [
                     'currency' => 'EUR',

@@ -2,6 +2,7 @@
 
 namespace Adyen\Core\BusinessLogic\Domain\Webhook\Services;
 
+use Adyen\Core\BusinessLogic\AdyenAPI\Management\Webhook\Http\Proxy;
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
@@ -56,9 +57,9 @@ class WebhookSynchronizationService
     public function isSynchronizationNeeded(Webhook $webhook): bool
     {
         return !$this->hasDuplicates(
-            $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference()),
-            $webhook
-        );
+                $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference()),
+                $webhook
+            ) && $webhook->getMerchantReference() !== Proxy::TEST_WEBHOOK;
     }
 
     /**
