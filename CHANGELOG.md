@@ -3,7 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased](https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
+## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
+
+## [1.1.8 - 1.1.9](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.8...1.1.9) - 2024-02-26
+- Modify webhook test request body
+  - Add merchant reference field
+  - Add validation in Synchronization service not to enqueue test webhooks
 
 ## [1.1.7 - 1.1.8](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.7...1.1.8) - 2024-02-02
 - Add necessary services and test data for the E2E tests
