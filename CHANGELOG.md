@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [1.1.9 - 1.1.10](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.9...1.1.10) - 2024-03-04
+- Fix calling integration order service for updating order payment when synchronizing webhook
+
 ## [1.1.8 - 1.1.9](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.8...1.1.9) - 2024-02-26
 - Modify webhook test request body
   - Add merchant reference field
