@@ -63,13 +63,11 @@ class OrderStatusMappingRepositoryTest extends BaseTestCase
         // assert
         self::assertEquals([
             PaymentStates::STATE_IN_PROGRESS => '',
-            PaymentStates::STATE_PENDING => '',
             PaymentStates::STATE_PAID => '',
             PaymentStates::STATE_FAILED => '',
             PaymentStates::STATE_REFUNDED => '',
             PaymentStates::STATE_CANCELLED => '',
             PaymentStates::STATE_PARTIALLY_REFUNDED => '',
-            PaymentStates::STATE_NEW => '',
             PaymentStates::CHARGE_BACK => ''
         ], $result);
     }
@@ -155,13 +153,11 @@ class OrderStatusMappingRepositoryTest extends BaseTestCase
         // assert
         self::assertEquals([
             PaymentStates::STATE_IN_PROGRESS => '',
-            PaymentStates::STATE_PENDING => '',
             PaymentStates::STATE_PAID => '',
             PaymentStates::STATE_FAILED => '',
             PaymentStates::STATE_REFUNDED => '',
             PaymentStates::STATE_CANCELLED => '',
             PaymentStates::STATE_PARTIALLY_REFUNDED => '',
-            PaymentStates::STATE_NEW => '',
             PaymentStates::CHARGE_BACK => ''
         ], $result);
     }

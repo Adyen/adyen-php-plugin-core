@@ -42,13 +42,11 @@ class OrderMappingsGetResponse extends Response
     {
         return [
             'inProgress' => (string)$this->orderStatusMapping[PaymentStates::STATE_IN_PROGRESS],
-            'pending' => (string)$this->orderStatusMapping[PaymentStates::STATE_PENDING],
             'paid' => (string)$this->orderStatusMapping[PaymentStates::STATE_PAID],
             'failed' => (string)$this->orderStatusMapping[PaymentStates::STATE_FAILED],
             'refunded' => (string)$this->orderStatusMapping[PaymentStates::STATE_REFUNDED],
             'cancelled' => (string)$this->orderStatusMapping[PaymentStates::STATE_CANCELLED],
             'partiallyRefunded' => (string)$this->orderStatusMapping[PaymentStates::STATE_PARTIALLY_REFUNDED],
-            'new' => (string)$this->orderStatusMapping[PaymentStates::STATE_NEW],
             'chargeBack' => (string)$this->orderStatusMapping[PaymentStates::CHARGE_BACK]
         ];
     }

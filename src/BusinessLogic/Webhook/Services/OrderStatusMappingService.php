@@ -68,13 +68,11 @@ class OrderStatusMappingService implements OrderStatusProvider
     {
         return array_merge([
             PaymentStates::STATE_IN_PROGRESS => '',
-            PaymentStates::STATE_PENDING => '',
             PaymentStates::STATE_PAID => '',
             PaymentStates::STATE_FAILED => '',
             PaymentStates::STATE_REFUNDED => '',
             PaymentStates::STATE_CANCELLED => '',
             PaymentStates::STATE_PARTIALLY_REFUNDED => '',
-            PaymentStates::STATE_NEW => '',
             PaymentStates::CHARGE_BACK => ''
         ], $this->storeService->getDefaultOrderStatusMapping());
     }
@@ -107,7 +105,7 @@ class OrderStatusMappingService implements OrderStatusProvider
         $refundedAmount = $transactionHistory->getTotalAmountForEventCode(EventCodes::REFUND);
 
         if (empty($previousPaymentState)) {
-            $previousPaymentState = PaymentStates::STATE_NEW;
+            $previousPaymentState = PaymentStates::STATE_IN_PROGRESS;
         }
 
         $notificationItem = Notification::createItem([

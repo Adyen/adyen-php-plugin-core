@@ -35,13 +35,11 @@ class OrderMappingsRequest
         return new self(
             [
                 PaymentStates::STATE_IN_PROGRESS => $payload['inProgress'] ?? '',
-                PaymentStates::STATE_PENDING => $payload['pending'] ?? '',
                 PaymentStates::STATE_PAID => $payload['paid'] ?? '',
                 PaymentStates::STATE_FAILED => $payload['failed'] ?? '',
                 PaymentStates::STATE_REFUNDED => $payload['refunded'] ?? '',
                 PaymentStates::STATE_CANCELLED => $payload['cancelled'] ?? '',
                 PaymentStates::STATE_PARTIALLY_REFUNDED => $payload['partiallyRefunded'] ?? '',
-                PaymentStates::STATE_NEW => $payload['new'] ?? '',
                 PaymentStates::CHARGE_BACK => $payload['chargeBack'] ?? ''
             ]
         );

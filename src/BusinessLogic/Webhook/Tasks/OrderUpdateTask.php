@@ -173,6 +173,7 @@ class OrderUpdateTask extends TransactionalTask
      * @return void
      *
      * @throws InvalidMerchantReferenceException
+     * @throws Exception
      */
     private function doExecute(): void
     {
