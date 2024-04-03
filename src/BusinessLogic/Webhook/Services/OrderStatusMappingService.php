@@ -121,7 +121,7 @@ class OrderStatusMappingService implements OrderStatusProvider
         $newState = $processor->process();
 
         if ($webhook->isSuccess() && $webhook->getEventCode(
-            ) === EventCodes::CANCELLATION && !$capturedAmount) {
+            ) === EventCodes::CANCELLATION && (!$capturedAmount || !$capturedAmount->getValue())) {
             $newState = PaymentStates::STATE_CANCELLED;
         }
 
