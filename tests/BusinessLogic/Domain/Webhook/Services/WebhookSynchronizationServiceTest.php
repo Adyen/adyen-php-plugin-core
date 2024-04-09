@@ -9,6 +9,7 @@ use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\Integration\Store\StoreService;
 use Adyen\Core\BusinessLogic\Domain\Multistore\StoreContext;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
@@ -409,19 +410,21 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
     private function expectedTransaction(): TransactionHistory
     {
         return new TransactionHistory(
-            'merchantRef', CaptureType::manual(), 1, Currency::getDefault(),
-        [new HistoryItem(
-            '7914073381342284',
-            'merchantRef',
-            EventCodes::AUTHORISATION,
-            PaymentStates::STATE_PAID,
-            '2023-02-01T14:09:24+01:00',
-            true,
-            Amount::fromInt(1, Currency::getDefault()),
-            'Method',
-            0,
-            false
-        )]
+            'merchantRef', CaptureType::manual(), 1, Currency::getDefault(), null,
+            [
+                new HistoryItem(
+                    '7914073381342284',
+                    'merchantRef',
+                    EventCodes::AUTHORISATION,
+                    PaymentStates::STATE_PAID,
+                    '2023-02-01T14:09:24+01:00',
+                    true,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    'Method',
+                    0,
+                    false
+                )
+            ]
         );
     }
 
@@ -432,7 +435,9 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
      */
     private function transactionHistory(): TransactionHistory
     {
-        return new TransactionHistory('merchantRef', CaptureType::immediate(), 0, null, [
+        return new TransactionHistory('merchantRef', CaptureType::immediate(), 0, null,
+            AuthorizationType::finalAuthorization(),
+            [
                 new HistoryItem(
                     'originalPsp',
                     'merchantRef',

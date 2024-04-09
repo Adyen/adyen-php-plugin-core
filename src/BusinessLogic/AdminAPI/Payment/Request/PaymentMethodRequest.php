@@ -10,6 +10,8 @@ use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\InvalidCardConfigurationE
 use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\NegativeValuesNotAllowedException;
 use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\PaymentMethodDataEmptyException;
 use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\StringValuesNotAllowedException;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\Exceptions\InvalidAuthorizationTypeException;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\Exceptions\InvalidTokenTypeException;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\AmazonPay;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\ApplePay;
@@ -154,11 +156,14 @@ class PaymentMethodRequest extends Request
      * @var bool
      */
     private $enableTokenization;
-
     /**
      * @var string
      */
     private $tokenType;
+    /**
+     * @var string
+     */
+    private $authorizationType;
 
     /**
      * @param string $methodId
@@ -193,6 +198,7 @@ class PaymentMethodRequest extends Request
      * @param bool $excludeFromPayByLink
      * @param bool $enableTokenization
      * @param string $tokenType
+     * @param string $authorizationType
      */
     private function __construct(
         string $methodId = '',
@@ -226,7 +232,8 @@ class PaymentMethodRequest extends Request
         array $supportedInstallments = [],
         bool $excludeFromPayByLink = false,
         bool $enableTokenization = false,
-        string $tokenType = ''
+        string $tokenType = '',
+        string $authorizationType = ''
     ) {
         $this->methodId = $methodId;
         $this->logo = $logo;
@@ -260,6 +267,7 @@ class PaymentMethodRequest extends Request
         $this->excludeFromPayByLink = $excludeFromPayByLink;
         $this->enableTokenization = $enableTokenization;
         $this->tokenType = $tokenType;
+        $this->authorizationType = $authorizationType;
     }
 
     /**
@@ -309,7 +317,8 @@ class PaymentMethodRequest extends Request
                 $rawData['additionalData']['supportedInstallments'] : [],
             !empty($rawData['excludeFromPayByLink']) && $rawData['excludeFromPayByLink'] === 'true',
             !empty($rawData['enableTokenization']) && $rawData['enableTokenization'] === 'true',
-            $rawData['tokenType'] ?? ''
+            $rawData['tokenType'] ?? '',
+            $rawData['authorizationType'] ?? ''
         );
     }
 
@@ -323,6 +332,7 @@ class PaymentMethodRequest extends Request
      * @throws StringValuesNotAllowedException|
      * @throws InvalidPaymentMethodCodeException
      * @throws InvalidTokenTypeException
+     * @throws InvalidAuthorizationTypeException
      */
     public function transformToDomainModel(): object
     {
@@ -344,7 +354,8 @@ class PaymentMethodRequest extends Request
             $this->transformAdditionalData(),
             $this->excludeFromPayByLink,
             $this->enableTokenization,
-            !empty($this->tokenType) ? TokenType::fromState($this->tokenType) : null
+            !empty($this->tokenType) ? TokenType::fromState($this->tokenType) : null,
+            !empty($this->authorizationType) ? AuthorizationType::fromState($this->authorizationType) : null
         );
     }
 

@@ -9,6 +9,8 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidCaptureTypeException;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\Exceptions\InvalidAuthorizationTypeException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\Infrastructure\ORM\Configuration\EntityConfiguration;
 use Adyen\Core\Infrastructure\ORM\Configuration\IndexMap;
@@ -61,6 +63,7 @@ class TransactionHistory extends Entity
      * @throws InvalidCurrencyCode
      * @throws InvalidMerchantReferenceException
      * @throws InvalidCaptureTypeException
+     * @throws InvalidAuthorizationTypeException
      */
     public function inflate(array $data): void
     {
@@ -75,6 +78,8 @@ class TransactionHistory extends Entity
             CaptureType::fromState(self::getDataValue($transactionHistory, 'captureType')),
             self::getDataValue($transactionHistory, 'captureDelay'),
             Currency::fromIsoCode(self::getDataValue($transactionHistory, 'currency')),
+            self::getDataValue($transactionHistory, 'authorizationType') ?
+                AuthorizationType::fromState(self::getDataValue($transactionHistory, 'authorizationType')) : null,
             $this->historyItemCollectionFromArray(self::getDataValue($transactionHistory, 'historyItemCollection'))
         );
 
@@ -160,9 +165,9 @@ class TransactionHistory extends Entity
             'isLive' => $this->transactionHistory->isLive(),
             'captureType' => $this->transactionHistory->getCaptureType()->getType(),
             'captureDelay' => $this->transactionHistory->getCaptureDelay(),
-            'currency' => $this->transactionHistory->getCurrency() ? $this->transactionHistory->getCurrency(
-            )->getIsoCode() : Currency::getDefault()->getIsoCode(),
-            'paymentLink' => $this->paymentLinkToArray($this->transactionHistory->getPaymentLink())
+            'currency' => $this->transactionHistory->getCurrency() ? $this->transactionHistory->getCurrency()->getIsoCode() : Currency::getDefault()->getIsoCode(),
+            'paymentLink' => $this->paymentLinkToArray($this->transactionHistory->getPaymentLink()),
+            'authorizationType' => $this->transactionHistory->getAuthorizationType() ? $this->transactionHistory->getAuthorizationType()->getType() : null
         ];
     }
 

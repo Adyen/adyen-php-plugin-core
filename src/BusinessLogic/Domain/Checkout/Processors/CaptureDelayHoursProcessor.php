@@ -10,6 +10,9 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentLinkRequest\Payme
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\PaymentRequestProcessor;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsService;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
+use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
+use Exception;
 
 /**
  * Class CaptureDelayHoursProcessor
@@ -21,14 +24,23 @@ class CaptureDelayHoursProcessor implements PaymentRequestProcessor, PaymentLink
     /**
      * @var GeneralSettingsService
      */
-    protected $generalSettingsService;
+    private $generalSettingsService;
+
+    /**
+     * @var PaymentMethodConfigRepository
+     */
+    private $methodConfigRepository;
 
     /**
      * @param GeneralSettingsService $generalSettingsService
+     * @param PaymentMethodConfigRepository $methodConfigRepository
      */
-    public function __construct(GeneralSettingsService $generalSettingsService)
-    {
+    public function __construct(
+        GeneralSettingsService $generalSettingsService,
+        PaymentMethodConfigRepository $methodConfigRepository
+    ) {
         $this->generalSettingsService = $generalSettingsService;
+        $this->methodConfigRepository = $methodConfigRepository;
     }
 
     /**
@@ -36,10 +48,15 @@ class CaptureDelayHoursProcessor implements PaymentRequestProcessor, PaymentLink
      * @param StartTransactionRequestContext $context
      *
      * @return void
+     *
+     * @throws Exception
      */
     public function process(PaymentRequestBuilder $builder, StartTransactionRequestContext $context): void
     {
         $generalSettings = $this->generalSettingsService->getGeneralSettings();
+        $configuredPaymentMethod = $this->methodConfigRepository->getPaymentMethodByCode(
+            (string)$context->getPaymentMethodCode()
+        );
 
         if (!$generalSettings) {
             $builder->setCaptureDelayHours(0);
@@ -47,7 +64,12 @@ class CaptureDelayHoursProcessor implements PaymentRequestProcessor, PaymentLink
             return;
         }
 
-        if (!$generalSettings->getCapture()->equal(CaptureType::manual())) {
+        if (!$generalSettings->getCapture()->equal(CaptureType::manual()) &&
+            (
+                !$configuredPaymentMethod->getAuthorizationType() ||
+                !$configuredPaymentMethod->getAuthorizationType()->equal(AuthorizationType::preAuthorization())
+            )
+        ) {
             $builder->setCaptureDelayHours($generalSettings->getCaptureDelayHours());
         }
     }

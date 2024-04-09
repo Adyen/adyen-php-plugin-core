@@ -12,6 +12,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePayment
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePaymentDetailsResult;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Proxies\PaymentsProxy;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
+use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Exception;
 
@@ -42,21 +43,29 @@ class PaymentRequestService
     private $transactionHistoryService;
 
     /**
+     * @var PaymentMethodConfigRepository
+     */
+    private $methodConfigRepository;
+
+    /**
      * @param PaymentsProxy $paymentsProxy
      * @param PaymentRequestFactory $paymentRequestFactory
      * @param DonationsDataRepository $donationsDataRepository
      * @param TransactionHistoryService $transactionHistoryService
+     * @param PaymentMethodConfigRepository $methodConfigRepository
      */
     public function __construct(
         PaymentsProxy $paymentsProxy,
         PaymentRequestFactory $paymentRequestFactory,
         DonationsDataRepository $donationsDataRepository,
-        TransactionHistoryService $transactionHistoryService
+        TransactionHistoryService $transactionHistoryService,
+        PaymentMethodConfigRepository $methodConfigRepository
     ) {
         $this->paymentsProxy = $paymentsProxy;
         $this->paymentRequestFactory = $paymentRequestFactory;
         $this->donationsDataRepository = $donationsDataRepository;
         $this->transactionHistoryService = $transactionHistoryService;
+        $this->methodConfigRepository = $methodConfigRepository;
     }
 
     /**
@@ -73,10 +82,19 @@ class PaymentRequestService
                 $captureType = CaptureType::immediate();
             }
 
+            $authorizationType = null;
+            $configuredPaymentMethod = $this->methodConfigRepository->getPaymentMethodByCode(
+                (string)$context->getPaymentMethodCode()
+            );
+            if($configuredPaymentMethod && $configuredPaymentMethod->getAuthorizationType()){
+                $authorizationType = $configuredPaymentMethod->getAuthorizationType();
+            }
+
             $this->transactionHistoryService->createTransactionHistory(
                 $context->getReference(),
                 $context->getAmount()->getCurrency(),
-                $captureType
+                $captureType,
+                $authorizationType
             );
         }
 

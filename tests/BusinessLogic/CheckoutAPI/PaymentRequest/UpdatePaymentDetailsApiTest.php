@@ -12,11 +12,13 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Factory\PaymentReque
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ResultCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePaymentDetailsResult;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Services\PaymentRequestService;
+use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Adyen\Core\Tests\BusinessLogic\AdminAPI\Store\MockComponents\MockConnectionSettingsRepository;
 use Adyen\Core\Tests\BusinessLogic\CheckoutAPI\PaymentRequest\MockComponents\MockUpdatePaymentDetailsProxy;
 use Adyen\Core\Tests\BusinessLogic\Common\BaseTestCase;
 use Adyen\Core\Tests\Infrastructure\Common\TestServiceRegister;
+use Exception;
 
 /**
  * Class PaymentUpdateApiTest
@@ -48,7 +50,8 @@ class UpdatePaymentDetailsApiTest extends BaseTestCase
                     $this->paymentsProxy,
                     new PaymentRequestFactory(),
                     TestServiceRegister::getService(DonationsDataRepository::class),
-                    TestServiceRegister::getService(TransactionHistoryService::class)
+                    TestServiceRegister::getService(TransactionHistoryService::class),
+                    TestServiceRegister::getService(PaymentMethodConfigRepository::class)
                 ));
             })
         );
@@ -64,8 +67,11 @@ class UpdatePaymentDetailsApiTest extends BaseTestCase
     /**
      * @dataProvider successfulResultCodesProvider
      *
+     * @param ResultCode $successfullyResultCode
+     *
      * @return void
-     * @throws \Exception
+     *
+     * @throws Exception
      */
     public function testSuccessfulUpdatePaymentDetails(ResultCode $successfullyResultCode): void
     {
@@ -81,7 +87,8 @@ class UpdatePaymentDetailsApiTest extends BaseTestCase
         self::assertTrue($response->isSuccessful());
         self::assertEquals(new UpdatePaymentDetailsResponse($expectedResult), $response);
         self::assertEquals([
-            'resultCode' => (string)$successfullyResultCode, 'pspReference' => $expectedResult->getPspReference()
+            'resultCode' => (string)$successfullyResultCode,
+            'pspReference' => $expectedResult->getPspReference()
         ], $response->toArray());
         self::assertEquals('TEST-PSP-REFERENCE-001', $response->getPspReference());
         self::assertTrue($this->paymentsProxy->getIsCalled());

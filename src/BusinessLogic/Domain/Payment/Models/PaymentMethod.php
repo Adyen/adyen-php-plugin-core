@@ -104,6 +104,11 @@ class PaymentMethod
     private $supportsRecurringPayments;
 
     /**
+     * @var AuthorizationType|null
+     */
+    private $authorizationType;
+
+    /**
      * @param string $methodId
      * @param string $code
      * @param string $name
@@ -122,7 +127,7 @@ class PaymentMethod
      * @param bool $excludeFromPayByLink
      * @param bool $enableTokenization
      * @param TokenType|null $tokenType
-     *
+     * @param AuthorizationType|null $authorizationType
      * @throws InvalidPaymentMethodCodeException
      * @throws PaymentMethodDataEmptyException
      */
@@ -144,7 +149,8 @@ class PaymentMethod
         ?PaymentMethodAdditionalData $additionalData = null,
         bool $excludeFromPayByLink = false,
         bool $enableTokenization = false,
-        ?TokenType $tokenType = null
+        ?TokenType $tokenType = null,
+        ?AuthorizationType $authorizationType = null
     ) {
         if (
             empty($methodId) ||
@@ -184,6 +190,7 @@ class PaymentMethod
         $this->enableTokenization = $enableTokenization;
         $this->tokenType = $tokenType;
         $this->supportsRecurringPayments = PaymentMethodCode::parse($code)->isRecurringPaymentSupported();
+        $this->authorizationType = $authorizationType;
     }
 
     /**
@@ -562,6 +569,24 @@ class PaymentMethod
     public function setSupportsRecurringPayments(bool $supportsTokenization): void
     {
         $this->supportsRecurringPayments = $supportsTokenization;
+    }
+
+    /**
+     * @return AuthorizationType|null
+     */
+    public function getAuthorizationType(): ?AuthorizationType
+    {
+        return $this->authorizationType;
+    }
+
+    /**
+     * @param AuthorizationType|null $authorizationType
+     *
+     * @return void
+     */
+    public function setAuthorizationType(?AuthorizationType $authorizationType): void
+    {
+        $this->authorizationType = $authorizationType;
     }
 
     /**

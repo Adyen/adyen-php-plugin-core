@@ -196,6 +196,10 @@ class PaymentHttpRequest extends HttpRequest
             );
         }
 
+        if(!empty($this->request->getAuthorizationType())){
+            $body['additionalData']['authorisationType'] = $this->request->getAuthorizationType()->getType();
+        }
+
         return $body;
     }
 

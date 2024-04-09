@@ -5,6 +5,7 @@ namespace Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Repositories\GeneralSettingsRepository;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Repositories\TransactionHistoryRepository;
@@ -43,6 +44,7 @@ class TransactionHistoryService
      * @param string $merchantReference
      * @param Currency|null $currency
      * @param CaptureType|null $captureType
+     * @param AuthorizationType|null $authorizationType
      *
      * @return TransactionHistory
      *
@@ -51,7 +53,8 @@ class TransactionHistoryService
     public function getTransactionHistory(
         string $merchantReference,
         Currency $currency = null,
-        CaptureType $captureType = null
+        CaptureType $captureType = null,
+        AuthorizationType $authorizationType = null
     ): TransactionHistory {
         $transactionHistory = $this->transactionRepository->getTransactionHistory($merchantReference);
 
@@ -67,7 +70,8 @@ class TransactionHistoryService
                 $merchantReference,
                 $captureType,
                 $captureDelayHours,
-                $currency ?? Currency::getDefault()
+                $currency ?? Currency::getDefault(),
+                $authorizationType
             );
         }
 
@@ -85,14 +89,22 @@ class TransactionHistoryService
     }
 
     /**
+     * @param string $merchantReference
+     * @param Currency $currency
+     * @param CaptureType|null $captureType
+     * @param AuthorizationType|null $authorizationType
+     *
+     * @return void
+     *
      * @throws InvalidMerchantReferenceException
      */
     public function createTransactionHistory(
         string $merchantReference,
         Currency $currency,
-        CaptureType $type = null
+        CaptureType $captureType = null,
+        AuthorizationType $authorizationType = null
     ): void {
-        $history = $this->getTransactionHistory($merchantReference, $currency, $type);
+        $history = $this->getTransactionHistory($merchantReference, $currency, $captureType, $authorizationType);
 
         $this->setTransactionHistory($history);
     }

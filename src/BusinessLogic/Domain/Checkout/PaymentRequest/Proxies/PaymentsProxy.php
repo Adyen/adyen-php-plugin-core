@@ -28,6 +28,8 @@ interface PaymentsProxy
     /**
      * Updates payment details for started payment transaction as a form of redirect return validation
      *
+     * @param UpdatePaymentDetailsRequest $request
+     *
      * @return UpdatePaymentDetailsResult
      */
     public function updatePaymentDetails(UpdatePaymentDetailsRequest $request): UpdatePaymentDetailsResult;

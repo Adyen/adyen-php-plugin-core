@@ -15,6 +15,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentReques
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\RiskData;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ShopperName;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ShopperReference;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
 
 /**
  * Class PaymentRequestBuilder
@@ -150,6 +151,14 @@ class PaymentRequestBuilder
      */
     private $applicationInfo;
 
+    /**
+     * @var AuthorizationType
+     */
+    private $authorizationType;
+
+    /**
+     * @return PaymentRequest
+     */
     public function build(): PaymentRequest
     {
         return new PaymentRequest(
@@ -183,7 +192,8 @@ class PaymentRequestBuilder
             $this->authenticationData,
             $this->deviceFingerprint,
             $this->bankAccount,
-            $this->applicationInfo
+            $this->applicationInfo,
+            $this->authorizationType
         );
     }
 
@@ -470,5 +480,15 @@ class PaymentRequestBuilder
     public function setApplicationInfo(ApplicationInfo $applicationInfo): void
     {
         $this->applicationInfo = $applicationInfo;
+    }
+
+    /**
+     * @param AuthorizationType $authorizationType
+     *
+     * @return void
+     */
+    public function setAuthorizationType(AuthorizationType $authorizationType): void
+    {
+        $this->authorizationType = $authorizationType;
     }
 }
