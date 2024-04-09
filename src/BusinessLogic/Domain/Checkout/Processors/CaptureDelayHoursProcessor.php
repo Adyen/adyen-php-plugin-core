@@ -58,18 +58,16 @@ class CaptureDelayHoursProcessor implements PaymentRequestProcessor, PaymentLink
             (string)$context->getPaymentMethodCode()
         );
 
-        if (!$generalSettings) {
+        $isPreAuthorizationEnabled = $configuredPaymentMethod->getAuthorizationType() &&
+            $configuredPaymentMethod->getAuthorizationType()->equal(AuthorizationType::preAuthorization());
+
+        if (!$generalSettings && !$isPreAuthorizationEnabled) {
             $builder->setCaptureDelayHours(0);
 
             return;
         }
 
-        if (!$generalSettings->getCapture()->equal(CaptureType::manual()) &&
-            (
-                !$configuredPaymentMethod->getAuthorizationType() ||
-                !$configuredPaymentMethod->getAuthorizationType()->equal(AuthorizationType::preAuthorization())
-            )
-        ) {
+        if ($generalSettings && !$generalSettings->getCapture()->equal(CaptureType::manual()) && !$isPreAuthorizationEnabled) {
             $builder->setCaptureDelayHours($generalSettings->getCaptureDelayHours());
         }
     }
