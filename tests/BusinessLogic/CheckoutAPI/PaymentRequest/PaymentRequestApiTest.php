@@ -17,6 +17,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Curren
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ResultCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\StartTransactionResult;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\AuthorizationTypeProcessor;
 use Adyen\Core\BusinessLogic\Domain\Connection\Repositories\ConnectionSettingsRepository as ConnectionSettingsRepositoryInterface;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Services\PaymentRequestService;
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\AmountProcessor;
@@ -70,7 +71,8 @@ class PaymentRequestApiTest extends BaseTestCase
                         $this->paymentsProxy,
                         new PaymentRequestFactory(),
                         TestServiceRegister::getService(DonationsDataRepository::class),
-                        TestServiceRegister::getService(TransactionHistoryService::class)
+                        TestServiceRegister::getService(TransactionHistoryService::class),
+                        ServiceRegister::getService(PaymentMethodConfigRepository::class)
                     )
                 );
             })
@@ -121,6 +123,13 @@ class PaymentRequestApiTest extends BaseTestCase
             OriginStateDataProcessor::class,
             new SingleInstance(static function () {
                 return new OriginStateDataProcessor();
+            })
+        );
+
+        TestServiceRegister::registerService(
+            AuthorizationTypeProcessor::class,
+            new SingleInstance(static function () {
+                return new AuthorizationTypeProcessor(ServiceRegister::getService(PaymentMethodConfigRepository::class));
             })
         );
 

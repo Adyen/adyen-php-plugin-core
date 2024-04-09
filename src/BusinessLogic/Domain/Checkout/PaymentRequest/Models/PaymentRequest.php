@@ -5,6 +5,7 @@ namespace Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\AdditionalData\AdditionalData;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ApplicationInfo\ApplicationInfo;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
 
 /**
  * Class PaymentRequest
@@ -133,11 +134,14 @@ class PaymentRequest
      * @var array
      */
     private $bankAccount;
-
     /**
      * @var ApplicationInfo
      */
     private $applicationInfo;
+    /**
+     * @var AuthorizationType
+     */
+    private $authorizationType;
 
     /**
      * @param Amount $amount
@@ -171,6 +175,7 @@ class PaymentRequest
      * @param string $deviceFingerprint
      * @param array $bankAccount
      * @param ApplicationInfo|null $applicationInfo
+     * @param AuthorizationType|null $authorizationType
      */
     public function __construct(
         Amount $amount,
@@ -203,7 +208,8 @@ class PaymentRequest
         AuthenticationData $authenticationData = null,
         string $deviceFingerprint = '',
         array $bankAccount = [],
-        ApplicationInfo $applicationInfo = null
+        ApplicationInfo $applicationInfo = null,
+        AuthorizationType $authorizationType = null
     ) {
         $this->amount = $amount;
         $this->merchantId = $merchantId;
@@ -236,6 +242,7 @@ class PaymentRequest
         $this->deviceFingerprint = $deviceFingerprint;
         $this->bankAccount = $bankAccount;
         $this->applicationInfo = $applicationInfo;
+        $this->authorizationType = $authorizationType;
     }
 
     /**
@@ -484,5 +491,13 @@ class PaymentRequest
     public function getApplicationInfo(): ?ApplicationInfo
     {
         return $this->applicationInfo;
+    }
+
+    /**
+     * @return AuthorizationType|null
+     */
+    public function getAuthorizationType(): ?AuthorizationType
+    {
+        return $this->authorizationType;
     }
 }

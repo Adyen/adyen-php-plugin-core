@@ -4,7 +4,13 @@ namespace Adyen\Core\BusinessLogic\DataAccess\Payment\Entities;
 
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidPaymentMethodCodeException;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
+use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\DuplicatedValuesNotAllowedException;
+use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\InvalidCardConfigurationException;
+use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\NegativeValuesNotAllowedException;
 use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\PaymentMethodDataEmptyException;
+use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\StringValuesNotAllowedException;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\Exceptions\InvalidAuthorizationTypeException;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\Exceptions\InvalidTokenTypeException;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\AmazonPay;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\ApplePay;
@@ -17,7 +23,6 @@ use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\PaymentM
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\PayPal;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\PaymentMethod as PaymentMethodModel;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\TokenType;
-use Adyen\Core\Infrastructure\Exceptions\BaseException;
 use Adyen\Core\Infrastructure\ORM\Configuration\EntityConfiguration;
 use Adyen\Core\Infrastructure\ORM\Configuration\IndexMap;
 use Adyen\Core\Infrastructure\ORM\Entity;
@@ -49,6 +54,9 @@ class PaymentMethod extends Entity
      * @var PaymentMethodModel
      */
     protected $paymentMethod;
+    /**
+     * @var string[]
+     */
     protected $fields = ['id', 'storeId', 'methodId', 'code'];
 
     /**
@@ -67,10 +75,18 @@ class PaymentMethod extends Entity
     /**
      * @inheritDoc
      *
-     * @throws BaseException
-     * @throws PaymentMethodDataEmptyException
+     * @param array $data
+     *
+     * @return void
+     *
+     * @throws DuplicatedValuesNotAllowedException
+     * @throws InvalidAuthorizationTypeException
+     * @throws InvalidCardConfigurationException
      * @throws InvalidPaymentMethodCodeException
      * @throws InvalidTokenTypeException
+     * @throws NegativeValuesNotAllowedException
+     * @throws PaymentMethodDataEmptyException
+     * @throws StringValuesNotAllowedException
      */
     public function inflate(array $data): void
     {
@@ -95,7 +111,8 @@ class PaymentMethod extends Entity
             $this->transformAdditionalData($paymentMethodData),
             static::getDataValue($paymentMethodData, 'excludeFromPayByLink'),
             static::getDataValue($paymentMethodData, 'enableTokenization'),
-            $this->transformTokenType($paymentMethodData)
+            $this->transformTokenType($paymentMethodData),
+            $this->transformAuthorizationType($paymentMethodData)
         );
     }
 
@@ -122,7 +139,8 @@ class PaymentMethod extends Entity
             'currencies' => $this->paymentMethod->getCurrencies(),
             'excludeFromPayByLink' => $this->paymentMethod->getExcludeFromPayByLink(),
             'enableTokenization' => $this->paymentMethod->getEnableTokenization(),
-            'tokenType' => $this->paymentMethod->getTokenType() ? $this->paymentMethod->getTokenType()->getType() : null
+            'tokenType' => $this->paymentMethod->getTokenType() ? $this->paymentMethod->getTokenType()->getType() : null,
+            'authorizationType' => $this->paymentMethod->getAuthorizationType() ? $this->paymentMethod->getAuthorizationType()->getType() : null
         ];
 
         if ($this->paymentMethod->getAdditionalData()) {
@@ -215,7 +233,7 @@ class PaymentMethod extends Entity
                 'sendBasket' => $data->isSendBasket(),
                 'installmentCountries' => $data->getInstallmentCountries(),
                 'minimumAmount' => $data->getMinimumAmount(),
-                'numberOfInstallments' => $data->getNumberOfInstallments(),
+                'numberOfInstallments' => $data->getNumberOfInstallments()
             ];
         }
 
@@ -284,7 +302,11 @@ class PaymentMethod extends Entity
      *
      * @return PaymentMethodAdditionalData|null
      *
-     * @throws BaseException
+     * @throws InvalidAuthorizationTypeException
+     * @throws InvalidCardConfigurationException
+     * @throws DuplicatedValuesNotAllowedException
+     * @throws NegativeValuesNotAllowedException
+     * @throws StringValuesNotAllowedException
      */
     protected function transformAdditionalData(array $data): ?PaymentMethodAdditionalData
     {
@@ -372,5 +394,17 @@ class PaymentMethod extends Entity
         }
 
         return TokenType::fromState($data['tokenType']);
+    }
+
+    /**
+     * @throws InvalidAuthorizationTypeException
+     */
+    private function transformAuthorizationType(array $data): ?AuthorizationType
+    {
+        if (empty($data['authorizationType'])) {
+            return null;
+        }
+
+        return AuthorizationType::fromState($data['authorizationType']);
     }
 }

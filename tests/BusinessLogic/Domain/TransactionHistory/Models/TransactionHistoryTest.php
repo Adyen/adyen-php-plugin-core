@@ -5,13 +5,13 @@ namespace Adyen\Core\Tests\BusinessLogic\Domain\TransactionHistory\Models;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\CurrencyMismatchException;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
+use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
 use Adyen\Core\Tests\BusinessLogic\Common\BaseTestCase;
 use Adyen\Webhook\EventCodes;
-use Adyen\Webhook\PaymentStates;
 
 /**
  * Class TransactionHistoryTest
@@ -22,6 +22,8 @@ class TransactionHistoryTest extends BaseTestCase
 {
     /**
      * @return void
+     *
+     * @throws InvalidMerchantReferenceException
      */
     public function testAddingFirstHistoryItem(): void
     {
@@ -52,6 +54,8 @@ class TransactionHistoryTest extends BaseTestCase
 
     /**
      * @return void
+     *
+     * @throws InvalidMerchantReferenceException
      */
     public function testAddingHistoryItems(): void
     {
@@ -109,6 +113,8 @@ class TransactionHistoryTest extends BaseTestCase
 
     /**
      * @return void
+     *
+     * @throws InvalidMerchantReferenceException
      */
     public function testFiltering(): void
     {
@@ -123,7 +129,7 @@ class TransactionHistoryTest extends BaseTestCase
     /**
      * @return void
      *
-     * @throws CurrencyMismatchException
+     * @throws InvalidMerchantReferenceException
      */
     public function testGetItemByPspReference(): void
     {
@@ -155,6 +161,7 @@ class TransactionHistoryTest extends BaseTestCase
      * @return void
      *
      * @throws CurrencyMismatchException
+     * @throws InvalidMerchantReferenceException
      */
     public function testTotalAmount(): void
     {
@@ -172,6 +179,7 @@ class TransactionHistoryTest extends BaseTestCase
      * @return void
      *
      * @throws CurrencyMismatchException
+     * @throws InvalidMerchantReferenceException
      */
     public function testTotalAmountByEventCode(): void
     {
@@ -185,11 +193,16 @@ class TransactionHistoryTest extends BaseTestCase
         self::assertEquals($result, Amount::fromInt(2, Currency::getDefault()));
     }
 
+    /**
+     * @throws CurrencyMismatchException
+     * @throws InvalidMerchantReferenceException
+     */
     public function testGetCaptureAmount(): void
     {
         // arrange
         $transactionHistory = new TransactionHistory(
             'merchantRef', CaptureType::manual(), 0, Currency::getDefault(),
+            AuthorizationType::finalAuthorization(),
             [
                 new HistoryItem(
                     'originalPsp',
@@ -239,130 +252,134 @@ class TransactionHistoryTest extends BaseTestCase
 
     /**
      * @return TransactionHistory
+     *
+     * @throws InvalidMerchantReferenceException
      */
     private function transactionHistory(): TransactionHistory
     {
-        return new TransactionHistory('merchantRef', CaptureType::manual(), 0, Currency::getDefault(), [
-            new HistoryItem(
-                'originalPsp',
-                'merchantRef',
-                'CODE1',
-                'paymentState',
-                'date',
-                true,
-                Amount::fromInt(1, Currency::getDefault()),
-                'paymentMethod',
-                0,
-                false
-            ),
-            new HistoryItem(
-                'pspRef1',
-                'merchantRef',
-                'CODE1',
-                'paymentState',
-                'date',
-                true,
-                Amount::fromInt(1, Currency::getDefault()),
-                'paymentMethod',
-                0,
-                false
-            ),
-            new HistoryItem(
-                'pspRef2',
-                'merchantRef',
-                'CODE1',
-                'paymentState',
-                'date',
-                false,
-                Amount::fromInt(1, Currency::getDefault()),
-                'paymentMethod',
-                0,
-                false
-            ),
-            new HistoryItem(
-                'pspRef3',
-                'merchantRef',
-                'CODE2',
-                'paymentState',
-                'date',
-                true,
-                Amount::fromInt(1, Currency::getDefault()),
-                'paymentMethod',
-                0,
-                false
-            ),
-            new HistoryItem(
-                'pspRef4',
-                'merchantRef',
-                'CODE2',
-                'paymentState',
-                'date',
-                true,
-                Amount::fromInt(1, Currency::getDefault()),
-                'paymentMethod',
-                0,
-                false
-            ),
-            new HistoryItem(
-                'pspRef5',
-                'merchantRef',
-                'CODE1',
-                'paymentState',
-                'date',
-                false,
-                Amount::fromInt(1, Currency::getDefault()),
-                'paymentMethod3',
-                0,
-                false
-            ),
-            new HistoryItem(
-                'pspRef6',
-                'merchantRef',
-                'CODE1',
-                'paymentState2',
-                'date',
-                false,
-                Amount::fromInt(1, Currency::getDefault()),
-                'paymentMethod',
-                0,
-                false
-            ),
-            new HistoryItem(
-                'pspRef7',
-                'merchantRef',
-                'CODE3',
-                'paymentState',
-                'date',
-                false,
-                Amount::fromInt(1, Currency::getDefault()),
-                'paymentMethod',
-                0,
-                false
-            ),
-            new HistoryItem(
-                'pspRef8',
-                'merchantRef',
-                'CODE3',
-                'paymentState',
-                'date',
-                true,
-                Amount::fromInt(1, Currency::getDefault()),
-                'paymentMethod',
-                0,
-                false
-            ),
-            new HistoryItem(
-                'pspRef9',
-                'merchantRef',
-                'CODE6',
-                'paymentState',
-                'date',
-                true,
-                Amount::fromInt(1, Currency::getDefault()),
-                'paymentMethod',
-                0,
-                false
-            )
-        ]);
+        return new TransactionHistory('merchantRef', CaptureType::manual(), 0, Currency::getDefault(),
+            AuthorizationType::finalAuthorization(),
+            [
+                new HistoryItem(
+                    'originalPsp',
+                    'merchantRef',
+                    'CODE1',
+                    'paymentState',
+                    'date',
+                    true,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    'paymentMethod',
+                    0,
+                    false
+                ),
+                new HistoryItem(
+                    'pspRef1',
+                    'merchantRef',
+                    'CODE1',
+                    'paymentState',
+                    'date',
+                    true,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    'paymentMethod',
+                    0,
+                    false
+                ),
+                new HistoryItem(
+                    'pspRef2',
+                    'merchantRef',
+                    'CODE1',
+                    'paymentState',
+                    'date',
+                    false,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    'paymentMethod',
+                    0,
+                    false
+                ),
+                new HistoryItem(
+                    'pspRef3',
+                    'merchantRef',
+                    'CODE2',
+                    'paymentState',
+                    'date',
+                    true,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    'paymentMethod',
+                    0,
+                    false
+                ),
+                new HistoryItem(
+                    'pspRef4',
+                    'merchantRef',
+                    'CODE2',
+                    'paymentState',
+                    'date',
+                    true,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    'paymentMethod',
+                    0,
+                    false
+                ),
+                new HistoryItem(
+                    'pspRef5',
+                    'merchantRef',
+                    'CODE1',
+                    'paymentState',
+                    'date',
+                    false,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    'paymentMethod3',
+                    0,
+                    false
+                ),
+                new HistoryItem(
+                    'pspRef6',
+                    'merchantRef',
+                    'CODE1',
+                    'paymentState2',
+                    'date',
+                    false,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    'paymentMethod',
+                    0,
+                    false
+                ),
+                new HistoryItem(
+                    'pspRef7',
+                    'merchantRef',
+                    'CODE3',
+                    'paymentState',
+                    'date',
+                    false,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    'paymentMethod',
+                    0,
+                    false
+                ),
+                new HistoryItem(
+                    'pspRef8',
+                    'merchantRef',
+                    'CODE3',
+                    'paymentState',
+                    'date',
+                    true,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    'paymentMethod',
+                    0,
+                    false
+                ),
+                new HistoryItem(
+                    'pspRef9',
+                    'merchantRef',
+                    'CODE6',
+                    'paymentState',
+                    'date',
+                    true,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    'paymentMethod',
+                    0,
+                    false
+                )
+            ]);
     }
 }

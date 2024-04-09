@@ -78,6 +78,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentLinkRequest\Allow
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentLinkRequest\ExpiresAtProcessor;
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentLinkRequest\PaymentLinkRequestProcessorsRegistry;
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\AuthenticationDataProcessor;
+use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\AuthorizationTypeProcessor;
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\PaymentRequestProcessorsRegistry;
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\ReturnUrlProcessor;
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\ShopperReferenceProcessor;
@@ -282,7 +283,8 @@ class BootstrapComponent extends BaseBootstrapComponent
                     ServiceRegister::getService(PaymentsProxyInterface::class),
                     new PaymentRequestFactory(),
                     ServiceRegister::getService(DonationsDataRepository::class),
-                    ServiceRegister::getService(TransactionHistoryService::class)
+                    ServiceRegister::getService(TransactionHistoryService::class),
+                    ServiceRegister::getService(PaymentMethodConfigRepository::class)
                 );
             })
         );
@@ -1093,7 +1095,8 @@ class BootstrapComponent extends BaseBootstrapComponent
             CaptureDelayHoursProcessor::class,
             new SingleInstance(static function () {
                 return new CaptureDelayHoursProcessor(
-                    ServiceRegister::getService(GeneralSettingsService::class)
+                    ServiceRegister::getService(GeneralSettingsService::class),
+                    ServiceRegister::getService(PaymentMethodConfigRepository::class)
                 );
             })
         );
@@ -1109,7 +1112,8 @@ class BootstrapComponent extends BaseBootstrapComponent
             CaptureProcessor::class,
             new SingleInstance(static function () {
                 return new CaptureProcessor(
-                    ServiceRegister::getService(GeneralSettingsService::class)
+                    ServiceRegister::getService(GeneralSettingsService::class),
+                    ServiceRegister::getService(PaymentMethodConfigRepository::class)
                 );
             })
         );
@@ -1148,6 +1152,13 @@ class BootstrapComponent extends BaseBootstrapComponent
             ShopperReferenceProcessor::class,
             new SingleInstance(static function () {
                 return new ShopperReferenceProcessor();
+            })
+        );
+
+        ServiceRegister::registerService(
+            AuthorizationTypeProcessor::class,
+            new SingleInstance(static function () {
+                return new AuthorizationTypeProcessor(ServiceRegister::getService(PaymentMethodConfigRepository::class));
             })
         );
 
@@ -1226,6 +1237,10 @@ class BootstrapComponent extends BaseBootstrapComponent
         PaymentRequestProcessorsRegistry::registerByPaymentType(
             PaymentMethodCode::scheme(),
             L2L3DataProcessor::class
+        );
+        PaymentRequestProcessorsRegistry::registerByPaymentType(
+            PaymentMethodCode::scheme(),
+            AuthorizationTypeProcessor::class
         );
         PaymentRequestProcessorsRegistry::registerGlobal(CaptureProcessor::class);
 

@@ -7,6 +7,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\CurrencyM
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\Infrastructure\Utility\TimeProvider;
 
@@ -68,11 +69,17 @@ class TransactionHistory
     private $paymentLink;
 
     /**
+     * @var AuthorizationType|null
+     */
+    private $authorizationType;
+
+    /**
      * @param string $merchantReference
      * @param CaptureType $captureType
      * @param int $captureDelay
      * @param Currency|null $currency
      * @param array $historyItems
+     * @param AuthorizationType|null $authorizationType
      *
      * @throws InvalidMerchantReferenceException
      */
@@ -81,6 +88,7 @@ class TransactionHistory
         CaptureType $captureType,
         int $captureDelay = 0,
         Currency $currency = null,
+        AuthorizationType $authorizationType = null,
         array $historyItems = []
     ) {
         $this->merchantReference = $merchantReference;
@@ -88,6 +96,7 @@ class TransactionHistory
         $this->captureDelay = $captureDelay;
         $this->currency = $currency;
         $this->historyItemCollection = new HistoryItemCollection();
+        $this->authorizationType = $authorizationType;
 
         foreach ($historyItems as $item) {
             $this->add($item);
@@ -302,5 +311,13 @@ class TransactionHistory
     public function setPaymentLink(?PaymentLink $paymentLink): void
     {
         $this->paymentLink = $paymentLink;
+    }
+
+    /**
+     * @return AuthorizationType|null
+     */
+    public function getAuthorizationType(): ?AuthorizationType
+    {
+        return $this->authorizationType;
     }
 }

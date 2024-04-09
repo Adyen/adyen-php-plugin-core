@@ -8,6 +8,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\Multistore\StoreContext;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory as TransactionModel;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Repositories\TransactionHistoryRepository;
@@ -65,6 +66,7 @@ class TransactionRepositoryTest extends BaseTestCase
     {
         // arrange
         $transaction = new TransactionModel('merchantReference', CaptureType::manual(), 0, Currency::getDefault(),
+            AuthorizationType::finalAuthorization(),
             $this->historyItems());
         $transactionEntity = new TransactionEntity();
         $transactionEntity->setTransactionHistory($transaction);
@@ -87,6 +89,7 @@ class TransactionRepositoryTest extends BaseTestCase
     {
         // arrange
         $transaction = new TransactionModel('merchantReference', CaptureType::manual(), 0, Currency::getDefault(),
+            AuthorizationType::finalAuthorization(),
             $this->historyItems());
         $transactionEntity = new TransactionEntity();
         $transactionEntity->setTransactionHistory($transaction);
@@ -109,6 +112,7 @@ class TransactionRepositoryTest extends BaseTestCase
     {
         // arrange
         $transaction = new TransactionModel('merchantReference', CaptureType::manual(), 0, Currency::getDefault(),
+            AuthorizationType::finalAuthorization(),
             $this->historyItems());
         $transactionEntity = new TransactionEntity();
         $transactionEntity->setTransactionHistory($transaction);
@@ -133,6 +137,7 @@ class TransactionRepositoryTest extends BaseTestCase
     {
         // arrange
         $transaction = new TransactionModel('merchantReference', CaptureType::manual(), 0, Currency::getDefault(),
+            AuthorizationType::finalAuthorization(),
             $this->historyItems());
 
         // act
@@ -150,6 +155,7 @@ class TransactionRepositoryTest extends BaseTestCase
     {
         // arrange
         $transaction = new TransactionModel('merchantReference', CaptureType::manual(), 0, Currency::getDefault(),
+            AuthorizationType::finalAuthorization(),
             $this->historyItems());
         $transactionEntity = new TransactionEntity();
         $transactionEntity->setTransactionHistory($transaction);
@@ -157,6 +163,7 @@ class TransactionRepositoryTest extends BaseTestCase
         $transactionEntity->setMerchantReference('merchantReference');
         $this->repository->save($transactionEntity);
         $newTransaction = new TransactionModel('merchantReference', CaptureType::manual(), 0, Currency::getDefault(),
+            AuthorizationType::finalAuthorization(),
             $this->historyItems());
 
         // act
@@ -174,6 +181,7 @@ class TransactionRepositoryTest extends BaseTestCase
     {
         // arrange
         $transaction = new TransactionModel('merchantReference', CaptureType::manual(), 0, Currency::getDefault(),
+            AuthorizationType::finalAuthorization(),
             $this->historyItems());
         $transactionEntity = new TransactionEntity();
         $transactionEntity->setTransactionHistory($transaction);
@@ -181,6 +189,7 @@ class TransactionRepositoryTest extends BaseTestCase
         $transactionEntity->setMerchantReference('merchantReference');
         $this->repository->save($transactionEntity);
         $newTransaction = new TransactionModel('merchantReference', CaptureType::manual(), 0, Currency::getDefault(),
+            AuthorizationType::finalAuthorization(),
             $this->historyItems());
 
         // act
@@ -200,6 +209,7 @@ class TransactionRepositoryTest extends BaseTestCase
     {
         // arrange
         $transaction = new TransactionModel('merchantReference', CaptureType::manual(), 0, Currency::getDefault(),
+            AuthorizationType::finalAuthorization(),
             $this->historyItems());
         $transaction->setPaymentLink(new PaymentLink('url', '9999-11-10T13:31:17+01:00'));
         $transactionEntity = new TransactionEntity();

@@ -7,6 +7,8 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\Multistore\StoreContext;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
+use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Repositories\TransactionHistoryRepository;
@@ -123,10 +125,14 @@ class TransactionServiceTest extends BaseTestCase
 
     /**
      * @return TransactionHistory
+     *
+     * @throws InvalidMerchantReferenceException
      */
     private function transactionHistory(): TransactionHistory
     {
-        return new TransactionHistory('merchantRef', CaptureType::manual(), 0, null, [
+        return new TransactionHistory('merchantRef', CaptureType::manual(), 0, null,
+            AuthorizationType::finalAuthorization(),
+            [
                 new HistoryItem(
                     'originalPsp',
                     'merchantRef',
