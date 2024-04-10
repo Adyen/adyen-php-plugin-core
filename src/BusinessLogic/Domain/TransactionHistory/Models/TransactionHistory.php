@@ -160,11 +160,11 @@ class TransactionHistory
     }
 
     /**
-     * @return Amount|null
+     * @return Amount
      *
      * @throws CurrencyMismatchException
      */
-    public function getCapturedAmount(): ?Amount
+    public function getCapturedAmount(): Amount
     {
         if ($this->captureType->equal(CaptureType::manual())) {
             return $this->getTotalAmountForEventCode('CAPTURE');
@@ -190,6 +190,22 @@ class TransactionHistory
         }
 
         return $this->getTotalAmountForEventCode('CAPTURE');
+    }
+
+    /**
+     * @return Amount
+     * 
+     * @throws CurrencyMismatchException
+     */
+    public function getAuthorizedAmount(): Amount
+    {
+        $authorisationAdjustmentItem = $this->collection()->filterByEventCode('AUTHORISATION_ADJUSTMENT')->last();
+
+        if ($authorisationAdjustmentItem) {
+            return $authorisationAdjustmentItem->getAmount();
+        }
+
+        return $this->getTotalAmountForEventCode('AUTHORISATION');
     }
 
     /**

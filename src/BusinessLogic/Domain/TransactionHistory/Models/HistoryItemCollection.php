@@ -151,6 +151,6 @@ class HistoryItemCollection
             return $this->historyItems;
         }
 
-        return array_slice($this->historyItems, $lastIndex);;
+        return array_slice($this->historyItems, $lastIndex);
     }
 }

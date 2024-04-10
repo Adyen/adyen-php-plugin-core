@@ -9,6 +9,8 @@ use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\Multistore\StoreContext;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Authorization\FailedPaymentAuthorizationEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Authorization\SuccessfulPaymentAuthorizationEvent;
+use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\AuthorizationAdjustment\FailedAuthorizationAdjustmentEvent;
+use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\AuthorizationAdjustment\SuccessfulAuthorizationAdjustmentEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Cancellation\FailedCancellationEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Cancellation\SuccessfulCancellationEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Capture\FailedCaptureEvent;
@@ -232,6 +234,14 @@ class OrderUpdateTask extends TransactionalTask
 
         if ($event === EventCodes::REFUND && !$success) {
             return new FailedRefundEvent($merchantReference, $paymentMethod);
+        }
+
+        if ($event === EventCodes::AUTHORISATION_ADJUSTMENT && $success) {
+            return new SuccessfulAuthorizationAdjustmentEvent($merchantReference, $paymentMethod);
+        }
+
+        if ($event === EventCodes::AUTHORISATION_ADJUSTMENT && !$success) {
+            return new FailedAuthorizationAdjustmentEvent($merchantReference, $paymentMethod);
         }
 
         return null;

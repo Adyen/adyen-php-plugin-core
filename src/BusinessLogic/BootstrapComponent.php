@@ -23,6 +23,7 @@ use Adyen\Core\BusinessLogic\AdminAPI\Stores\Controller\StoreController;
 use Adyen\Core\BusinessLogic\AdminAPI\TestConnection\Controller\TestConnectionController;
 use Adyen\Core\BusinessLogic\AdminAPI\Versions\Controller\VersionInfoController;
 use Adyen\Core\BusinessLogic\AdminAPI\WebhookNotifications\Controller\WebhookNotificationController;
+use Adyen\Core\BusinessLogic\AdyenAPI\AuthorizationAdjustment\Http\Proxy as AuthorizationAdjustmentProxyImplementation;
 use Adyen\Core\BusinessLogic\AdyenAPI\Checkout\PaymentLink\Http\Proxy as PaymentLinkProxy;
 use Adyen\Core\BusinessLogic\AdyenAPI\Checkout\Payments\Http\Proxy as PaymentsProxy;
 use Adyen\Core\BusinessLogic\AdyenAPI\Management\Connection\Http\Proxy as ConnectionProxy;
@@ -53,6 +54,8 @@ use Adyen\Core\BusinessLogic\DataAccess\TransactionLog\Repositories\TransactionL
 use Adyen\Core\BusinessLogic\DataAccess\Webhook\Entities\WebhookConfig;
 use Adyen\Core\BusinessLogic\Domain\AdyenGivingSettings\Repositories\AdyenGivingSettingsRepository as AdyenGivingSettingsRepositoryInterface;
 use Adyen\Core\BusinessLogic\Domain\AdyenGivingSettings\Services\AdyenGivingSettingsService;
+use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Handlers\AuthorizationAdjustmentHandler;
+use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Proxies\AuthorizationAdjustmentProxy;
 use Adyen\Core\BusinessLogic\Domain\Cancel\Handlers\CancelHandler;
 use Adyen\Core\BusinessLogic\Domain\Cancel\Proxies\CancelProxy;
 use Adyen\Core\BusinessLogic\Domain\Capture\Handlers\CaptureHandler;
@@ -451,6 +454,18 @@ class BootstrapComponent extends BaseBootstrapComponent
         );
 
         ServiceRegister::registerService(
+            AuthorizationAdjustmentHandler::class,
+            new SingleInstance(static function () {
+                return new AuthorizationAdjustmentHandler(
+                    ServiceRegister::getService(TransactionHistoryService::class),
+                    ServiceRegister::getService(ShopNotificationService::class),
+                    ServiceRegister::getService(AuthorizationAdjustmentProxy::class),
+                    ServiceRegister::getService(ConnectionService::class)
+                );
+            })
+        );
+
+        ServiceRegister::registerService(
             TransactionDetailsService::class,
             new SingleInstance(static function () {
                 return new TransactionDetailsService(
@@ -827,6 +842,13 @@ class BootstrapComponent extends BaseBootstrapComponent
             static function () {
                 return AdyenAPI\Checkout\ProxyFactory::makeProxy(PaymentLinkProxy::class);
             }
+        );
+
+        ServiceRegister::registerService(
+            AuthorizationAdjustmentProxy::class,
+            new SingleInstance(static function () {
+                return AdyenAPI\Checkout\ProxyFactory::makeProxy(AuthorizationAdjustmentProxyImplementation::class);
+            })
         );
     }
 

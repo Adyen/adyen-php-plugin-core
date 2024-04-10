@@ -251,6 +251,120 @@ class TransactionHistoryTest extends BaseTestCase
     }
 
     /**
+     * @throws CurrencyMismatchException
+     * @throws InvalidMerchantReferenceException
+     */
+    public function testGetAuthorizedAmount(): void
+    {
+        // arrange
+        $transactionHistory = new TransactionHistory(
+            'merchantRef', CaptureType::manual(), 0, Currency::getDefault(),
+            AuthorizationType::preAuthorization(),
+            [
+                new HistoryItem(
+                    'originalPsp',
+                    'merchantRef',
+                    EventCodes::AUTHORISATION,
+                    'paymentState',
+                    'date',
+                    true,
+                    Amount::fromInt(100, Currency::getDefault()),
+                    'paymentMethod',
+                    0,
+                    false
+                ),
+                new HistoryItem(
+                    'pspRef1',
+                    'merchantRef',
+                    EventCodes::CAPTURE,
+                    'paymentState',
+                    'date',
+                    true,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    'paymentMethod',
+                    0,
+                    false
+                ),
+                new HistoryItem(
+                    'pspRef2',
+                    'merchantRef',
+                    EventCodes::CAPTURE,
+                    'paymentState',
+                    'date',
+                    true,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    'paymentMethod',
+                    0,
+                    false
+                ),
+            ]
+        );
+
+        // act
+        $result = $transactionHistory->getAuthorizedAmount();
+
+        // assert
+        self::assertEquals($result, Amount::fromInt(100, Currency::getDefault()));
+    }
+
+    /**
+     * @throws CurrencyMismatchException
+     * @throws InvalidMerchantReferenceException
+     */
+    public function testGetAuthorizedAmountWithAdjustments(): void
+    {
+        // arrange
+        $transactionHistory = new TransactionHistory(
+            'merchantRef', CaptureType::manual(), 0, Currency::getDefault(),
+            AuthorizationType::preAuthorization(),
+            [
+                new HistoryItem(
+                    'originalPsp',
+                    'merchantRef',
+                    EventCodes::AUTHORISATION,
+                    'paymentState',
+                    'date',
+                    true,
+                    Amount::fromInt(100, Currency::getDefault()),
+                    'paymentMethod',
+                    0,
+                    false
+                ),
+                new HistoryItem(
+                    'pspRef1',
+                    'merchantRef',
+                    EventCodes::CAPTURE,
+                    'paymentState',
+                    'date',
+                    true,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    'paymentMethod',
+                    0,
+                    false
+                ),
+                new HistoryItem(
+                    'pspRef2',
+                    'merchantRef',
+                    EventCodes::AUTHORISATION_ADJUSTMENT,
+                    'paymentState',
+                    'date',
+                    true,
+                    Amount::fromInt(300, Currency::getDefault()),
+                    'paymentMethod',
+                    0,
+                    false
+                )
+            ]
+        );
+
+        // act
+        $result = $transactionHistory->getAuthorizedAmount();
+
+        // assert
+        self::assertEquals($result, Amount::fromInt(300, Currency::getDefault()));
+    }
+
+    /**
      * @return TransactionHistory
      *
      * @throws InvalidMerchantReferenceException

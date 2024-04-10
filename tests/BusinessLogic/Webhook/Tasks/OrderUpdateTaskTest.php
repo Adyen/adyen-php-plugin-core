@@ -368,4 +368,78 @@ class OrderUpdateTaskTest extends BaseSerializationTestCase
 
         self::assertEmpty($notifications);
     }
+
+    /**
+     * @return void
+     *
+     * @throws AbortTaskExecutionException
+     */
+    public function testPushingSuccessfulAuthorizationAdjustmentNotification(): void
+    {
+        // arrange
+        $this->webhook = new Webhook(
+            Amount::fromInt(1111, Currency::getDefault()),
+            EventCodes::AUTHORISATION_ADJUSTMENT,
+            '2023-02-01T14:09:24+01:00',
+            '123',
+            'code',
+            'reference',
+            'pspReference',
+            'paymentMethod',
+            'reason',
+            true,
+            'originalRef',
+            0,
+            false
+        );
+        $task = new OrderUpdateTask($this->webhook);
+
+        // act
+        $task->execute();
+
+        // assert
+        $notifications = $this->shopNotificationService->getNotifications(1, 0);
+
+        self::assertNotEmpty($notifications);
+        self::assertEquals($notifications[0]->getPaymentMethod(), $this->webhook->getPaymentMethod());
+        self::assertEquals($notifications[0]->getOrderId(), $this->webhook->getMerchantReference());
+        self::assertEquals('info', $notifications[0]->getSeverity());
+    }
+
+    /**
+     * @return void
+     *
+     * @throws AbortTaskExecutionException
+     */
+    public function testPushingFailedAuthorizationAdjustmentNotification(): void
+    {
+        // arrange
+        $this->webhook = new Webhook(
+            Amount::fromInt(1111, Currency::getDefault()),
+            EventCodes::AUTHORISATION_ADJUSTMENT,
+            '2023-02-01T14:09:24+01:00',
+            '123',
+            'code',
+            'reference',
+            'pspReference',
+            'paymentMethod',
+            'reason',
+            false,
+            'originalRef',
+            0,
+            false
+        );
+        $task = new OrderUpdateTask($this->webhook);
+
+        // act
+        $task->execute();
+
+        // assert
+        $notifications = $this->shopNotificationService->getNotifications(1, 0);
+
+        self::assertNotEmpty($notifications);
+        self::assertEquals($notifications[0]->getPaymentMethod(), $this->webhook->getPaymentMethod());
+        self::assertEquals($notifications[0]->getOrderId(), $this->webhook->getMerchantReference());
+        self::assertEquals('warning', $notifications[0]->getSeverity());
+    }
 }

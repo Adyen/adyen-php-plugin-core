@@ -35,6 +35,8 @@ use Adyen\Core\BusinessLogic\DataAccess\TransactionLog\Repositories\TransactionL
 use Adyen\Core\BusinessLogic\DataAccess\Webhook\Entities\WebhookConfig;
 use Adyen\Core\BusinessLogic\Domain\AdyenGivingSettings\Repositories\AdyenGivingSettingsRepository as AdyenGivingSettingsRepositoryInterface;
 use Adyen\Core\BusinessLogic\Domain\AdyenGivingSettings\Services\AdyenGivingSettingsService;
+use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Handlers\AuthorizationAdjustmentHandler;
+use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Proxies\AuthorizationAdjustmentProxy;
 use Adyen\Core\BusinessLogic\Domain\Cancel\Handlers\CancelHandler;
 use Adyen\Core\BusinessLogic\Domain\Cancel\Proxies\CancelProxy;
 use Adyen\Core\BusinessLogic\Domain\Capture\Handlers\CaptureHandler;
@@ -459,6 +461,18 @@ class BaseTestCase extends TestCase
                     TestServiceRegister::getService(TransactionHistoryService::class),
                     TestServiceRegister::getService(ShopNotificationService::class),
                     TestServiceRegister::getService(CaptureProxy::class),
+                    TestServiceRegister::getService(ConnectionService::class)
+                );
+            }
+        );
+
+        TestServiceRegister::registerService(
+            AuthorizationAdjustmentHandler::class,
+            static function () {
+                return new AuthorizationAdjustmentHandler(
+                    TestServiceRegister::getService(TransactionHistoryService::class),
+                    TestServiceRegister::getService(ShopNotificationService::class),
+                    TestServiceRegister::getService(AuthorizationAdjustmentProxy::class),
                     TestServiceRegister::getService(ConnectionService::class)
                 );
             }
