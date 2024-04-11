@@ -2,6 +2,7 @@
 
 namespace Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services;
 
+use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Validator\AuthorizationAdjustmentValidator;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\CurrencyMismatchException;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidPaymentMethodCodeException;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
@@ -14,6 +15,7 @@ use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
 use Adyen\Core\Infrastructure\Utility\TimeProvider;
+use Exception;
 
 /**
  * Class TransactionDetailsService
@@ -57,7 +59,7 @@ class TransactionDetailsService
      * @return array
      *
      * @throws InvalidMerchantReferenceException
-     * @throws InvalidPaymentMethodCodeException
+     * @throws CurrencyMismatchException
      */
     public function getTransactionDetails(string $merchantReference, string $storeId): array
     {
@@ -74,7 +76,7 @@ class TransactionDetailsService
             && $connectionSettings->getActiveConnectionData()
             && $connectionSettings->getActiveConnectionData()->getMerchantId();
         try {
-            $authorizationAmount = $transactionHistory->getTotalAmountForEventCode('AUTHORISATION');
+            $authorizationAmount = $transactionHistory->getAuthorizedAmount();
             $refundAmount = $transactionHistory->getTotalAmountForEventCode('REFUND');
             $captureAmount = $transactionHistory->getCapturedAmount();
             $capturableAmount = $isCaptureTypeKnown ? $authorizationAmount->minus(
@@ -131,16 +133,16 @@ class TransactionDetailsService
                 'refund' => $isCaptureTypeKnown ? $refund : true,
                 'partialRefund' => $isCaptureTypeKnown ? $partialRefund : true,
                 'refundAmount' => $refundAmount->getPriceInCurrencyUnits(),
-                'refundableAmount' => $isCaptureTypeKnown ? $captureAmount->getPriceInCurrencyUnits(
-                    ) - $refundAmount->getPriceInCurrencyUnits() : $authorizationAmount->getPriceInCurrencyUnits(),
+                'refundableAmount' => $isCaptureTypeKnown ? $captureAmount->getPriceInCurrencyUnits() - $refundAmount->getPriceInCurrencyUnits() : $authorizationAmount->getPriceInCurrencyUnits(),
                 'capturableAmount' => $capturableAmount,
                 'riskScore' => $transactionHistory->getRiskScore(),
                 'cancelSupported' => $isCaptureTypeKnown ? $cancel : true,
                 'paymentMethodType' => $item->getPaymentMethod(),
                 'paymentState' => $item->getPaymentState(),
                 'displayPaymentLink' => $this->shouldDisplayPaymentLink($transactionHistory),
-                'paymentLink' => $transactionHistory->getPaymentLink() ? $transactionHistory->getPaymentLink()->getUrl(
-                ) : ''
+                'paymentLink' => $transactionHistory->getPaymentLink() ? $transactionHistory->getPaymentLink()->getUrl() : '',
+                'authorizationAdjustmentAvailable' => $this->isAuthorizationAdjustmentAvailable($transactionHistory),
+                'authorizationAdjustmentDate' => $this->getAuthorizationAdjustmentDate($transactionHistory)
             ];
         }
 
@@ -222,8 +224,7 @@ class TransactionDetailsService
         Amount $captureAmount
     ): bool {
         try {
-            return !empty($code) && $this->parseCode($code)->isPartialRefundSupported(
-                ) && $refundAmount->getPriceInCurrencyUnits()
+            return !empty($code) && $this->parseCode($code)->isPartialRefundSupported() && $refundAmount->getPriceInCurrencyUnits()
                 < $captureAmount->getPriceInCurrencyUnits();
         } catch (InvalidPaymentMethodCodeException $exception) {
             return false;
@@ -243,8 +244,7 @@ class TransactionDetailsService
         Amount $captureAmount
     ): bool {
         try {
-            return !empty($code) && $this->parseCode($code)->isRefundSupported(
-                ) && $refundAmount->getPriceInCurrencyUnits()
+            return !empty($code) && $this->parseCode($code)->isRefundSupported() && $refundAmount->getPriceInCurrencyUnits()
                 < $captureAmount->getPriceInCurrencyUnits();
         } catch (InvalidPaymentMethodCodeException $exception) {
             return false;
@@ -330,5 +330,37 @@ class TransactionDetailsService
         }
 
         return $item->getPaymentState() === 'new';
+    }
+
+    /**
+     * @param TransactionHistory $transactionHistory
+     *
+     * @return bool
+     */
+    private function isAuthorizationAdjustmentAvailable(TransactionHistory $transactionHistory): bool
+    {
+        try {
+            AuthorizationAdjustmentValidator::validateAdjustmentPossibility($transactionHistory);
+
+            return true;
+        } catch (Exception $exception) {
+            return false;
+        }
+    }
+
+    /**
+     * @param TransactionHistory $transactionHistory
+     *
+     * @return string|null
+     */
+    private function getAuthorizationAdjustmentDate(TransactionHistory $transactionHistory): ?string
+    {
+        $authorizationAdjustmentItems = $transactionHistory->collection()->filterByEventCode('AUTHORISATION_ADJUSTMENT');
+
+        if ($authorizationAdjustmentItems->isEmpty()) {
+            return null;
+        }
+
+        return $authorizationAdjustmentItems->last()->getDateAndTime();
     }
 }

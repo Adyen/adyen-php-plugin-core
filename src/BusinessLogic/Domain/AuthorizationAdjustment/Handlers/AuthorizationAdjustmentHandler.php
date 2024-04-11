@@ -8,9 +8,9 @@ use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Exceptions\OrderFull
 use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Exceptions\PaymentLinkExistsException;
 use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Models\AuthorizationAdjustmentRequest;
 use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Proxies\AuthorizationAdjustmentProxy;
+use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Validator\AuthorizationAdjustmentValidator;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\CurrencyMismatchException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
-use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\AuthorizationAdjustment\FailedAuthorizationAdjustmentRequestEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\AuthorizationAdjustment\SuccessfulAuthorizationAdjustmentRequestEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\ShopEvents;
@@ -19,7 +19,6 @@ use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchan
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
-use Adyen\Core\BusinessLogic\Domain\Translations\Model\TranslatableLabel;
 use Adyen\Core\Infrastructure\Utility\TimeProvider;
 use DateTimeInterface;
 use Exception;
@@ -87,7 +86,7 @@ class AuthorizationAdjustmentHandler
     {
         $transactionHistory = $this->transactionHistoryService->getTransactionHistory($merchantReference);
         try {
-            $this->validateAdjustmentPossibility($transactionHistory);
+            AuthorizationAdjustmentValidator::validateAdjustmentPossibility($transactionHistory);
             $adjustmentAmount = $transactionHistory->getAuthorizedAmount()->minus($transactionHistory->getCapturedAmount());
             $pspReference = $transactionHistory->getOriginalPspReference();
             $connectionSettings = $this->connectionService->getConnectionData();
@@ -109,41 +108,6 @@ class AuthorizationAdjustmentHandler
             $this->pushNotification(false, $transactionHistory);
 
             throw $exception;
-        }
-    }
-
-    /**
-     * @throws InvalidAuthorizationTypeException
-     * @throws CurrencyMismatchException
-     * @throws OrderFullyCapturedException
-     * @throws InvalidPaymentStateException
-     * @throws PaymentLinkExistsException
-     */
-    private function validateAdjustmentPossibility(TransactionHistory $transactionHistory): void
-    {
-        if (!$transactionHistory->getAuthorizationType() ||
-            !$transactionHistory->getAuthorizationType()->equal(AuthorizationType::preAuthorization())) {
-            throw new InvalidAuthorizationTypeException(
-                new TranslatableLabel(
-                    'Authorization adjustment is only possible for payments with Pre-authorization authorization types',
-                    'authorizationAdjustment.invalidAuthorizationType')
-            );
-        }
-
-        if ($transactionHistory->getCapturedAmount()->minus($transactionHistory->getAuthorizedAmount())->getPriceInCurrencyUnits() === 0) {
-            throw new OrderFullyCapturedException(new TranslatableLabel(
-                'Authorization adjustment is not possible. Order is fully captured.',
-                'authorizationAdjustment.orderFullyCaptured'));
-        }
-
-        if ($transactionHistory->collection()->last()->getPaymentState() === 'cancelled') {
-            throw new InvalidPaymentStateException(new TranslatableLabel('Authorization adjustment is not possible. Order is cancelled.',
-                'authorizationAdjustment.orderCancelled'));
-        }
-
-        if ($transactionHistory->getPaymentLink()) {
-            throw new PaymentLinkExistsException(new TranslatableLabel('Authorization adjustment is not possible. Payment link is generated.',
-                'authorizationAdjustment.paymentLink'));
         }
     }
 
