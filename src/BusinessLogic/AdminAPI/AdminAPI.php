@@ -5,6 +5,7 @@ namespace Adyen\Core\BusinessLogic\AdminAPI;
 use Adyen\Core\BusinessLogic\AdminAPI\AdyenGivingSettings\Controller\AdyenGivingSettingsController;
 use Adyen\Core\BusinessLogic\AdminAPI\Aspects\ErrorHandlingAspect;
 use Adyen\Core\BusinessLogic\AdminAPI\Aspects\StoreContextAspect;
+use Adyen\Core\BusinessLogic\AdminAPI\AuthorizationAdjustment\Controller\AuthorizationAdjustmentController;
 use Adyen\Core\BusinessLogic\AdminAPI\Cancel\Controller\CancelController;
 use Adyen\Core\BusinessLogic\AdminAPI\Capture\Controller\CaptureController;
 use Adyen\Core\BusinessLogic\AdminAPI\Connection\Controller\ConnectionController;
@@ -306,5 +307,18 @@ class AdminAPI
             ::run(new ErrorHandlingAspect())
             ->andRun(new StoreContextAspect($storeId))
             ->beforeEachMethodOfService(PaymentLinkController::class);
+    }
+
+    /**
+     * @param string $storeId
+     *
+     * @return AuthorizationAdjustmentController
+     */
+    public function authorizationAdjustment(string $storeId): object
+    {
+        return Aspects
+            ::run(new ErrorHandlingAspect())
+            ->andRun(new StoreContextAspect($storeId))
+            ->beforeEachMethodOfService(AuthorizationAdjustmentController::class);
     }
 }

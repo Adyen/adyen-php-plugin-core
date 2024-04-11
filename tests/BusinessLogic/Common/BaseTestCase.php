@@ -2,6 +2,7 @@
 
 namespace Adyen\Core\Tests\BusinessLogic\Common;
 
+use Adyen\Core\BusinessLogic\AdminAPI\AuthorizationAdjustment\Controller\AuthorizationAdjustmentController;
 use Adyen\Core\BusinessLogic\AdminAPI\InfoSettings\Controller\AutoTestController;
 use Adyen\Core\BusinessLogic\AdminAPI\InfoSettings\Controller\DebugController;
 use Adyen\Core\BusinessLogic\AdminAPI\InfoSettings\Controller\SystemInfoController;
@@ -350,6 +351,11 @@ class BaseTestCase extends TestCase
             PaymentLinkController::class => function () {
                 return new PaymentLinkController(
                     TestServiceRegister::getService(PaymentLinkService::class)
+                );
+            },
+            AuthorizationAdjustmentController::class => function () {
+                return new AuthorizationAdjustmentController(
+                    TestServiceRegister::getService(AuthorizationAdjustmentHandler::class)
                 );
             },
             SystemInfoController::class => function () {

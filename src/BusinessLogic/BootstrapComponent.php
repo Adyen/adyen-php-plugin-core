@@ -3,6 +3,7 @@
 namespace Adyen\Core\BusinessLogic;
 
 use Adyen\Core\BusinessLogic\AdminAPI\AdyenGivingSettings\Controller\AdyenGivingSettingsController;
+use Adyen\Core\BusinessLogic\AdminAPI\AuthorizationAdjustment\Controller\AuthorizationAdjustmentController;
 use Adyen\Core\BusinessLogic\AdminAPI\Cancel\Controller\CancelController;
 use Adyen\Core\BusinessLogic\AdminAPI\Capture\Controller\CaptureController;
 use Adyen\Core\BusinessLogic\AdminAPI\Connection\Controller\ConnectionController;
@@ -757,6 +758,15 @@ class BootstrapComponent extends BaseBootstrapComponent
             new SingleInstance(static function () {
                 return new PaymentLinkController(
                     ServiceRegister::getService(PaymentLinkService::class)
+                );
+            })
+        );
+
+        ServiceRegister::registerService(
+            AuthorizationAdjustmentController::class,
+            new SingleInstance(static function () {
+                return new AuthorizationAdjustmentController(
+                    ServiceRegister::getService(AuthorizationAdjustmentHandler::class)
                 );
             })
         );
