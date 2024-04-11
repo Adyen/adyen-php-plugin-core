@@ -87,6 +87,7 @@ class PaymentRequestService
                 (string)$context->getPaymentMethodCode()
             );
             if($configuredPaymentMethod && $configuredPaymentMethod->getAuthorizationType()){
+                $captureType = CaptureType::manual();
                 $authorizationType = $configuredPaymentMethod->getAuthorizationType();
             }
 
