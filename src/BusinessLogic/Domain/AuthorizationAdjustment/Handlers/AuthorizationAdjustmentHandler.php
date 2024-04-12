@@ -87,7 +87,7 @@ class AuthorizationAdjustmentHandler
         $transactionHistory = $this->transactionHistoryService->getTransactionHistory($merchantReference);
         try {
             AuthorizationAdjustmentValidator::validateAdjustmentPossibility($transactionHistory);
-            $adjustmentAmount = $transactionHistory->getAuthorizedAmount()->minus($transactionHistory->getCapturedAmount());
+            $adjustmentAmount = $transactionHistory->getCapturableAmount();
             $pspReference = $transactionHistory->getOriginalPspReference();
             $connectionSettings = $this->connectionService->getConnectionData();
             $merchantAccount = $connectionSettings ? $connectionSettings->getActiveConnectionData()->getMerchantId() : '';
@@ -136,7 +136,7 @@ class AuthorizationAdjustmentHandler
                 $lastItem ? $lastItem->getPaymentState() : '',
                 TimeProvider::getInstance()->getCurrentLocalTime()->format(DateTimeInterface::ATOM),
                 $success,
-                $history->getAuthorizedAmount()->minus($history->getCapturedAmount()),
+                $history->getCapturableAmount(),
                 $history->getPaymentMethod(),
                 $history->getRiskScore(),
                 $history->isLive()

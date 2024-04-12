@@ -131,6 +131,32 @@ class HistoryItemCollection
     }
 
     /**
+     * Returns all elements after the one given as parameter.
+     *
+     * @param HistoryItem $historyItem
+     *
+     * @return HistoryItemCollection
+     */
+    public function trimFromHistoryItem(HistoryItem $historyItem): HistoryItemCollection
+    {
+        $found = false;
+        $result = [];
+
+        foreach ($this->historyItems as $object) {
+            if (!$found && $object === $historyItem) {
+                $found = true;
+            }
+
+            if ($found) {
+                $result[] = $object;
+            }
+        }
+
+        return new self($result);
+    }
+
+
+    /**
      * Find sub array in transaction history starting from last AUTHORISATION code.
      *
      * @return HistoryItem[]

@@ -184,8 +184,7 @@ class TransactionHistory
             $authorisedItem->getDateAndTime()
         )->getTimestamp();
 
-        if ($authorisedDate + $this->captureDelay * 3600 < TimeProvider::getInstance()->getCurrentLocalTime(
-            )->getTimestamp()) {
+        if ($authorisedDate + $this->captureDelay * 3600 < TimeProvider::getInstance()->getCurrentLocalTime()->getTimestamp()) {
             return $this->getTotalAmountForEventCode('AUTHORISATION');
         }
 
@@ -194,18 +193,27 @@ class TransactionHistory
 
     /**
      * @return Amount
-     * 
+     *
      * @throws CurrencyMismatchException
      */
-    public function getAuthorizedAmount(): Amount
+    public function getCapturableAmount(): Amount
     {
-        $authorisationAdjustmentItem = $this->collection()->filterByEventCode('AUTHORISATION_ADJUSTMENT')->last();
+        $authorisationAdjustmentItem = $this->collection()->filterByEventCode('AUTHORISATION_ADJUSTMENT')->filterByStatus(true)->last();
+        $authorisationAmount = $this->collection()->filterByEventCode('AUTHORISATION')->filterByStatus(true)->getTotalAmount($this->currency);
+        $capturedAmount = $this->getCapturedAmount();
 
-        if ($authorisationAdjustmentItem) {
-            return $authorisationAdjustmentItem->getAmount();
+        if (!$authorisationAdjustmentItem || $authorisationAmount->getValue() === $authorisationAdjustmentItem->getAmount()->getValue()) {
+            return $authorisationAmount->minus($capturedAmount);
         }
 
-        return $this->getTotalAmountForEventCode('AUTHORISATION');
+        if ($authorisationAmount->getValue() > $authorisationAdjustmentItem->getAmount()->getValue()) {
+            return $authorisationAdjustmentItem->getAmount()->minus($capturedAmount);
+        }
+
+        $capturedAfterAdjustmentElements = $this->collection()->trimFromHistoryItem($authorisationAdjustmentItem);
+        $capturedAfterAdjustmentAmount = $capturedAfterAdjustmentElements->filterByEventCode('CAPTURE')->filterByStatus(true)->getTotalAmount($this->currency);
+
+        return $authorisationAdjustmentItem->getAmount()->minus($capturedAfterAdjustmentAmount);
     }
 
     /**

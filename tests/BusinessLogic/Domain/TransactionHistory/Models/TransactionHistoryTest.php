@@ -254,7 +254,7 @@ class TransactionHistoryTest extends BaseTestCase
      * @throws CurrencyMismatchException
      * @throws InvalidMerchantReferenceException
      */
-    public function testGetAuthorizedAmount(): void
+    public function testGetCapturableAmount(): void
     {
         // arrange
         $transactionHistory = new TransactionHistory(
@@ -280,7 +280,7 @@ class TransactionHistoryTest extends BaseTestCase
                     'paymentState',
                     'date',
                     true,
-                    Amount::fromInt(1, Currency::getDefault()),
+                    Amount::fromInt(10, Currency::getDefault()),
                     'paymentMethod',
                     0,
                     false
@@ -292,7 +292,7 @@ class TransactionHistoryTest extends BaseTestCase
                     'paymentState',
                     'date',
                     true,
-                    Amount::fromInt(1, Currency::getDefault()),
+                    Amount::fromInt(10, Currency::getDefault()),
                     'paymentMethod',
                     0,
                     false
@@ -301,17 +301,17 @@ class TransactionHistoryTest extends BaseTestCase
         );
 
         // act
-        $result = $transactionHistory->getAuthorizedAmount();
+        $result = $transactionHistory->getCapturableAmount();
 
         // assert
-        self::assertEquals($result, Amount::fromInt(100, Currency::getDefault()));
+        self::assertEquals($result, Amount::fromInt(80, Currency::getDefault()));
     }
 
     /**
      * @throws CurrencyMismatchException
      * @throws InvalidMerchantReferenceException
      */
-    public function testGetAuthorizedAmountWithAdjustments(): void
+    public function testGetCapturableAmountWithAdjustments(): void
     {
         // arrange
         $transactionHistory = new TransactionHistory(
@@ -337,7 +337,7 @@ class TransactionHistoryTest extends BaseTestCase
                     'paymentState',
                     'date',
                     true,
-                    Amount::fromInt(1, Currency::getDefault()),
+                    Amount::fromInt(10, Currency::getDefault()),
                     'paymentMethod',
                     0,
                     false
@@ -349,7 +349,7 @@ class TransactionHistoryTest extends BaseTestCase
                     'paymentState',
                     'date',
                     true,
-                    Amount::fromInt(300, Currency::getDefault()),
+                    Amount::fromInt(200, Currency::getDefault()),
                     'paymentMethod',
                     0,
                     false
@@ -358,10 +358,10 @@ class TransactionHistoryTest extends BaseTestCase
         );
 
         // act
-        $result = $transactionHistory->getAuthorizedAmount();
+        $result = $transactionHistory->getCapturableAmount();
 
         // assert
-        self::assertEquals($result, Amount::fromInt(300, Currency::getDefault()));
+        self::assertEquals($result, Amount::fromInt(200, Currency::getDefault()));
     }
 
     /**

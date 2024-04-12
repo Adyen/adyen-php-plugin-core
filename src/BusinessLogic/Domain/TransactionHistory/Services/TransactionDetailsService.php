@@ -76,12 +76,10 @@ class TransactionDetailsService
             && $connectionSettings->getActiveConnectionData()
             && $connectionSettings->getActiveConnectionData()->getMerchantId();
         try {
-            $authorizationAmount = $transactionHistory->getAuthorizedAmount();
+            $authorizationAmount = $transactionHistory->getCapturableAmount()->plus($transactionHistory->getCapturedAmount());
             $refundAmount = $transactionHistory->getTotalAmountForEventCode('REFUND');
             $captureAmount = $transactionHistory->getCapturedAmount();
-            $capturableAmount = $isCaptureTypeKnown ? $authorizationAmount->minus(
-                $captureAmount
-            )->getPriceInCurrencyUnits() : $authorizationAmount->getPriceInCurrencyUnits();
+            $capturableAmount = $isCaptureTypeKnown ? $transactionHistory->getCapturableAmount()->getPriceInCurrencyUnits() : $authorizationAmount->getPriceInCurrencyUnits();
             $cancelledAmount = $transactionHistory->getTotalAmountForEventCode('CANCELLATION');
             $cancel = $isMerchantConnected && $this->isCancellationSupported(
                     $captureAmount,

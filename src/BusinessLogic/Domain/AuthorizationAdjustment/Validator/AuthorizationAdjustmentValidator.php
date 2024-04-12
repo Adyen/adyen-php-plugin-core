@@ -36,7 +36,7 @@ class AuthorizationAdjustmentValidator
             );
         }
 
-        if ($transactionHistory->getCapturedAmount()->minus($transactionHistory->getAuthorizedAmount())->getPriceInCurrencyUnits() === 0) {
+        if ($transactionHistory->getCapturableAmount()->getValue() <= 0) {
             throw new OrderFullyCapturedException(new TranslatableLabel(
                 'Authorization adjustment is not possible. Order is fully captured.',
                 'authorizationAdjustment.orderFullyCaptured'));
