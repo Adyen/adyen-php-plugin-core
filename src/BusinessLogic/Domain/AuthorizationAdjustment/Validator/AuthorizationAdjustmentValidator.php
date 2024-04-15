@@ -42,7 +42,7 @@ class AuthorizationAdjustmentValidator
                 'authorizationAdjustment.orderFullyCaptured'));
         }
 
-        if ($transactionHistory->collection()->last()->getPaymentState() === 'cancelled') {
+        if (!$transactionHistory->collection()->filterByEventCode('CANCELLATION')->filterByStatus(true)->isEmpty()) {
             throw new InvalidPaymentStateException(new TranslatableLabel('Authorization adjustment is not possible. Order is cancelled.',
                 'authorizationAdjustment.orderCancelled'));
         }
