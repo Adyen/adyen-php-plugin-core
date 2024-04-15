@@ -202,12 +202,8 @@ class TransactionHistory
         $authorisationAmount = $this->collection()->filterByEventCode('AUTHORISATION')->filterByStatus(true)->getTotalAmount($this->currency);
         $capturedAmount = $this->getCapturedAmount();
 
-        if (!$authorisationAdjustmentItem || $authorisationAmount->getValue() === $authorisationAdjustmentItem->getAmount()->getValue()) {
+        if (!$authorisationAdjustmentItem) {
             return $authorisationAmount->minus($capturedAmount);
-        }
-
-        if ($authorisationAmount->getValue() > $authorisationAdjustmentItem->getAmount()->getValue()) {
-            return $authorisationAdjustmentItem->getAmount()->minus($capturedAmount);
         }
 
         $capturedAfterAdjustmentElements = $this->collection()->trimFromHistoryItem($authorisationAdjustmentItem);
