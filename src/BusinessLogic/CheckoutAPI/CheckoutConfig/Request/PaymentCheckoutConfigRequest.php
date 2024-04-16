@@ -28,14 +28,23 @@ class PaymentCheckoutConfigRequest
      * @var string|null
      */
     private $shopperReference;
+    /**
+     * @var string|null
+     */
+    private $shopperEmail;
 
-    public function __construct(Amount $amount, Country $country = null, string $shopperLocale = 'en-US', string $shopperReference = null)
-    {
-
+    public function __construct(
+        Amount $amount,
+        Country $country = null,
+        string $shopperLocale = 'en-US',
+        string $shopperReference = null,
+        string $shopperEmail = null
+    ){
         $this->amount = $amount;
         $this->country = $country;
         $this->shopperLocale = $shopperLocale;
         $this->shopperReference = $shopperReference;
+        $this->shopperEmail = $shopperEmail;
     }
 
     /**
@@ -68,5 +77,13 @@ class PaymentCheckoutConfigRequest
     public function getShopperReference(): ?string
     {
         return $this->shopperReference;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getShopperEmail(): ?string
+    {
+        return $this->shopperEmail;
     }
 }

@@ -37,17 +37,23 @@ class PaymentCheckoutConfigResponse extends Response
      * @var string
      */
     private $country;
+    /**
+     * @var string|null
+     */
+    private $shopperEmail;
 
     public function __construct(
         PaymentCheckoutConfigResult $result,
         Amount $amount,
         string $shopperLocale = 'en-US',
-        string $country = ''
+        string $country = '',
+        string $shopperEmail = null
     ) {
         $this->result = $result;
         $this->amount = $amount;
         $this->shopperLocale = $shopperLocale;
         $this->country = $country;
+        $this->shopperEmail = $shopperEmail;
     }
 
     /**
@@ -110,6 +116,11 @@ class PaymentCheckoutConfigResponse extends Response
 
                 $configurations['card']['showBrandsUnderCardNumber'] = $additionalData->isShowLogos();
                 $configurations['card']['enableStoreDetails'] = $additionalData->isSingleClickPayment();
+                if($additionalData->isClickToPay()){
+                    $configurations['card']['clickToPayConfiguration'] = [
+                        'shopperEmail' => $this->shopperEmail
+                    ];
+                }
             }
 
             if (PaymentMethodCode::eps()->equals($method->getCode())) {

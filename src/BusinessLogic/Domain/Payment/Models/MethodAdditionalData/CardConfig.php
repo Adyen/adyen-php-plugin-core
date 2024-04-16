@@ -29,6 +29,10 @@ class CardConfig implements PaymentMethodAdditionalData
     /**
      * @var bool
      */
+    private $clickToPay;
+    /**
+     * @var bool
+     */
     private $installments;
     /**
      * @var bool
@@ -54,6 +58,7 @@ class CardConfig implements PaymentMethodAdditionalData
     /**
      * @param bool $showLogos
      * @param bool $singleClickPayment
+     * @param bool $clickToPay
      * @param bool $installments
      * @param bool $installmentAmounts
      * @param bool $sendBasket
@@ -69,6 +74,7 @@ class CardConfig implements PaymentMethodAdditionalData
     public function __construct(
         bool  $showLogos = false,
         bool  $singleClickPayment = false,
+        bool  $clickToPay = false,
         bool  $installments = false,
         bool  $installmentAmounts = false,
         bool  $sendBasket = false,
@@ -94,6 +100,7 @@ class CardConfig implements PaymentMethodAdditionalData
 
         $this->showLogos = $showLogos;
         $this->singleClickPayment = $singleClickPayment;
+        $this->clickToPay = $clickToPay;
         $this->installments = $installments;
         $this->installmentAmounts = $installmentAmounts;
         $this->sendBasket = $sendBasket;
@@ -116,6 +123,14 @@ class CardConfig implements PaymentMethodAdditionalData
     public function isSingleClickPayment(): bool
     {
         return $this->singleClickPayment;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isClickToPay(): bool
+    {
+        return $this->clickToPay;
     }
 
     /**

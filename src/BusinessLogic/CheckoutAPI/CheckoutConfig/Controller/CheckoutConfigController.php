@@ -38,7 +38,8 @@ class CheckoutConfigController
             ),
             $request->getAmount(),
             $request->getShopperLocale(),
-            $request->getCountry() ? $request->getCountry()->getIsoCode() : ''
+            $request->getCountry() ? $request->getCountry()->getIsoCode() : '',
+            $request->getShopperEmail()
         );
     }
 
