@@ -247,7 +247,7 @@ class ProxyTest extends BaseTestCase
         $request = new HttpRequest('/test-query');
         $request->setQueries(['paramName' => 'paramValue']);
 
-        $proxy = new MockProxy($this->httpClient, $baseUrl, 'v69');
+        $proxy = new MockProxy($this->httpClient, $baseUrl, 'v71');
 
         // act
         $response = $proxy->get($request);

@@ -26,7 +26,7 @@ class ProxyTest extends BaseTestCase
             return $this->httpClient;
         });
 
-        $this->proxy = new Proxy($this->httpClient, 'https://checkout-test.adyen.com', 'v69', '0123456789');
+        $this->proxy = new Proxy($this->httpClient, 'https://checkout-test.adyen.com', 'v71', '0123456789');
     }
 
     public function testMakeDonationUrl(): void
@@ -48,7 +48,7 @@ class ProxyTest extends BaseTestCase
 
         // assert
         $history = $this->httpClient->getLastRequest();
-        self::assertEquals('https://checkout-test.adyen.com/v69/donations', $history['url']);
+        self::assertEquals('https://checkout-test.adyen.com/v71/donations', $history['url']);
     }
 
     public function testMakeDonationMethod(): void

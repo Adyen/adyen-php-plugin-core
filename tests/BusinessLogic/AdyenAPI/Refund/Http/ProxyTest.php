@@ -42,7 +42,7 @@ class ProxyTest extends BaseTestCase
             return $this->httpClient;
         });
 
-        $this->proxy = new Proxy($this->httpClient, 'https://checkout-test.adyen.com', 'v69', '0123456789');
+        $this->proxy = new Proxy($this->httpClient, 'https://checkout-test.adyen.com', 'v71', '0123456789');
     }
 
     /**
@@ -65,7 +65,7 @@ class ProxyTest extends BaseTestCase
 
         // assert
         $history = $this->httpClient->getLastRequest();
-        self::assertEquals('https://checkout-test.adyen.com/v69/payments/psp/refunds', $history['url']);
+        self::assertEquals('https://checkout-test.adyen.com/v71/payments/psp/refunds', $history['url']);
     }
 
     /**
