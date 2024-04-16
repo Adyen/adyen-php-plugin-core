@@ -301,7 +301,7 @@ class ProxyTest extends BaseTestCase
 
         // assert
         $lastRequest = $this->httpClient->getLastRequest();
-        self::assertEquals('https://checkout-test.adyen.com/v70/paymentMethods', $lastRequest['url']);
+        self::assertEquals('https://checkout-test.adyen.com/v71/paymentMethods', $lastRequest['url']);
     }
 
     public function testGetAvailablePaymentMethodsMethod(): void

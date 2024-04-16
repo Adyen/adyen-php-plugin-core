@@ -20,7 +20,7 @@ class ProxyFactory
 {
     private const CHECKOUT_API_TEST_URL = 'checkout-test.adyen.com';
     private const CHECKOUT_API_LIVE_URL = 'checkout-live.adyenpayments.com/checkout';
-    private const API_VERSION = 'v70';
+    private const API_VERSION = 'v71';
 
     /**
      * Creates proxy object.
