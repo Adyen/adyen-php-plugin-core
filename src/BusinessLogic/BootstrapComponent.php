@@ -461,7 +461,8 @@ class BootstrapComponent extends BaseBootstrapComponent
                     ServiceRegister::getService(TransactionHistoryService::class),
                     ServiceRegister::getService(ShopNotificationService::class),
                     ServiceRegister::getService(AuthorizationAdjustmentProxy::class),
-                    ServiceRegister::getService(ConnectionService::class)
+                    ServiceRegister::getService(ConnectionService::class),
+                    ServiceRegister::getService(CancelHandler::class)
                 );
             })
         );

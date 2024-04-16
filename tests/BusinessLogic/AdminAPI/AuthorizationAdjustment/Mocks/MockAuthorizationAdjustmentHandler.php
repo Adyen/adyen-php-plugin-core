@@ -3,6 +3,7 @@
 namespace Adyen\Core\Tests\BusinessLogic\AdminAPI\AuthorizationAdjustment\Mocks;
 
 use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Handlers\AuthorizationAdjustmentHandler;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
 use Exception;
 
 /**
@@ -33,6 +34,23 @@ class MockAuthorizationAdjustmentHandler extends AuthorizationAdjustmentHandler
     {
         if ($this->exception) {
             throw  $this->exception;
+        }
+
+        return $this->success;
+    }
+
+    /**
+     * @param string $merchantReference
+     * @param Amount $amount
+     *
+     * @return bool
+     *
+     * @throws Exception
+     */
+    public function handleOrderModifications(string $merchantReference, Amount $amount): bool
+    {
+        if ($this->exception) {
+            throw $this->exception;
         }
 
         return $this->success;

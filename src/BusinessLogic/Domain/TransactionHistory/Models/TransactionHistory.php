@@ -213,6 +213,16 @@ class TransactionHistory
     }
 
     /**
+     * @return Amount
+     *
+     * @throws CurrencyMismatchException
+     */
+    public function getAuthorizedAmount(): Amount
+    {
+        return $this->getCapturedAmount()->plus($this->getCapturableAmount());
+    }
+
+    /**
      * @param string $pspReference PSP reference that belongs to this transaction history based on merchant order reference
      *
      * @return string

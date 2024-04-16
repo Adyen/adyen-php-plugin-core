@@ -479,7 +479,8 @@ class BaseTestCase extends TestCase
                     TestServiceRegister::getService(TransactionHistoryService::class),
                     TestServiceRegister::getService(ShopNotificationService::class),
                     TestServiceRegister::getService(AuthorizationAdjustmentProxy::class),
-                    TestServiceRegister::getService(ConnectionService::class)
+                    TestServiceRegister::getService(ConnectionService::class),
+                    TestServiceRegister::getService(CancelHandler::class)
                 );
             }
         );

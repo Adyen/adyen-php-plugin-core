@@ -2,6 +2,9 @@
 
 namespace Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Handlers;
 
+use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Exceptions\AdjustmentRequestAlreadySentException;
+use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Exceptions\AmountNotChangedException;
+use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Exceptions\InvalidAmountException;
 use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Exceptions\InvalidAuthorizationTypeException;
 use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Exceptions\InvalidPaymentStateException;
 use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Exceptions\OrderFullyCapturedException;
@@ -9,7 +12,9 @@ use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Exceptions\PaymentLi
 use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Models\AuthorizationAdjustmentRequest;
 use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Proxies\AuthorizationAdjustmentProxy;
 use Adyen\Core\BusinessLogic\Domain\AuthorizationAdjustment\Validator\AuthorizationAdjustmentValidator;
+use Adyen\Core\BusinessLogic\Domain\Cancel\Handlers\CancelHandler;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\CurrencyMismatchException;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\AuthorizationAdjustment\FailedAuthorizationAdjustmentRequestEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\AuthorizationAdjustment\SuccessfulAuthorizationAdjustmentRequestEvent;
@@ -51,21 +56,29 @@ class AuthorizationAdjustmentHandler
     private $connectionService;
 
     /**
+     * @var CancelHandler
+     */
+    private $cancelHandler;
+
+    /**
      * @param TransactionHistoryService $transactionHistoryService
      * @param ShopNotificationService $shopNotificationService
      * @param AuthorizationAdjustmentProxy $authorizationAdjustmentProxy
      * @param ConnectionService $connectionService
+     * @param CancelHandler $cancelHandler
      */
     public function __construct(
         TransactionHistoryService $transactionHistoryService,
         ShopNotificationService $shopNotificationService,
         AuthorizationAdjustmentProxy $authorizationAdjustmentProxy,
-        ConnectionService $connectionService
+        ConnectionService $connectionService,
+        CancelHandler $cancelHandler
     ) {
         $this->transactionHistoryService = $transactionHistoryService;
         $this->shopNotificationService = $shopNotificationService;
         $this->authorizationAdjustmentProxy = $authorizationAdjustmentProxy;
         $this->connectionService = $connectionService;
+        $this->cancelHandler = $cancelHandler;
     }
 
     /**
@@ -88,27 +101,83 @@ class AuthorizationAdjustmentHandler
         try {
             AuthorizationAdjustmentValidator::validateAdjustmentPossibility($transactionHistory);
             $adjustmentAmount = $transactionHistory->getCapturableAmount();
-            $pspReference = $transactionHistory->getOriginalPspReference();
-            $connectionSettings = $this->connectionService->getConnectionData();
-            $merchantAccount = $connectionSettings ? $connectionSettings->getActiveConnectionData()->getMerchantId() : '';
-            $success = $this->authorizationAdjustmentProxy->adjustPayment(
-                new AuthorizationAdjustmentRequest(
-                    $pspReference,
-                    $adjustmentAmount,
-                    $merchantAccount,
-                    $merchantReference)
-            );
 
-            $this->addHistoryItem($transactionHistory, $success);
-            $this->pushNotification($success, $transactionHistory);
-
-            return $success;
+            return $this->sendAdjustmentRequest($merchantReference, $adjustmentAmount, $transactionHistory);
         } catch (Exception $exception) {
             $this->addHistoryItem($transactionHistory, false);
             $this->pushNotification(false, $transactionHistory);
 
             throw $exception;
         }
+    }
+
+    /**
+     * @param string $merchantReference
+     * @param Amount $amount
+     *
+     * @return bool
+     *
+     * @throws CurrencyMismatchException
+     * @throws InvalidAuthorizationTypeException
+     * @throws InvalidMerchantReferenceException
+     * @throws InvalidPaymentStateException
+     * @throws OrderFullyCapturedException
+     * @throws PaymentLinkExistsException
+     * @throws AmountNotChangedException
+     * @throws AdjustmentRequestAlreadySentException
+     * @throws InvalidAmountException
+     */
+    public function handleOrderModifications(string $merchantReference, Amount $amount): bool
+    {
+        $transactionHistory = $this->transactionHistoryService->getTransactionHistory($merchantReference);
+        try {
+            $amount = $amount->minus($transactionHistory->getCapturedAmount());
+            AuthorizationAdjustmentValidator::validateModificationPossibility($transactionHistory, $amount);
+            AuthorizationAdjustmentValidator::validateAdjustmentPossibility($transactionHistory);
+
+            if ($amount->getValue() === 0) {
+                return $this->cancelHandler->handle($merchantReference);
+            }
+
+            return $this->sendAdjustmentRequest($merchantReference, $amount, $transactionHistory);
+        } catch (Exception $exception) {
+            $this->addHistoryItem($transactionHistory, false);
+            $this->pushNotification(false, $transactionHistory);
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * @param string $merchantReference
+     * @param Amount $amount
+     * @param TransactionHistory $transactionHistory
+     *
+     * @return bool
+     *
+     * @throws CurrencyMismatchException
+     * @throws InvalidMerchantReferenceException
+     */
+    private function sendAdjustmentRequest(
+        string $merchantReference,
+        Amount $amount,
+        TransactionHistory $transactionHistory
+    ): bool {
+        $pspReference = $transactionHistory->getOriginalPspReference();
+        $connectionSettings = $this->connectionService->getConnectionData();
+        $merchantAccount = $connectionSettings ? $connectionSettings->getActiveConnectionData()->getMerchantId() : '';
+        $success = $this->authorizationAdjustmentProxy->adjustPayment(
+            new AuthorizationAdjustmentRequest(
+                $pspReference,
+                $amount,
+                $merchantAccount,
+                $merchantReference)
+        );
+
+        $this->addHistoryItem($transactionHistory, $success);
+        $this->pushNotification($success, $transactionHistory);
+
+        return $success;
     }
 
     /**
