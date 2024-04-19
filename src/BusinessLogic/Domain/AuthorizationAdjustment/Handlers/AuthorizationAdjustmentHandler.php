@@ -104,7 +104,7 @@ class AuthorizationAdjustmentHandler
 
             return $this->sendAdjustmentRequest($merchantReference, $adjustmentAmount, $transactionHistory);
         } catch (Exception $exception) {
-            $this->addHistoryItem($transactionHistory, false);
+            $this->addHistoryItem($transactionHistory, false, $transactionHistory->getCapturableAmount());
             $this->pushNotification(false, $transactionHistory);
 
             throw $exception;
@@ -141,7 +141,7 @@ class AuthorizationAdjustmentHandler
 
             return $this->sendAdjustmentRequest($merchantReference, $amount, $transactionHistory);
         } catch (Exception $exception) {
-            $this->addHistoryItem($transactionHistory, false);
+            $this->addHistoryItem($transactionHistory, false, $amount);
             $this->pushNotification(false, $transactionHistory);
 
             throw $exception;
@@ -155,7 +155,6 @@ class AuthorizationAdjustmentHandler
      *
      * @return bool
      *
-     * @throws CurrencyMismatchException
      * @throws InvalidMerchantReferenceException
      */
     private function sendAdjustmentRequest(
@@ -174,7 +173,7 @@ class AuthorizationAdjustmentHandler
                 $merchantReference)
         );
 
-        $this->addHistoryItem($transactionHistory, $success);
+        $this->addHistoryItem($transactionHistory, $success, $amount);
         $this->pushNotification($success, $transactionHistory);
 
         return $success;
@@ -185,13 +184,13 @@ class AuthorizationAdjustmentHandler
      *
      * @param TransactionHistory $history
      * @param bool $success
+     * @param Amount $amount
      *
      * @return void
      *
      * @throws InvalidMerchantReferenceException
-     * @throws CurrencyMismatchException
      */
-    private function addHistoryItem(TransactionHistory $history, bool $success): void
+    private function addHistoryItem(TransactionHistory $history, bool $success, Amount $amount): void
     {
         $lastItem = $history->collection()->last();
         $adjustmentRequestCount = count(
@@ -205,7 +204,7 @@ class AuthorizationAdjustmentHandler
                 $lastItem ? $lastItem->getPaymentState() : '',
                 TimeProvider::getInstance()->getCurrentLocalTime()->format(DateTimeInterface::ATOM),
                 $success,
-                $history->getCapturableAmount(),
+                $amount,
                 $history->getPaymentMethod(),
                 $history->getRiskScore(),
                 $history->isLive()
