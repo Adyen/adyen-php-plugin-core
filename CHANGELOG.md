@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [1.1.11 - 1.1.12](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.11...1.1.12) - 2024-04-15
+- Fix retrieving new payment state when transaction is cancelled
+
 ## [1.1.10 - 1.1.11](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.10...1.1.11) - 2024-03-11
 - Remove 'New' and 'Pending' order status from Order status map
 
