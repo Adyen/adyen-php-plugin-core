@@ -72,7 +72,7 @@ class ProxyTest extends BaseTestCase
         // assert
         $lastRequest = $this->httpClient->getLastRequest();
         self::assertEquals(
-            'https://' . ProxyFactory::MANAGEMENT_API_TEST_URL . '/v1/merchants?pageNumber=1&pageSize=100',
+            'https://' . ProxyFactory::MANAGEMENT_API_TEST_URL . '/v3/merchants?pageNumber=1&pageSize=100',
             $lastRequest['url']
         );
     }
@@ -147,7 +147,7 @@ class ProxyTest extends BaseTestCase
         // assert
         $lastRequest = $this->httpClient->getLastRequest();
         self::assertEquals(
-            'https://' . ProxyFactory::MANAGEMENT_API_TEST_URL . '/v1/merchants/1234',
+            'https://' . ProxyFactory::MANAGEMENT_API_TEST_URL . '/v3/merchants/1234',
             $lastRequest['url']
         );
     }
@@ -184,7 +184,7 @@ class ProxyTest extends BaseTestCase
         // assert
         $lastRequest = $this->httpClient->getLastRequest();
         self::assertEquals(
-            'https://' . ProxyFactory::MANAGEMENT_API_TEST_URL . '/v1/me/generateClientKey',
+            'https://' . ProxyFactory::MANAGEMENT_API_TEST_URL . '/v3/me/generateClientKey',
             $lastRequest['url']
         );
     }

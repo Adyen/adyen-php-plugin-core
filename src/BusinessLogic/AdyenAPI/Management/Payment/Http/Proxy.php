@@ -85,8 +85,7 @@ class Proxy extends AuthorizedProxy implements PaymentProxy
     {
         $result = [];
 
-        foreach ($response as $method) {
-            $paymentMethod = $method['PaymentMethod'] ?? [];
+        foreach ($response as $paymentMethod) {
             $result[] = new PaymentMethodResponse(
                 $paymentMethod['id'] ?? '',
                 $paymentMethod['type'] ?? '',

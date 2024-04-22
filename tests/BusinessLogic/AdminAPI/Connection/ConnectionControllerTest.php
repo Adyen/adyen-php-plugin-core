@@ -53,7 +53,7 @@ class ConnectionControllerTest extends BaseTestCase
         $this->webhookConfigRepository = TestServiceRegister::getService(WebhookConfigRepository::class);
         $this->httpClient = new TestHttpClient();
         $merchantProxy = new MockMerchantProxy(
-            $this->httpClient, 'test.url', 'V1', '0123456789'
+            $this->httpClient, 'test.url', 'v3', '0123456789'
         );
         TestServiceRegister::registerService(HttpClient::class, function () {
             return $this->httpClient;

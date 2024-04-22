@@ -9,16 +9,16 @@
   "primarySettlementCurrency": "EUR",
   "_links": {
     "self": {
-      "href": "https://management-test.adyen.com/v1/merchants/YOUR_MERCHANT_ACCOUNT"
+      "href": "https://management-test.adyen.com/v3/merchants/YOUR_MERCHANT_ACCOUNT"
     },
     "apiCredentials": {
-      "href": "https://management-test.adyen.com/v1/merchants/YOUR_MERCHANT_ACCOUNT/apiCredentials"
+      "href": "https://management-test.adyen.com/v3/merchants/YOUR_MERCHANT_ACCOUNT/apiCredentials"
     },
     "users": {
-      "href": "https://management-test.adyen.com/v1/merchants/YOUR_MERCHANT_ACCOUNT/users"
+      "href": "https://management-test.adyen.com/v3/merchants/YOUR_MERCHANT_ACCOUNT/users"
     },
     "webhooks": {
-      "href": "https://management-test.adyen.com/v1/merchants/YOUR_MERCHANT_ACCOUNT/webhooks"
+      "href": "https://management-test.adyen.com/v3/merchants/YOUR_MERCHANT_ACCOUNT/webhooks"
     }
   }
 }

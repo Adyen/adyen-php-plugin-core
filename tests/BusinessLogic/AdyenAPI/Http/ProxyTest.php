@@ -34,7 +34,7 @@ class ProxyTest extends BaseTestCase
         parent::setUp();
 
         $this->httpClient = new TestHttpClient();
-        $this->proxy = new MockProxy($this->httpClient, self::BASE_PROXY_URL, 'v1');
+        $this->proxy = new MockProxy($this->httpClient, self::BASE_PROXY_URL, 'v3');
     }
 
 
@@ -55,7 +55,7 @@ class ProxyTest extends BaseTestCase
         $request = $this->httpClient->getLastRequest();
         self::assertEquals(HttpClient::HTTP_METHOD_GET, $request['method']);
         self::assertEquals('[]', (string)$request['body']);
-        self::assertEquals('https://test-adyen-proxy-url.domain.com/test-path/v1/hello', $request['url']);
+        self::assertEquals('https://test-adyen-proxy-url.domain.com/test-path/v3/hello', $request['url']);
     }
 
     /**
@@ -75,7 +75,7 @@ class ProxyTest extends BaseTestCase
         $request = $this->httpClient->getLastRequest();
         self::assertEquals(HttpClient::HTTP_METHOD_DELETE, $request['method']);
         self::assertEquals('[]', $request['body']);
-        self::assertEquals('https://test-adyen-proxy-url.domain.com/test-path/v1/hello', $request['url']);
+        self::assertEquals('https://test-adyen-proxy-url.domain.com/test-path/v3/hello', $request['url']);
     }
 
     /**
@@ -98,7 +98,7 @@ class ProxyTest extends BaseTestCase
         $request = $this->httpClient->getLastRequest();
         self::assertEquals(HttpClient::HTTP_METHOD_POST, $request['method']);
         self::assertEquals(json_encode($body), $request['body']);
-        self::assertEquals('https://test-adyen-proxy-url.domain.com/test-path/v1/hello', $request['url']);
+        self::assertEquals('https://test-adyen-proxy-url.domain.com/test-path/v3/hello', $request['url']);
     }
 
     /**
@@ -121,7 +121,7 @@ class ProxyTest extends BaseTestCase
         $request = $this->httpClient->getLastRequest();
         self::assertEquals(HttpClient::HTTP_METHOD_PUT, $request['method']);
         self::assertEquals(json_encode($body), $request['body']);
-        self::assertEquals('https://test-adyen-proxy-url.domain.com/test-path/v1/hello', $request['url']);
+        self::assertEquals('https://test-adyen-proxy-url.domain.com/test-path/v3/hello', $request['url']);
     }
 
     /**
@@ -144,7 +144,7 @@ class ProxyTest extends BaseTestCase
         $request = $this->httpClient->getLastRequest();
         self::assertEquals(HttpClient::HTTP_METHOD_PATCH, $request['method']);
         self::assertEquals(json_encode($body), $request['body']);
-        self::assertEquals('https://test-adyen-proxy-url.domain.com/test-path/v1/hello', $request['url']);
+        self::assertEquals('https://test-adyen-proxy-url.domain.com/test-path/v3/hello', $request['url']);
     }
 
     /**
@@ -164,7 +164,7 @@ class ProxyTest extends BaseTestCase
         $request = $this->httpClient->getLastRequest();
         self::assertEquals(HttpClient::HTTP_METHOD_POST, $request['method']);
         self::assertEquals('[]', $request['body']);
-        self::assertEquals('https://test-adyen-proxy-url.domain.com/test-path/v1/hello', $request['url']);
+        self::assertEquals('https://test-adyen-proxy-url.domain.com/test-path/v3/hello', $request['url']);
     }
 
     public function testDefaultRequestHeaders()
@@ -207,7 +207,7 @@ class ProxyTest extends BaseTestCase
         $request = $this->httpClient->getLastRequest();
         self::assertEquals(HttpClient::HTTP_METHOD_GET, $request['method']);
         self::assertEquals('[]', $request['body']);
-        self::assertEquals('https://test-adyen-proxy-url.domain.com/test-path/v1/hello', $request['url']);
+        self::assertEquals('https://test-adyen-proxy-url.domain.com/test-path/v3/hello', $request['url']);
         $headers = $request['headers'];
         self::assertNotEmpty($headers);
         self::assertArrayHasKey('test', $headers);

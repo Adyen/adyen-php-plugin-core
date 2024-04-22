@@ -226,7 +226,7 @@ class BaseTestCase extends TestCase
             ConnectionProxy::class => function () {
                 return new Proxy(
                     TestServiceRegister::getService(HttpClient::class),
-                    'test.url', 'V1', '0123456789'
+                    'test.url', 'v3', '0123456789'
                 );
             },
 
@@ -270,7 +270,7 @@ class BaseTestCase extends TestCase
             MerchantProxy::class => function () {
                 return new \Adyen\Core\BusinessLogic\AdyenAPI\Management\Merchant\Http\Proxy(
                     TestServiceRegister::getService(HttpClient::class),
-                    'test.url', 'V1', '0123456789'
+                    'test.url', 'v3', '0123456789'
                 );
             },
             WebhookUrlService::class => function () {
@@ -291,7 +291,7 @@ class BaseTestCase extends TestCase
             },
             WebhookProxy::class => function () {
                 return new \Adyen\Core\BusinessLogic\AdyenAPI\Management\Webhook\Http\Proxy(
-                    TestServiceRegister::getService(HttpClient::class), 'test.url', 'V1', '0123456789'
+                    TestServiceRegister::getService(HttpClient::class), 'test.url', 'v3', '0123456789'
                 );
             },
             StoreService::class => function () {
@@ -388,12 +388,12 @@ class BaseTestCase extends TestCase
             },
             PaymentProxy::class => function () {
                 return new \Adyen\Core\BusinessLogic\AdyenAPI\Management\Payment\Http\Proxy(
-                    TestServiceRegister::getService(HttpClient::class), 'test.url', 'V1', '0123456789'
+                    TestServiceRegister::getService(HttpClient::class), 'test.url', 'v3', '0123456789'
                 );
             },
             PaymentsProxy::class => function () {
                 return new \Adyen\Core\BusinessLogic\AdyenAPI\Checkout\Payments\Http\Proxy(
-                    TestServiceRegister::getService(HttpClient::class), 'test.url', 'V1', '0123456789'
+                    TestServiceRegister::getService(HttpClient::class), 'test.url', 'v3', '0123456789'
                 );
             },
             OrderService::class => function () {
