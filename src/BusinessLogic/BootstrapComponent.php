@@ -788,7 +788,7 @@ class BootstrapComponent extends BaseBootstrapComponent
         ServiceRegister::registerService(
             StoredDetailsProxy::class,
             new SingleInstance(static function () {
-                return AdyenAPI\Recurring\ProxyFactory::makeProxy(AdyenAPI\Recurring\StoredDetails\Http\Proxy::class);
+                return AdyenAPI\Checkout\ProxyFactory::makeProxy(AdyenAPI\Checkout\Recurring\Http\Proxy::class);
             })
         );
 

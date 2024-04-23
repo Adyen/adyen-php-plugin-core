@@ -140,8 +140,7 @@ class PaymentMethodStateDataProcessor implements PaymentRequestProcessor
     private function isPaymentStored(PaymentMethod $method, array $storedMethods, string $storedId): bool
     {
         foreach ($storedMethods as $storedMethod) {
-            if ($method->getCode() === $storedMethod->getType() && $storedId === $storedMethod->getMetaData(
-                )['RecurringDetail']['recurringDetailReference']) {
+            if ($method->getCode() === $storedMethod->getType() && $storedId === $storedMethod->getMetaData()['id']) {
                 return true;
             }
         }
