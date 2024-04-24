@@ -120,6 +120,8 @@ class PaymentCheckoutConfigResponse extends Response
                     $configurations['card']['clickToPayConfiguration'] = [
                         'shopperEmail' => $this->shopperEmail
                     ];
+                } else{
+                    $configurations['card']['_disableClickToPay'] = true;
                 }
             }
 
