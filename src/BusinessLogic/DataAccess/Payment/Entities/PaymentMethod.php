@@ -228,6 +228,7 @@ class PaymentMethod extends Entity
                 'type' => CardConfig::class,
                 'showLogos' => $data->isShowLogos(),
                 'singleClickPayment' => $data->isSingleClickPayment(),
+                'clickToPay' => $data->isClickToPay(),
                 'installments' => $data->isInstallments(),
                 'installmentAmounts' => $data->isInstallmentAmounts(),
                 'sendBasket' => $data->isSendBasket(),
@@ -320,6 +321,7 @@ class PaymentMethod extends Entity
             return new CardConfig(
                 static::getDataValue($additionalData, 'showLogos', false),
                 static::getDataValue($additionalData, 'singleClickPayment', false),
+                static::getDataValue($additionalData, 'clickToPay', false),
                 static::getDataValue($additionalData, 'installments', false),
                 static::getDataValue($additionalData, 'installmentAmounts', false),
                 static::getDataValue($additionalData, 'sendBasket', false),

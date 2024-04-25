@@ -80,6 +80,7 @@ class PaymentMethodResponse extends Response
                 'type' => CardConfig::class,
                 'showLogos' => $data->isShowLogos(),
                 'singleClickPayment' => $data->isSingleClickPayment(),
+                'clickToPay' => $data->isClickToPay(),
                 'installments' => $data->isInstallments(),
                 'installmentAmounts' => $data->isInstallmentAmounts(),
                 'sendBasket' => $data->isSendBasket(),

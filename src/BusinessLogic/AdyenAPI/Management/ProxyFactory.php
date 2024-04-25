@@ -19,7 +19,7 @@ class ProxyFactory
 {
     public const MANAGEMENT_API_TEST_URL = 'management-test.adyen.com';
     public const MANAGEMENT_API_LIVE_URL = 'management-live.adyen.com';
-    public const API_VERSION = 'v1';
+    public const API_VERSION = 'v3';
 
     /**
      * Creates proxy object.

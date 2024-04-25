@@ -76,7 +76,7 @@ class ProxyTest extends BaseTestCase
         // assert
         $lastRequest = $this->httpClient->getLastRequest();
         self::assertEquals(
-            'https://' . ProxyFactory::MANAGEMENT_API_TEST_URL . '/v1/merchants/1234/webhooks',
+            'https://' . ProxyFactory::MANAGEMENT_API_TEST_URL . '/v3/merchants/1234/webhooks',
             $lastRequest['url']
         );
     }
@@ -160,7 +160,7 @@ class ProxyTest extends BaseTestCase
         // assert
         $lastRequest = $this->httpClient->getLastRequest();
         self::assertEquals(
-            'https://' . ProxyFactory::MANAGEMENT_API_TEST_URL . '/v1/merchants/1234/webhooks/012345678',
+            'https://' . ProxyFactory::MANAGEMENT_API_TEST_URL . '/v3/merchants/1234/webhooks/012345678',
             $lastRequest['url']
         );
     }
@@ -195,7 +195,7 @@ class ProxyTest extends BaseTestCase
         // assert
         $lastRequest = $this->httpClient->getLastRequest();
         self::assertEquals(
-            'https://' . ProxyFactory::MANAGEMENT_API_TEST_URL . '/v1/merchants/1234/webhooks/012345678/generateHmac',
+            'https://' . ProxyFactory::MANAGEMENT_API_TEST_URL . '/v3/merchants/1234/webhooks/012345678/generateHmac',
             $lastRequest['url']
         );
     }
@@ -321,7 +321,7 @@ class ProxyTest extends BaseTestCase
         // assert
         $lastRequest = $this->httpClient->getLastRequest();
         self::assertEquals(
-            'https://' . ProxyFactory::MANAGEMENT_API_TEST_URL . '/v1/merchants/1/webhooks/1/test',
+            'https://' . ProxyFactory::MANAGEMENT_API_TEST_URL . '/v3/merchants/1/webhooks/1/test',
             $lastRequest['url']
         );
     }

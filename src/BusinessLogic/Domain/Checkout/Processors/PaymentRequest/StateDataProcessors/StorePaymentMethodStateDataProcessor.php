@@ -13,6 +13,8 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\PaymentRe
  */
 class StorePaymentMethodStateDataProcessor implements PaymentRequestProcessor
 {
+    private const DEFAULT_RECURRING_PROCESSING_MODEL = 'CardOnFile';
+
     public function process(PaymentRequestBuilder $builder, StartTransactionRequestContext $context): void
     {
         $storePaymentMethod = $context->getStateData()->get('storePaymentMethod');
@@ -22,5 +24,6 @@ class StorePaymentMethodStateDataProcessor implements PaymentRequestProcessor
         }
 
         $builder->setStorePaymentMethod($storePaymentMethod);
+        $builder->setRecurringProcessingModel(self::DEFAULT_RECURRING_PROCESSING_MODEL);
     }
 }

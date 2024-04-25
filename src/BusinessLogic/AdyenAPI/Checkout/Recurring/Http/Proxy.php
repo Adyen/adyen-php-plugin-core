@@ -1,10 +1,10 @@
 <?php
 
-namespace Adyen\Core\BusinessLogic\AdyenAPI\Recurring\StoredDetails\Http;
+namespace Adyen\Core\BusinessLogic\AdyenAPI\Checkout\Recurring\Http;
 
+use Adyen\Core\BusinessLogic\AdyenAPI\Checkout\Recurring\Requests\DisableStoredDetailsRequest;
+use Adyen\Core\BusinessLogic\AdyenAPI\Checkout\Recurring\Requests\StoredPaymentDetailsHttpRequest;
 use Adyen\Core\BusinessLogic\AdyenAPI\Http\Authorized\AuthorizedProxy;
-use Adyen\Core\BusinessLogic\AdyenAPI\Recurring\StoredDetails\Requests\DisableStoredDetailsRequest;
-use Adyen\Core\BusinessLogic\AdyenAPI\Recurring\StoredDetails\Requests\StoredPaymentDetailsHttpRequest;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ShopperReference;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Proxies\StoredDetailsProxy;
@@ -25,7 +25,7 @@ class Proxy extends AuthorizedProxy implements StoredDetailsProxy
     public function disable(ShopperReference $shopperReference, string $detailReference, string $merchant): void
     {
         try {
-            $this->post(new DisableStoredDetailsRequest($shopperReference, $detailReference, $merchant))
+            $this->delete(new DisableStoredDetailsRequest($shopperReference, $detailReference, $merchant))
                 ->decodeBodyToArray();
         } catch (HttpRequestException $e) {
             Logger::logError(
@@ -46,11 +46,11 @@ class Proxy extends AuthorizedProxy implements StoredDetailsProxy
     public function getStoredPaymentDetails(ShopperReference $shopperReference, string $merchant): array
     {
         try {
-            $response = $this->post(
+            $response = $this->get(
                 new StoredPaymentDetailsHttpRequest($shopperReference, $merchant)
             )->decodeBodyToArray();
 
-            return $this->transformStoredPaymentDetailsResponse($response['details'] ?? []);
+            return $this->transformStoredPaymentDetailsResponse($response['storedPaymentMethods'] ?? []);
         } catch (HttpRequestException $e) {
             Logger::logError(
                 'Failed to retrieve stored payment details for shopper with reference ' . $shopperReference .
@@ -72,16 +72,13 @@ class Proxy extends AuthorizedProxy implements StoredDetailsProxy
     private function transformStoredPaymentDetailsResponse(array $response): array
     {
         $response = array_filter($response, static function (array $method) {
-            return !isset($method['RecurringDetail']['variant']) || !in_array(
-                    $method['RecurringDetail']['variant'],
-                    PaymentService::CREDIT_CARD_BRANDS
-                );
+            return $method['type'] !== PaymentService::CREDIT_CARD_CODE;
         });
 
         return array_map(static function (array $method) {
             return new PaymentMethodResponse(
-                $method['RecurringDetail']['variant'] ?? '',
-                $method['RecurringDetail']['variant'] ?? '',
+                $method['type'] ?? ($method['brand'] ?? ''),
+                $method['type'] ?? ($method['brand'] ?? ''),
                 $method
             );
         }, $response);

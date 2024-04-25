@@ -108,7 +108,7 @@ class PaymentControllerTest extends BaseTestCase
         $pm1->setPercentSurcharge(0.0);
         $pm1->setAdditionalData(
             new CardConfig(
-                false, false, false, false, false, [], 0.0, []
+                false, false, false, false, false, false, [], 0.0, []
             )
         );
         $entity1 = new PaymentMethod();

@@ -139,6 +139,6 @@ class ProxyFactoryTest extends BaseTestCase
         $lastRequest = $this->httpClient->getLastRequest();
         self::assertNotNull($lastRequest);
         self::assertArrayHasKey('url', $lastRequest);
-        self::assertStringStartsWith('https://live-key-checkout-live.adyenpayments.com/checkout/v69/', $lastRequest['url']);
+        self::assertStringStartsWith('https://live-key-checkout-live.adyenpayments.com/checkout/v71/', $lastRequest['url']);
     }
 }

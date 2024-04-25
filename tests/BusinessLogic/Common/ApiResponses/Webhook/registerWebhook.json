@@ -80,16 +80,16 @@
   },
   "_links": {
     "self": {
-      "href": "https://management-test.adyen.com/v1/merchants/YOUR_MERCHANT_ACCOUNT/webhooks/S2-31433949437F"
+      "href": "https://management-test.adyen.com/v3/merchants/YOUR_MERCHANT_ACCOUNT/webhooks/S2-31433949437F"
     },
     "generateHmac": {
-      "href": "https://management-test.adyen.com/v1/merchants/YOUR_MERCHANT_ACCOUNT/webhooks/S2-31433949437F/generateHmac"
+      "href": "https://management-test.adyen.com/v3/merchants/YOUR_MERCHANT_ACCOUNT/webhooks/S2-31433949437F/generateHmac"
     },
     "merchant": {
-      "href": "https://management-test.adyen.com/v1/merchants/YOUR_MERCHANT_ACCOUNT"
+      "href": "https://management-test.adyen.com/v3/merchants/YOUR_MERCHANT_ACCOUNT"
     },
     "testWebhook": {
-      "href": "https://management-test.adyen.com/v1/merchants/YOUR_MERCHANT_ACCOUNT/webhooks/S2-31433949437F/test"
+      "href": "https://management-test.adyen.com/v3/merchants/YOUR_MERCHANT_ACCOUNT/webhooks/S2-31433949437F/test"
     }
   }
 }

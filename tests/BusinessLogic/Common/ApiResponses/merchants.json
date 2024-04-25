@@ -1,13 +1,13 @@
 {
   "_links": {
     "first": {
-      "href": "https://management-test.adyen.com/v1/merchants?pageNumber=1&pageSize=10"
+      "href": "https://management-test.adyen.com/v3/merchants?pageNumber=1&pageSize=10"
     },
     "last": {
-      "href": "https://management-test.adyen.com/v1/merchants?pageNumber=1&pageSize=10"
+      "href": "https://management-test.adyen.com/v3/merchants?pageNumber=1&pageSize=10"
     },
     "self": {
-      "href": "https://management-test.adyen.com/v1/merchants?pageNumber=1&pageSize=10"
+      "href": "https://management-test.adyen.com/v3/merchants?pageNumber=1&pageSize=10"
     }
   },
   "itemsTotal": 3,
@@ -31,16 +31,16 @@
       ],
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "apiCredentials": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/apiCredentials"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/apiCredentials"
         },
         "users": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/users"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/users"
         },
         "webhooks": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks"
         }
       },
       "reference": "LogeecomECOM"
@@ -63,16 +63,16 @@
       ],
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/Logeecom_LogeecomECOM1_TEST"
+          "href": "https://management-test.adyen.com/v3/merchants/Logeecom_LogeecomECOM1_TEST"
         },
         "apiCredentials": {
-          "href": "https://management-test.adyen.com/v1/merchants/Logeecom_LogeecomECOM1_TEST/apiCredentials"
+          "href": "https://management-test.adyen.com/v3/merchants/Logeecom_LogeecomECOM1_TEST/apiCredentials"
         },
         "users": {
-          "href": "https://management-test.adyen.com/v1/merchants/Logeecom_LogeecomECOM1_TEST/users"
+          "href": "https://management-test.adyen.com/v3/merchants/Logeecom_LogeecomECOM1_TEST/users"
         },
         "webhooks": {
-          "href": "https://management-test.adyen.com/v1/merchants/Logeecom_LogeecomECOM1_TEST/webhooks"
+          "href": "https://management-test.adyen.com/v3/merchants/Logeecom_LogeecomECOM1_TEST/webhooks"
         }
       },
       "reference": "Logeecom_LogeecomECOM1_TEST"
@@ -95,16 +95,16 @@
       ],
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/Logeecom_Sava_local_test_TEST"
+          "href": "https://management-test.adyen.com/v3/merchants/Logeecom_Sava_local_test_TEST"
         },
         "apiCredentials": {
-          "href": "https://management-test.adyen.com/v1/merchants/Logeecom_Sava_local_test_TEST/apiCredentials"
+          "href": "https://management-test.adyen.com/v3/merchants/Logeecom_Sava_local_test_TEST/apiCredentials"
         },
         "users": {
-          "href": "https://management-test.adyen.com/v1/merchants/Logeecom_Sava_local_test_TEST/users"
+          "href": "https://management-test.adyen.com/v3/merchants/Logeecom_Sava_local_test_TEST/users"
         },
         "webhooks": {
-          "href": "https://management-test.adyen.com/v1/merchants/Logeecom_Sava_local_test_TEST/webhooks"
+          "href": "https://management-test.adyen.com/v3/merchants/Logeecom_Sava_local_test_TEST/webhooks"
         }
       },
       "reference": "Logeecom_Sava_local_test_TEST"

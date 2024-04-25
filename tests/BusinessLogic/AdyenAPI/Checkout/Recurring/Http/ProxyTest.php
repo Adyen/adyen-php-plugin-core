@@ -1,9 +1,9 @@
 <?php
 
-namespace Adyen\Core\Tests\BusinessLogic\AdyenAPI\Recurring\StoredDetails\Http;
+namespace Adyen\Core\Tests\BusinessLogic\AdyenAPI\Checkout\Recurring\Http;
 
-use Adyen\Core\BusinessLogic\AdyenAPI\Recurring\ProxyFactory;
-use Adyen\Core\BusinessLogic\AdyenAPI\Recurring\StoredDetails\Http\Proxy;
+use Adyen\Core\BusinessLogic\AdyenAPI\Checkout\ProxyFactory;
+use Adyen\Core\BusinessLogic\AdyenAPI\Checkout\Recurring\Http\Proxy;
 use Adyen\Core\BusinessLogic\DataAccess\Connection\Entities\ConnectionSettings as ConnectionSettingsEntity;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ShopperReference;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\EmptyConnectionDataException;
@@ -24,6 +24,12 @@ use Exception;
 
 class ProxyTest extends BaseTestCase
 {
+    /** @var string */
+    private const CHECKOUT_API_TEST_URL = 'checkout-test.adyen.com';
+
+    /** @var string */
+    private const API_VERSION = 'v71';
+
     /**
      * @var Proxy
      */
@@ -82,7 +88,7 @@ class ProxyTest extends BaseTestCase
 
         // assert
         $lastRequest = $this->httpClient->getLastRequest();
-        self::assertEquals(HttpClient::HTTP_METHOD_POST, $lastRequest['method']);
+        self::assertEquals(HttpClient::HTTP_METHOD_DELETE, $lastRequest['method']);
     }
 
     /**
@@ -101,7 +107,7 @@ class ProxyTest extends BaseTestCase
         // assert
         $lastRequest = $this->httpClient->getLastRequest();
         self::assertEquals(
-            'https://' . ProxyFactory::RECURRING_API_TEST_URL . '/v68/disable',
+            'https://' . self::CHECKOUT_API_TEST_URL . '/' . self::API_VERSION . '/storedPaymentMethods/4567?shopperReference=0123&merchantAccount=1111',
             $lastRequest['url']
         );
     }
@@ -122,11 +128,7 @@ class ProxyTest extends BaseTestCase
         // assert
         $lastRequest = $this->httpClient->getLastRequest();
         self::assertEquals(
-            [
-                'shopperReference' => '0123',
-                'recurringDetailReference' => '4567',
-                'merchantAccount' => '1111',
-            ],
+            [],
             json_decode($lastRequest['body'], true)
         );
     }
@@ -148,7 +150,7 @@ class ProxyTest extends BaseTestCase
 
         // assert
         $lastRequest = $this->httpClient->getLastRequest();
-        self::assertEquals(HttpClient::HTTP_METHOD_POST, $lastRequest['method']);
+        self::assertEquals(HttpClient::HTTP_METHOD_GET, $lastRequest['method']);
     }
 
     /**
@@ -171,7 +173,7 @@ class ProxyTest extends BaseTestCase
         // assert
         $lastRequest = $this->httpClient->getLastRequest();
         self::assertEquals(
-            'https://' . ProxyFactory::RECURRING_API_TEST_URL . '/v68/listRecurringDetails',
+            'https://' . self::CHECKOUT_API_TEST_URL . '/' . self::API_VERSION . '/storedPaymentMethods?shopperReference=0123&merchantAccount=4567',
             $lastRequest['url']
         );
     }
@@ -195,7 +197,7 @@ class ProxyTest extends BaseTestCase
 
         // assert
         $lastRequest = $this->httpClient->getLastRequest();
-        self::assertEquals(['shopperReference' => '0123', 'merchantAccount' => '4567'],
+        self::assertEquals([],
             json_decode($lastRequest['body'], true)
         );
     }

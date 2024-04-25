@@ -80,7 +80,7 @@ class ProxyTest extends BaseTestCase
         // assert
         $lastRequest = $this->httpClient->getLastRequest();
         self::assertEquals(
-            'https://management-test.adyen.com/v1/merchants/1234/paymentMethodSettings?pageNumber=2&pageSize=100',
+            'https://management-test.adyen.com/v3/merchants/1234/paymentMethodSettings?pageNumber=2&pageSize=100',
             $lastRequest['url']
         );
     }

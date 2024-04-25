@@ -1,13 +1,13 @@
 {
   "_links": {
     "first": {
-      "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks?pageNumber=1&pageSize=100"
+      "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks?pageNumber=1&pageSize=100"
     },
     "last": {
-      "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks?pageNumber=1&pageSize=100"
+      "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks?pageNumber=1&pageSize=100"
     },
     "self": {
-      "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks?pageNumber=1&pageSize=100"
+      "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks?pageNumber=1&pageSize=100"
     }
   },
   "itemsTotal": 55,
@@ -155,16 +155,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-335535692523"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-335535692523"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-335535692523/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-335535692523/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-335535692523/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-335535692523/test"
         }
       }
     },
@@ -310,16 +310,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-222538746521"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-222538746521"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-222538746521/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-222538746521/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-222538746521/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-222538746521/test"
         }
       }
     },
@@ -466,16 +466,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-42404E533924"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-42404E533924"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-42404E533924/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-42404E533924/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-42404E533924/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-42404E533924/test"
         }
       }
     },
@@ -623,16 +623,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-757177255856"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-757177255856"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-757177255856/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-757177255856/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-757177255856/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-757177255856/test"
         }
       }
     },
@@ -780,16 +780,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-5C5527536036"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-5C5527536036"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-5C5527536036/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-5C5527536036/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-5C5527536036/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-5C5527536036/test"
         }
       }
     },
@@ -937,16 +937,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-607A52642661"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-607A52642661"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-607A52642661/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-607A52642661/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-607A52642661/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-607A52642661/test"
         }
       }
     },
@@ -1093,16 +1093,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-3C48467C2130"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-3C48467C2130"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-3C48467C2130/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-3C48467C2130/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-3C48467C2130/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-3C48467C2130/test"
         }
       }
     },
@@ -1250,16 +1250,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-364F3B5C746B"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-364F3B5C746B"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-364F3B5C746B/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-364F3B5C746B/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-364F3B5C746B/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-364F3B5C746B/test"
         }
       }
     },
@@ -1406,16 +1406,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-4C546024455A"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-4C546024455A"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-4C546024455A/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-4C546024455A/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-4C546024455A/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-4C546024455A/test"
         }
       }
     },
@@ -1563,16 +1563,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-4275202F257E"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-4275202F257E"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-4275202F257E/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-4275202F257E/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-4275202F257E/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-4275202F257E/test"
         }
       }
     },
@@ -1720,16 +1720,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-402D4862593C"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-402D4862593C"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-402D4862593C/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-402D4862593C/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-402D4862593C/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-402D4862593C/test"
         }
       }
     },
@@ -1877,16 +1877,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-2E3E512F5B2C"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-2E3E512F5B2C"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-2E3E512F5B2C/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-2E3E512F5B2C/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-2E3E512F5B2C/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-2E3E512F5B2C/test"
         }
       }
     },
@@ -2033,16 +2033,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-407A5E3C7266"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-407A5E3C7266"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-407A5E3C7266/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-407A5E3C7266/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-407A5E3C7266/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-407A5E3C7266/test"
         }
       }
     },
@@ -2189,16 +2189,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-37272D22365F"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-37272D22365F"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-37272D22365F/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-37272D22365F/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-37272D22365F/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-37272D22365F/test"
         }
       }
     },
@@ -2345,16 +2345,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-213E504C2F46"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-213E504C2F46"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-213E504C2F46/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-213E504C2F46/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-213E504C2F46/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-213E504C2F46/test"
         }
       }
     },
@@ -2501,16 +2501,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-4D314B7D562C"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-4D314B7D562C"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-4D314B7D562C/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-4D314B7D562C/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-4D314B7D562C/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-4D314B7D562C/test"
         }
       }
     },
@@ -2658,16 +2658,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-775129483D33"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-775129483D33"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-775129483D33/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-775129483D33/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-775129483D33/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-775129483D33/test"
         }
       }
     },
@@ -2815,16 +2815,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-466546756267"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-466546756267"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-466546756267/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-466546756267/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-466546756267/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-466546756267/test"
         }
       }
     },
@@ -2972,16 +2972,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-3B7246274C7C"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-3B7246274C7C"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-3B7246274C7C/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-3B7246274C7C/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-3B7246274C7C/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-3B7246274C7C/test"
         }
       }
     },
@@ -3129,16 +3129,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-787336733648"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-787336733648"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-787336733648/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-787336733648/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-787336733648/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-787336733648/test"
         }
       }
     },
@@ -3286,16 +3286,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-5F5C614D6972"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-5F5C614D6972"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-5F5C614D6972/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-5F5C614D6972/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-5F5C614D6972/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-5F5C614D6972/test"
         }
       }
     },
@@ -3443,16 +3443,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-302B316D6A6E"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-302B316D6A6E"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-302B316D6A6E/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-302B316D6A6E/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-302B316D6A6E/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-302B316D6A6E/test"
         }
       }
     },
@@ -3601,16 +3601,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-303D4C457360"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-303D4C457360"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-303D4C457360/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-303D4C457360/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-303D4C457360/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-303D4C457360/test"
         }
       }
     },
@@ -3758,16 +3758,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-752E5B4B4356"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-752E5B4B4356"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-752E5B4B4356/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-752E5B4B4356/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-752E5B4B4356/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-752E5B4B4356/test"
         }
       }
     },
@@ -3916,16 +3916,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-7F5F3D5B5934"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-7F5F3D5B5934"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-7F5F3D5B5934/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-7F5F3D5B5934/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-7F5F3D5B5934/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-7F5F3D5B5934/test"
         }
       }
     },
@@ -4073,16 +4073,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-66577442243D"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-66577442243D"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-66577442243D/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-66577442243D/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-66577442243D/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-66577442243D/test"
         }
       }
     },
@@ -4231,16 +4231,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-216067335D3F"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-216067335D3F"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-216067335D3F/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-216067335D3F/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-216067335D3F/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-216067335D3F/test"
         }
       }
     },
@@ -4389,16 +4389,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-47725B5A244F"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-47725B5A244F"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-47725B5A244F/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-47725B5A244F/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-47725B5A244F/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-47725B5A244F/test"
         }
       }
     },
@@ -4547,16 +4547,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-2A5623766961"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-2A5623766961"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-2A5623766961/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-2A5623766961/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-2A5623766961/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-2A5623766961/test"
         }
       }
     },
@@ -4705,16 +4705,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-296324364E75"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-296324364E75"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-296324364E75/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-296324364E75/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-296324364E75/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-296324364E75/test"
         }
       }
     },
@@ -4863,16 +4863,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-57393F244346"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-57393F244346"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-57393F244346/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-57393F244346/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-57393F244346/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-57393F244346/test"
         }
       }
     },
@@ -5021,16 +5021,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-28467B4E2E35"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-28467B4E2E35"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-28467B4E2E35/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-28467B4E2E35/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-28467B4E2E35/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-28467B4E2E35/test"
         }
       }
     },
@@ -5179,16 +5179,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-345E4C664822"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-345E4C664822"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-345E4C664822/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-345E4C664822/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-345E4C664822/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-345E4C664822/test"
         }
       }
     },
@@ -5337,16 +5337,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-60764B602B79"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-60764B602B79"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-60764B602B79/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-60764B602B79/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-60764B602B79/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-60764B602B79/test"
         }
       }
     },
@@ -5495,16 +5495,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-2E587170315E"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-2E587170315E"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-2E587170315E/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-2E587170315E/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-2E587170315E/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-2E587170315E/test"
         }
       }
     },
@@ -5653,16 +5653,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-75715774674D"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-75715774674D"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-75715774674D/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-75715774674D/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-75715774674D/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-75715774674D/test"
         }
       }
     },
@@ -5811,16 +5811,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-6F4C5E5E312B"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-6F4C5E5E312B"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-6F4C5E5E312B/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-6F4C5E5E312B/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-6F4C5E5E312B/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-6F4C5E5E312B/test"
         }
       }
     },
@@ -5969,16 +5969,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-754C753F4860"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-754C753F4860"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-754C753F4860/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-754C753F4860/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-754C753F4860/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-754C753F4860/test"
         }
       }
     },
@@ -6127,16 +6127,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-5A7E4477784B"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-5A7E4477784B"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-5A7E4477784B/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-5A7E4477784B/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-5A7E4477784B/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-5A7E4477784B/test"
         }
       }
     },
@@ -6285,16 +6285,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-6F3C312F3820"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-6F3C312F3820"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-6F3C312F3820/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-6F3C312F3820/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-6F3C312F3820/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-6F3C312F3820/test"
         }
       }
     },
@@ -6443,16 +6443,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-62626C295653"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-62626C295653"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-62626C295653/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-62626C295653/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-62626C295653/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-62626C295653/test"
         }
       }
     },
@@ -6601,16 +6601,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-3D4C51524247"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-3D4C51524247"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-3D4C51524247/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-3D4C51524247/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-3D4C51524247/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-3D4C51524247/test"
         }
       }
     },
@@ -6759,16 +6759,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-285F6F217156"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-285F6F217156"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-285F6F217156/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-285F6F217156/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-285F6F217156/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-285F6F217156/test"
         }
       }
     },
@@ -6917,16 +6917,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-74754562236B"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-74754562236B"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-74754562236B/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-74754562236B/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-74754562236B/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-74754562236B/test"
         }
       }
     },
@@ -7075,16 +7075,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-3D2122782546"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-3D2122782546"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-3D2122782546/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-3D2122782546/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-3D2122782546/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-3D2122782546/test"
         }
       }
     },
@@ -7233,16 +7233,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-362C597F3121"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-362C597F3121"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-362C597F3121/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-362C597F3121/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-362C597F3121/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-362C597F3121/test"
         }
       }
     },
@@ -7391,16 +7391,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-6F4B285F3A35"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-6F4B285F3A35"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-6F4B285F3A35/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-6F4B285F3A35/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-6F4B285F3A35/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-6F4B285F3A35/test"
         }
       }
     },
@@ -7549,16 +7549,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-762254622A6C"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-762254622A6C"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-762254622A6C/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-762254622A6C/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-762254622A6C/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-762254622A6C/test"
         }
       }
     },
@@ -7706,16 +7706,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-44395E224158"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-44395E224158"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-44395E224158/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-44395E224158/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-44395E224158/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-44395E224158/test"
         }
       }
     },
@@ -7864,16 +7864,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-69795B6A5C76"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-69795B6A5C76"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-69795B6A5C76/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-69795B6A5C76/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-69795B6A5C76/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-69795B6A5C76/test"
         }
       }
     },
@@ -8022,16 +8022,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-6B6D6B647877"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-6B6D6B647877"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-6B6D6B647877/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-6B6D6B647877/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-6B6D6B647877/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-6B6D6B647877/test"
         }
       }
     },
@@ -8180,16 +8180,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-72453A3C7340"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-72453A3C7340"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-72453A3C7340/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-72453A3C7340/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-72453A3C7340/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-72453A3C7340/test"
         }
       }
     },
@@ -8338,16 +8338,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-214B51466249"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-214B51466249"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-214B51466249/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-214B51466249/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-214B51466249/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-214B51466249/test"
         }
       }
     },
@@ -8496,16 +8496,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-375F65364B6D"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-375F65364B6D"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-375F65364B6D/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-375F65364B6D/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-375F65364B6D/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-375F65364B6D/test"
         }
       }
     },
@@ -8654,16 +8654,16 @@
       },
       "_links": {
         "self": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-6544242B4B72"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-6544242B4B72"
         },
         "generateHmac": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-6544242B4B72/generateHmac"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-6544242B4B72/generateHmac"
         },
         "merchant": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM"
         },
         "testWebhook": {
-          "href": "https://management-test.adyen.com/v1/merchants/LogeecomECOM/webhooks/S2-6544242B4B72/test"
+          "href": "https://management-test.adyen.com/v3/merchants/LogeecomECOM/webhooks/S2-6544242B4B72/test"
         }
       }
     }

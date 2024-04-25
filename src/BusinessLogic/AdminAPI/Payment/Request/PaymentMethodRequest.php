@@ -115,6 +115,10 @@ class PaymentMethodRequest extends Request
     /**
      * @var bool
      */
+    private $clickToPay;
+    /**
+     * @var bool
+     */
     private $installments;
     /**
      * @var bool
@@ -186,6 +190,7 @@ class PaymentMethodRequest extends Request
      * @param string $merchantName
      * @param bool $showLogos
      * @param bool $singleClickPayment
+     * @param bool $clickToPay
      * @param bool $installments
      * @param bool $installmentAmounts
      * @param bool $sendBasket
@@ -221,6 +226,7 @@ class PaymentMethodRequest extends Request
         string $merchantName = '',
         bool $showLogos = false,
         bool $singleClickPayment = false,
+        bool $clickToPay = false,
         bool $installments = false,
         bool $installmentAmounts = false,
         bool $sendBasket = false,
@@ -255,6 +261,7 @@ class PaymentMethodRequest extends Request
         $this->merchantName = $merchantName;
         $this->showLogos = $showLogos;
         $this->singleClickPayment = $singleClickPayment;
+        $this->clickToPay = $clickToPay;
         $this->installments = $installments;
         $this->installmentAmounts = $installmentAmounts;
         $this->sendBasket = $sendBasket;
@@ -298,6 +305,7 @@ class PaymentMethodRequest extends Request
             $rawData['additionalData']['merchantName'] ?? '',
             $rawData['additionalData']['showLogos'] ?? false,
             $rawData['additionalData']['singleClickPayment'] ?? false,
+            $rawData['additionalData']['clickToPay'] ?? false,
             $rawData['additionalData']['installments'] ?? false,
             $rawData['additionalData']['installmentAmounts'] ?? false,
             $rawData['additionalData']['sendBasket'] ?? false,
@@ -381,6 +389,7 @@ class PaymentMethodRequest extends Request
             return new CardConfig(
                 $this->showLogos,
                 $this->singleClickPayment,
+                $this->clickToPay,
                 $this->installments,
                 $this->installmentAmounts,
                 $this->sendBasket,

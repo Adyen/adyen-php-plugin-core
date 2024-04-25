@@ -63,7 +63,7 @@ class ProxyTest extends BaseTestCase
         // assert
         $lastRequest = $this->httpClient->getLastRequest();
         self::assertEquals(
-            'https://' . ProxyFactory::MANAGEMENT_API_TEST_URL . '/v1/me',
+            'https://' . ProxyFactory::MANAGEMENT_API_TEST_URL . '/v3/me',
             $lastRequest['url']
         );
     }
@@ -92,7 +92,7 @@ class ProxyTest extends BaseTestCase
         // assert
         $lastRequest = $this->httpClient->getLastRequest();
         self::assertEquals(
-            'https://' . ProxyFactory::MANAGEMENT_API_TEST_URL . '/v1/me/allowedOrigins',
+            'https://' . ProxyFactory::MANAGEMENT_API_TEST_URL . '/v3/me/allowedOrigins',
             $lastRequest['url']
         );
     }
