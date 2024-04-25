@@ -125,7 +125,7 @@ class PaymentCheckoutConfigResponse extends Response
                 if($additionalData->isClickToPay()){
                     $configurations['card']['clickToPayConfiguration'] = [
                         'shopperEmail' => $this->shopperEmail,
-                        'merchantDisplayName' => $this->merchantDisplayName
+                        'merchantDisplayName' => $this->merchantDisplayName ?? ''
                     ];
                 } else{
                     $configurations['card']['_disableClickToPay'] = true;
