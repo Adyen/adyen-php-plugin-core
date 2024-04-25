@@ -6,6 +6,8 @@ use Adyen\Core\BusinessLogic\CheckoutAPI\CheckoutConfig\Request\DisableStoredDet
 use Adyen\Core\BusinessLogic\CheckoutAPI\CheckoutConfig\Request\PaymentCheckoutConfigRequest;
 use Adyen\Core\BusinessLogic\CheckoutAPI\CheckoutConfig\Response\DisableStoredDetailsResponse;
 use Adyen\Core\BusinessLogic\CheckoutAPI\CheckoutConfig\Response\PaymentCheckoutConfigResponse;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\MissingActiveApiConnectionData;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\MissingClientKeyConfiguration;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ShopperReference;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Services\PaymentCheckoutConfigService;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\ConnectionSettingsNotFountException;
@@ -27,6 +29,10 @@ class CheckoutConfigController
         $this->service = $service;
     }
 
+    /**
+     * @throws MissingClientKeyConfiguration
+     * @throws MissingActiveApiConnectionData
+     */
     public function getPaymentCheckoutConfig(PaymentCheckoutConfigRequest $request): PaymentCheckoutConfigResponse
     {
         return new PaymentCheckoutConfigResponse(
@@ -39,10 +45,15 @@ class CheckoutConfigController
             $request->getAmount(),
             $request->getShopperLocale(),
             $request->getCountry() ? $request->getCountry()->getIsoCode() : '',
-            $request->getShopperEmail()
+            $request->getShopperEmail(),
+            $request->getMerchantDisplayName()
         );
     }
 
+    /**
+     * @throws MissingClientKeyConfiguration
+     * @throws MissingActiveApiConnectionData
+     */
     public function getExpressPaymentCheckoutConfig(PaymentCheckoutConfigRequest $request): PaymentCheckoutConfigResponse
     {
         return new PaymentCheckoutConfigResponse(
