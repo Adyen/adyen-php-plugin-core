@@ -19,6 +19,7 @@ use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\ModeChangedException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\UserDoesNotHaveNecessaryRolesException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
 use Adyen\Core\BusinessLogic\Domain\Merchant\Exceptions\ClientKeyGenerationFailedException;
+use Adyen\Core\BusinessLogic\Domain\Merchant\Exceptions\ClientPrefixDoesNotExistException;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Exceptions\FailedToGenerateHmacException;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Exceptions\FailedToRegisterWebhookException;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Exceptions\MerchantDoesNotExistException;
@@ -59,11 +60,11 @@ class ConnectionController
      * @throws InvalidApiKeyException
      * @throws InvalidConnectionSettingsException
      * @throws InvalidModeException
-     * @throws MerchantIdChangedException
      * @throws ModeChangedException
      * @throws UserDoesNotHaveNecessaryRolesException
      * @throws ConnectionSettingsNotFoundException
      * @throws MerchantDoesNotExistException
+     * @throws ClientPrefixDoesNotExistException
      */
     public function connect(ConnectionRequest $connectionRequest): ConnectionResponse
     {

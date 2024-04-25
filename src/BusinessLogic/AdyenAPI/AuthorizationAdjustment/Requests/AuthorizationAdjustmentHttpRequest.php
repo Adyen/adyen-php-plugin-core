@@ -38,7 +38,7 @@ class AuthorizationAdjustmentHttpRequest extends HttpRequest
                 'currency' => $this->authorizationAdjustmentRequest->getAmount()->getCurrency()->getIsoCode(),
                 'value' => $this->authorizationAdjustmentRequest->getAmount()->getValue(),
             ],
-            'reason' => $this->authorizationAdjustmentRequest->getReason(),
+            'industryUsage' => $this->authorizationAdjustmentRequest->getIndustryUsage(),
             'reference' => $this->authorizationAdjustmentRequest->getMerchantReference()
         ];
     }

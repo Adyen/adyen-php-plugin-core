@@ -12,9 +12,9 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount
 class AuthorizationAdjustmentRequest
 {
     /**
-     *  Default reason constant.
+     *  Default industry usage constant.
      */
-    private const DEFAULT_REASON = 'delayedCharge';
+    private const DEFAULT_INDUSTRY_USAGE = 'delayedCharge';
 
     /**
      * @var string
@@ -89,8 +89,8 @@ class AuthorizationAdjustmentRequest
     /**
      * @return string
      */
-    public function getReason(): string
+    public function getIndustryUsage(): string
     {
-        return self::DEFAULT_REASON;
+        return self::DEFAULT_INDUSTRY_USAGE;
     }
 }

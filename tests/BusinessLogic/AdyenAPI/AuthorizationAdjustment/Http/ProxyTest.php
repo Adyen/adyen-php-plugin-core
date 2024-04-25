@@ -130,7 +130,7 @@ class ProxyTest extends BaseTestCase
                 'currency' => 'EUR',
                 'value' => 1,
             ],
-            'reason' => 'delayedCharge',
+            'industryUsage' => 'delayedCharge',
             'reference' => 'reference'
         ];
 
