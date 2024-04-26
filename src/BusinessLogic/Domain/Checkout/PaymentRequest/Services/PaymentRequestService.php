@@ -12,6 +12,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePayment
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePaymentDetailsResult;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Proxies\PaymentsProxy;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Exception;
@@ -86,9 +87,16 @@ class PaymentRequestService
             $configuredPaymentMethod = $this->methodConfigRepository->getPaymentMethodByCode(
                 (string)$context->getPaymentMethodCode()
             );
-            if($configuredPaymentMethod && $configuredPaymentMethod->getAuthorizationType()){
-                $captureType = CaptureType::manual();
+
+            if($configuredPaymentMethod){
                 $authorizationType = $configuredPaymentMethod->getAuthorizationType();
+            }
+
+            if($configuredPaymentMethod &&
+                $configuredPaymentMethod->getAuthorizationType() &&
+                $configuredPaymentMethod->getAuthorizationType()->equal(AuthorizationType::preAuthorization())){
+
+                $captureType = CaptureType::manual();
             }
 
             $this->transactionHistoryService->createTransactionHistory(
