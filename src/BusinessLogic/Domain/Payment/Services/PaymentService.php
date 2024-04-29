@@ -24,7 +24,16 @@ use Exception;
  */
 class PaymentService
 {
-    public const CREDIT_CARD_BRANDS = ['amex', 'bcmc', 'cartebancaire', 'mc', 'visa', 'visadankort'];
+    public const CREDIT_CARD_BRANDS = [
+        'amex',
+        'bcmc',
+        'cartebancaire',
+        'mc',
+        'visa',
+        'visadankort',
+        'visa_clicktopay',
+        'mc_clicktopay'
+    ];
     public const CREDIT_CARD_CODE = 'scheme';
     public const ONEY_TYPE = 'facilypay';
     public const ONEY_CODE = 'oney';
