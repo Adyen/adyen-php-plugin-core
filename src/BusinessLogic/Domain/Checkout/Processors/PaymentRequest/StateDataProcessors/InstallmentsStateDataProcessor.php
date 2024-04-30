@@ -24,7 +24,7 @@ class InstallmentsStateDataProcessor implements PaymentRequestProcessor
 
         $installments = new Installments(
             $rawInstallmentsData['value'] ?? 1,
-            $rawInstallmentsData['plan'] ?? ''
+            $rawInstallmentsData['plan'] ?? 'regular'
         );
 
         $builder->setInstallments($installments);
