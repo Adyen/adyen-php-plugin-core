@@ -223,7 +223,6 @@ class ConnectionService
         $merchantId = $connectionData->getMerchantId();
         $this->addAllowedOrigin($connectionSettings);
         $clientKey = $this->generateClientKey($connectionData);
-        $this->initializeWebhook($merchantId);
         $connectionData->setClientKey($clientKey);
 
         if ($connectionSettings->getMode() === Mode::MODE_LIVE) {
@@ -236,6 +235,8 @@ class ConnectionService
         }
 
         $this->saveConnectionSettings($connectionSettings);
+
+        $this->initializeWebhook($merchantId);
     }
 
     /**
