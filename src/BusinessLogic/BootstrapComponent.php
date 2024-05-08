@@ -995,7 +995,10 @@ class BootstrapComponent extends BaseBootstrapComponent
         ServiceRegister::registerService(
             AmountProcessor::class,
             new SingleInstance(static function () {
-                return new AmountProcessor();
+                return new AmountProcessor(
+                    ServiceRegister::getService(TransactionHistoryService::class),
+                    ServiceRegister::getService(OrderService::class)
+                );
             })
         );
         ServiceRegister::registerService(

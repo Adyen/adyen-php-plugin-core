@@ -30,6 +30,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\ReferenceProcessor;
 use Adyen\Core\BusinessLogic\Domain\Connection\Enums\Mode;
 use Adyen\Core\BusinessLogic\Domain\Connection\Models\ConnectionData;
 use Adyen\Core\BusinessLogic\Domain\Connection\Models\ConnectionSettings;
+use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Adyen\Core\Infrastructure\ServiceRegister;
@@ -88,7 +89,9 @@ class PaymentRequestApiTest extends BaseTestCase
         TestServiceRegister::registerService(
             AmountProcessor::class,
             new SingleInstance(static function () {
-                return new AmountProcessor();
+                return new AmountProcessor(
+                    TestServiceRegister::getService(TransactionHistoryService::class),
+                    TestServiceRegister::getService(OrderService::class));
             })
         );
         TestServiceRegister::registerService(

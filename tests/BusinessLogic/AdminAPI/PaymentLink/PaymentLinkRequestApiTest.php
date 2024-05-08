@@ -19,6 +19,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentLinkRequest\Payme
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\ReferenceProcessor;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Repositories\GeneralSettingsRepository;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsService;
+use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\PaymentMethodDataEmptyException;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\AmazonPay;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\Oney;
@@ -27,6 +28,7 @@ use Adyen\Core\BusinessLogic\Domain\Payment\Proxies\PaymentProxy;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
 use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
+use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Adyen\Core\Tests\BusinessLogic\AdminAPI\PaymentLink\MockComponents\MockGeneralSettingsService;
 use Adyen\Core\Tests\BusinessLogic\AdminAPI\PaymentLink\MockComponents\MockPaymentLinkProxy;
 use Adyen\Core\Tests\BusinessLogic\AdminAPI\PaymentLink\MockComponents\MockPaymentService;
@@ -99,7 +101,10 @@ class PaymentLinkRequestApiTest extends BaseTestCase
         TestServiceRegister::registerService(
             AmountProcessor::class,
             new SingleInstance(static function () {
-                return new AmountProcessor();
+                return new AmountProcessor(
+                    TestServiceRegister::getService(TransactionHistoryService::class),
+                    TestServiceRegister::getService(OrderService::class)
+                );
             })
         );
 
