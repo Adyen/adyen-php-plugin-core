@@ -14,7 +14,7 @@ use Adyen\Core\BusinessLogic\Domain\Payment\Models\PaymentMethod;
 use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
-use Adyen\Core\Infrastructure\Utility\TimeProvider;
+use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Exception;
 
 /**
@@ -38,18 +38,26 @@ class TransactionDetailsService
     private $generalSettingsService;
 
     /**
+     * @var OrderService
+     */
+    private $orderService;
+
+    /**
      * @param ConnectionService $connectionService
      * @param TransactionHistoryService $historyService
      * @param GeneralSettingsService $generalSettingsService
+     * @param OrderService $orderService
      */
     public function __construct(
         ConnectionService $connectionService,
         TransactionHistoryService $historyService,
-        GeneralSettingsService $generalSettingsService
+        GeneralSettingsService $generalSettingsService,
+        OrderService $orderService
     ) {
         $this->connectionService = $connectionService;
         $this->historyService = $historyService;
         $this->generalSettingsService = $generalSettingsService;
+        $this->orderService = $orderService;
     }
 
     /**
@@ -311,7 +319,11 @@ class TransactionDetailsService
     {
         $generalSettings = $this->generalSettingsService->getGeneralSettings();
 
-        if ($generalSettings && !$generalSettings->isEnablePayByLink()) {
+        if (!$generalSettings || !$generalSettings->isEnablePayByLink()) {
+            return false;
+        }
+
+        if(!$this->orderService->getOrderAmount($transactionHistory->getMerchantReference())->getPriceInCurrencyUnits()) {
             return false;
         }
 

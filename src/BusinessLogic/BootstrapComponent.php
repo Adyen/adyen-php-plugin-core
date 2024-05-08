@@ -473,7 +473,8 @@ class BootstrapComponent extends BaseBootstrapComponent
                 return new TransactionDetailsService(
                     ServiceRegister::getService(ConnectionService::class),
                     ServiceRegister::getService(TransactionHistoryService::class),
-                    ServiceRegister::getService(GeneralSettingsService::class)
+                    ServiceRegister::getService(GeneralSettingsService::class),
+                    ServiceRegister::getService(OrderService::class)
                 );
             })
         );
@@ -528,7 +529,8 @@ class BootstrapComponent extends BaseBootstrapComponent
                 return new PaymentLinkService(
                     ServiceRegister::getService(PaymentLinkProxyInterface::class),
                     new PaymentLinkRequestFactory(),
-                    ServiceRegister::getService(TransactionHistoryService::class)
+                    ServiceRegister::getService(TransactionHistoryService::class),
+                    ServiceRegister::getService(GeneralSettingsService::class)
                 );
             })
         );

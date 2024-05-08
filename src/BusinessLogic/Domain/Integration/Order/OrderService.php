@@ -2,6 +2,7 @@
 
 namespace Adyen\Core\BusinessLogic\Domain\Integration\Order;
 
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Models\Webhook;
 
 /**
@@ -46,4 +47,11 @@ interface OrderService
      * @return void
      */
     public function updateOrderPayment(Webhook $webhook): void;
+
+    /**
+     * @param string $merchantReference
+     *
+     * @return Amount
+     */
+    public function getOrderAmount(string $merchantReference): Amount;
 }

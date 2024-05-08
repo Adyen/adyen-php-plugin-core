@@ -350,4 +350,25 @@ class TransactionHistory
     {
         return $this->authorizationType;
     }
+
+    /**
+     * @param CaptureType $captureType
+     *
+     * @return void
+     */
+    public function setCaptureType(CaptureType $captureType): void
+    {
+        $this->captureType = $captureType;
+
+    }
+
+    /**
+     * @param AuthorizationType $authorizationType
+     *
+     * @return void
+     */
+    public function setAuthorizationType(AuthorizationType $authorizationType): void
+    {
+        $this->authorizationType = $authorizationType;
+    }
 }

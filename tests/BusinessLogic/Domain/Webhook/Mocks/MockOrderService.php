@@ -2,6 +2,8 @@
 
 namespace Adyen\Core\Tests\BusinessLogic\Domain\Webhook\Mocks;
 
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Models\Webhook;
 
@@ -62,5 +64,10 @@ class MockOrderService implements OrderService
 
     public function updateOrderPayment(Webhook $webhook): void
     {
+    }
+
+    public function getOrderAmount(string $merchantReference): Amount
+    {
+        return Amount::fromInt(1, Currency::getDefault());
     }
 }

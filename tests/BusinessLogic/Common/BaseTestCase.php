@@ -318,7 +318,8 @@ class BaseTestCase extends TestCase
                 return new PaymentLinkService(
                     TestServiceRegister::getService(PaymentLinkProxy::class),
                     new PaymentLinkRequestFactory(),
-                    TestServiceRegister::getService(TransactionHistoryService::class)
+                    TestServiceRegister::getService(TransactionHistoryService::class),
+                    TestServiceRegister::getService(GeneralSettingsService::class)
                 );
             },
             ShopNotificationService::class => function () {

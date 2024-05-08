@@ -7,6 +7,9 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Models\PaymentLink;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Models\PaymentLinkRequestContext;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Proxies\PaymentLinkProxy;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
+use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
+use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsService;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\ShopEvents;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
@@ -38,19 +41,24 @@ class PaymentLinkService
      */
     private $transactionHistoryService;
 
+    private $generalSettingsService;
+
     /**
      * @param PaymentLinkProxy $paymentLinkProxy
      * @param PaymentLinkRequestFactory $paymentLinkRequestFactory
      * @param TransactionHistoryService $transactionHistoryService
+     * @param GeneralSettingsService $generalSettingsService
      */
     public function __construct(
         PaymentLinkProxy $paymentLinkProxy,
         PaymentLinkRequestFactory $paymentLinkRequestFactory,
-        TransactionHistoryService $transactionHistoryService
+        TransactionHistoryService $transactionHistoryService,
+        GeneralSettingsService $generalSettingsService
     ) {
         $this->paymentLinkProxy = $paymentLinkProxy;
         $this->paymentLinkRequestFactory = $paymentLinkRequestFactory;
         $this->transactionHistoryService = $transactionHistoryService;
+        $this->generalSettingsService = $generalSettingsService;
     }
 
     /**
@@ -68,6 +76,10 @@ class PaymentLinkService
             $context->getReference(),
             $context->getAmount()->getCurrency()
         );
+        $generalSettings = $this->generalSettingsService->getGeneralSettings();
+        $captureType = $generalSettings ? $generalSettings->getCapture() : CaptureType::immediate();
+        $transactionHistory->setCaptureType($captureType);
+        $transactionHistory->setAuthorizationType(AuthorizationType::finalAuthorization());
         $this->addHistoryItem($transactionHistory, $context->getAmount(), $paymentLink);
 
         return $paymentLink;
