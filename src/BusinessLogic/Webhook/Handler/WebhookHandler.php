@@ -2,6 +2,7 @@
 
 namespace Adyen\Core\BusinessLogic\Webhook\Handler;
 
+use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Models\Webhook;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Services\WebhookSynchronizationService;
 use Adyen\Core\BusinessLogic\Webhook\Tasks\OrderUpdateTask;
@@ -41,6 +42,7 @@ class WebhookHandler
      * @return void
      *
      * @throws QueueStorageUnavailableException
+     * @throws InvalidMerchantReferenceException
      */
     public function handle(Webhook $webhook): void
     {

@@ -33,8 +33,8 @@ class SuccessfulAuthorizationAdjustmentRequestEvent extends Event
             $orderId,
             $paymentMethod,
             Severity::info(),
-            new TranslatableLabel(self::MESSAGE, 'event.successfulAuthorizationAdjustmentEventMessage'),
-            new TranslatableLabel(self::DETAILS, 'event.successfulAuthorizationAdjustmentEventDetails')
+            new TranslatableLabel(self::MESSAGE, 'event.successfulAuthorizationAdjustmentRequestEventMessage'),
+            new TranslatableLabel(self::DETAILS, 'event.successfulAuthorizationAdjustmentRequestEventDetails')
         );
     }
 }

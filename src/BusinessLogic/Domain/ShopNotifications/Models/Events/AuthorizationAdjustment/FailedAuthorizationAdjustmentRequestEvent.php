@@ -33,8 +33,8 @@ class FailedAuthorizationAdjustmentRequestEvent extends Event
             $orderId,
             $paymentMethod,
             Severity::error(),
-            new TranslatableLabel(self::MESSAGE, 'event.successfulPaymentAuthorizationEventMessage'),
-            new TranslatableLabel(self::DETAILS, 'event.successfulPaymentAuthorizationEventDetails')
+            new TranslatableLabel(self::MESSAGE, 'event.failedAuthorizationAdjustmentRequestMessage'),
+            new TranslatableLabel(self::DETAILS, 'event.failedAuthorizationAdjustmentRequestDetails')
         );
     }
 }
