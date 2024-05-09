@@ -109,11 +109,13 @@ class TransactionDetailsService
             );
         $partialCapture = $isMerchantConnected && !empty($paymentMethod) &&
             $this->isPartialCaptureSupported($paymentMethod, $transactionHistory, $captureAmount, $authorizationAmount);
-        $refund = $isMerchantConnected && $this->isRefundSupported($paymentMethod, $refundAmount, $captureAmount);
+        $refund = $isMerchantConnected && $this->isRefundSupported($paymentMethod, $refundAmount, $captureAmount,
+                $cancelledAmount);
         $partialRefund = $isMerchantConnected && !empty($paymentMethod) && $this->isPartialRefundSupported(
                 $paymentMethod,
                 $refundAmount,
-                $captureAmount
+                $captureAmount,
+                $cancelledAmount
             );
 
         foreach ($transactionHistory->collection()->getAll() as $item) {
@@ -221,17 +223,22 @@ class TransactionDetailsService
      * @param string $code
      * @param Amount $refundAmount
      * @param Amount $captureAmount
+     * @param Amount $cancellationAmount
      *
      * @return bool
      */
     private function isPartialRefundSupported(
         string $code,
         Amount $refundAmount,
-        Amount $captureAmount
+        Amount $captureAmount,
+        Amount $cancellationAmount
     ): bool {
         try {
-            return !empty($code) && $this->parseCode($code)->isPartialRefundSupported() && $refundAmount->getPriceInCurrencyUnits()
-                < $captureAmount->getPriceInCurrencyUnits();
+            return !empty($code) &&
+                $this->parseCode($code)->isPartialRefundSupported() &&
+                $refundAmount->getPriceInCurrencyUnits() < $captureAmount->getPriceInCurrencyUnits() &&
+                $cancellationAmount->getPriceInCurrencyUnits() !== $refundAmount->getPriceInCurrencyUnits() +
+                $captureAmount->getPriceInCurrencyUnits();
         } catch (InvalidPaymentMethodCodeException $exception) {
             return false;
         }
@@ -241,17 +248,22 @@ class TransactionDetailsService
      * @param string $code
      * @param Amount $refundAmount
      * @param Amount $captureAmount
+     * @param Amount $cancellationAmount
      *
      * @return bool
      */
     private function isRefundSupported(
         string $code,
         Amount $refundAmount,
-        Amount $captureAmount
+        Amount $captureAmount,
+        Amount $cancellationAmount
     ): bool {
         try {
-            return !empty($code) && $this->parseCode($code)->isRefundSupported() && $refundAmount->getPriceInCurrencyUnits()
-                < $captureAmount->getPriceInCurrencyUnits();
+            return !empty($code) &&
+                $this->parseCode($code)->isRefundSupported() &&
+                $refundAmount->getPriceInCurrencyUnits() < $captureAmount->getPriceInCurrencyUnits() &&
+                $cancellationAmount->getPriceInCurrencyUnits() !== $refundAmount->getPriceInCurrencyUnits() +
+                $captureAmount->getPriceInCurrencyUnits();
         } catch (InvalidPaymentMethodCodeException $exception) {
             return false;
         }
@@ -323,7 +335,7 @@ class TransactionDetailsService
             return false;
         }
 
-        if(!$this->orderService->getOrderAmount($transactionHistory->getMerchantReference())->getPriceInCurrencyUnits()) {
+        if (!$this->orderService->getOrderAmount($transactionHistory->getMerchantReference())->getPriceInCurrencyUnits()) {
             return false;
         }
 
