@@ -275,17 +275,14 @@ class TransactionDetailsService
      * @param Amount $cancelledAmount
      *
      * @return bool
-     *
-     * @throws CurrencyMismatchException
      */
     private function isCancellationSupported(
         Amount $captureAmount,
         Amount $authorizedAmount,
         Amount $cancelledAmount
     ): bool {
-        return $captureAmount->getPriceInCurrencyUnits() < $authorizedAmount->minus(
-                $cancelledAmount
-            )->getPriceInCurrencyUnits();
+        return !$cancelledAmount->getPriceInCurrencyUnits() &&
+            $captureAmount->getPriceInCurrencyUnits() < $authorizedAmount->getPriceInCurrencyUnits();
     }
 
     /**
