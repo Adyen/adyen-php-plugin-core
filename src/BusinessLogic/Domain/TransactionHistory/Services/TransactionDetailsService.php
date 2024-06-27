@@ -89,6 +89,7 @@ class TransactionDetailsService
             $captureAmount = $transactionHistory->getCapturedAmount();
             $capturableAmount = $isCaptureTypeKnown ? $transactionHistory->getCapturableAmount()->getPriceInCurrencyUnits() : $authorizationAmount->getPriceInCurrencyUnits();
             $cancelledAmount = $transactionHistory->getTotalAmountForEventCode('CANCELLATION');
+            $authorizationAdjustmentAmount = $transactionHistory->getTotalAmountForEventCode('AUTHORIZATION_ADJUSTMENT');
             $cancel = $isMerchantConnected && $this->isCancellationSupported(
                     $captureAmount,
                     $authorizationAmount,
@@ -150,7 +151,8 @@ class TransactionDetailsService
                 'displayPaymentLink' => $this->shouldDisplayPaymentLink($transactionHistory),
                 'paymentLink' => $transactionHistory->getPaymentLink() ? $transactionHistory->getPaymentLink()->getUrl() : '',
                 'authorizationAdjustmentAvailable' => $this->isAuthorizationAdjustmentAvailable($transactionHistory),
-                'authorizationAdjustmentDate' => $this->getAuthorizationAdjustmentDate($transactionHistory)
+                'authorizationAdjustmentDate' => $this->getAuthorizationAdjustmentDate($transactionHistory),
+                'authorizationAdjustmentAmount' => $authorizationAdjustmentAmount,
             ];
         }
 
