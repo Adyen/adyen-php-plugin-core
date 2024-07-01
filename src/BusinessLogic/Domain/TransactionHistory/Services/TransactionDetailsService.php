@@ -152,7 +152,7 @@ class TransactionDetailsService
                 'paymentLink' => $transactionHistory->getPaymentLink() ? $transactionHistory->getPaymentLink()->getUrl() : '',
                 'authorizationAdjustmentAvailable' => $this->isAuthorizationAdjustmentAvailable($transactionHistory),
                 'authorizationAdjustmentDate' => $this->getAuthorizationAdjustmentDate($transactionHistory),
-                'authorizationAdjustmentAmount' => $authorizationAdjustmentAmount,
+                'authorizationAdjustmentAmount' => $authorizationAdjustmentAmount ? $authorizationAdjustmentAmount->getPriceInCurrencyUnits() : '',
             ];
         }
 
