@@ -89,7 +89,7 @@ class TransactionDetailsService
             $captureAmount = $transactionHistory->getCapturedAmount();
             $capturableAmount = $isCaptureTypeKnown ? $transactionHistory->getCapturableAmount()->getPriceInCurrencyUnits() : $authorizationAmount->getPriceInCurrencyUnits();
             $cancelledAmount = $transactionHistory->getTotalAmountForEventCode('CANCELLATION');
-            $authorizationAdjustmentAmount = $transactionHistory->getTotalAmountForEventCode('AUTHORIZATION_ADJUSTMENT');
+            $authorizationAdjustmentAmount = $transactionHistory->getTotalAmountForEventCode('AUTHORISATION_ADJUSTMENT');
             $cancel = $isMerchantConnected && $this->isCancellationSupported(
                     $captureAmount,
                     $authorizationAmount,
