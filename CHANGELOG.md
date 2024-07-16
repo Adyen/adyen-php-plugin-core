@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [1.1.12 - 1.1.13](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.12...1.1.13) - 2024-07-16
+- Fix order status transition when fail authorization webhook is received
+- Make sure that webhook validation doesn't leave empty client key configuration
+
 ## [1.1.11 - 1.1.12](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.11...1.1.12) - 2024-04-15
 - Fix retrieving new payment state when transaction is cancelled
 
