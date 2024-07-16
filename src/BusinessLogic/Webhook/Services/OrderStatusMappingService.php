@@ -136,6 +136,7 @@ class OrderStatusMappingService implements OrderStatusProvider
         }
 
         if (
+            $webhook->isSuccess() &&
             $webhook->getEventCode() === EventCodes::AUTHORISATION &&
             $webhook->getPspReference() !== $transactionHistory->getOriginalPspReference() &&
             ($previousPaymentState === PaymentStates::STATE_FAILED || $previousPaymentState === PaymentStates::STATE_CANCELLED)
