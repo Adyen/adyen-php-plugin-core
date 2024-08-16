@@ -36,6 +36,7 @@ use Adyen\Core\Tests\BusinessLogic\AdminAPI\Store\MockComponents\MockConnectionS
 use Adyen\Core\Tests\BusinessLogic\Common\BaseTestCase;
 use Adyen\Core\Tests\Infrastructure\Common\TestServiceRegister;
 use DateTime;
+use DateTimeZone;
 
 /**
  * Class PaymentLinkRequestApiTest
@@ -153,7 +154,7 @@ class PaymentLinkRequestApiTest extends BaseTestCase
     public function testSuccess(): void
     {
         // Arrange
-        $context = new CreatePaymentLinkRequest(456.12, 'EUR', '1', new DateTime('2020-12-18'));
+        $context = new CreatePaymentLinkRequest(456.12, 'EUR', '1', new DateTime('2020-12-18', new DateTimeZone('GMT')));
         $this->paymentService->setPaymentMethods($this->getPaymentMethods());
 
         // Act
