@@ -536,7 +536,8 @@ class PaymentMethodCode
         //</editor-fold>
         self::TWINT,
         self::BCMC_MOBILE,
-        self::ALMA
+        self::ALMA,
+        self::BIZUM
     ];
     public const RECURRING_PAYMENTS_SUPPORTED = [
         self::ACH,
