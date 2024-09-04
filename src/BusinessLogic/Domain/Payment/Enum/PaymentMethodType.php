@@ -39,6 +39,7 @@ interface PaymentMethodType
         'molpay_ebanking_TH' => 'onlinePayments',
         'directEbanking' => 'onlinePayments',
         'trustly' => 'onlinePayments',
+        'bizum' => 'onlinePayments',
         'applepay' => 'wallet',
         'amazonpay' => 'wallet',
         'alipay' => 'wallet',

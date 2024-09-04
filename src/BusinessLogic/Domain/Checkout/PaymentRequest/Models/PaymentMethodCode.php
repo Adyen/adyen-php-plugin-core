@@ -116,7 +116,8 @@ class PaymentMethodCode
         //</editor-fold>
         self::PAYSAFECARD,
         self::TWINT,
-        self::ALMA
+        self::ALMA,
+        self::BIZUM
     ];
 
     public const CAPTURE_SUPPORTED = [
@@ -342,7 +343,8 @@ class PaymentMethodCode
         //</editor-fold>
         self::PAYSAFECARD,
         self::TWINT,
-        self::ALMA
+        self::ALMA,
+        self::BIZUM
     ];
 
     public const PARTIAL_REFUND_SUPPORTED = [
@@ -445,7 +447,8 @@ class PaymentMethodCode
         self::PROSODIE_ILLICADO,
         //</editor-fold>
         self::TWINT,
-        self::ALMA
+        self::ALMA,
+        self::BIZUM
     ];
     public const PAYMENT_LINK_SUPPORTED = [
         self::ACH,
@@ -656,6 +659,8 @@ class PaymentMethodCode
 
     private const PAYSAFECARD = 'paysafecard';
     private const TWINT = 'twint';
+
+    private const BIZUM = 'bizum';
     const GIFTCARD_BRANDS = [
         self::GIFTCARD,
         self::AURIGA,
