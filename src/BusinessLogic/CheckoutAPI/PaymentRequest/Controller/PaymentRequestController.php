@@ -5,9 +5,12 @@ namespace Adyen\Core\BusinessLogic\CheckoutAPI\PaymentRequest\Controller;
 use Adyen\Core\BusinessLogic\CheckoutAPI\PaymentRequest\Request\StartTransactionRequest;
 use Adyen\Core\BusinessLogic\CheckoutAPI\PaymentRequest\Response\StartTransactionResponse;
 use Adyen\Core\BusinessLogic\CheckoutAPI\PaymentRequest\Response\UpdatePaymentDetailsResponse;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidCurrencyCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidPaymentMethodCodeException;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\DataBag;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateOrderRequest;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateOrderResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\StartTransactionRequestContext;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePaymentDetailsRequest;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Services\PaymentRequestService;
@@ -66,5 +69,17 @@ class PaymentRequestController
         return new UpdatePaymentDetailsResponse(
             $this->service->updatePaymentDetails(UpdatePaymentDetailsRequest::parse($rawRequest))
         );
+    }
+
+    /**
+     * @param array $rawRequest
+     *
+     * @return PayPalUpdateOrderResponse
+     *
+     * @throws InvalidCurrencyCode
+     */
+    public function paypalUpdateOrder(array $rawRequest): PaypalUpdateOrderResponse
+    {
+        return $this->service->paypalUpdateOrder(PayPalUpdateOrderRequest::parse($rawRequest));
     }
 }

@@ -2,7 +2,9 @@
 
 namespace Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models;
 
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidCurrencyCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
 
 /**
  * Class PayPalUpdateOrderRequest
@@ -49,5 +51,21 @@ class PayPalUpdateOrderRequest
     public function getPspReference(): string
     {
         return $this->pspReference;
+    }
+
+    /**
+     * @param array $rawRequest
+     *
+     * @return PayPalUpdateOrderRequest
+     *
+     * @throws InvalidCurrencyCode
+     */
+    public static function parse(array $rawRequest): PayPalUpdateOrderRequest
+    {
+        return new self(
+            Amount::fromFloat($rawRequest['amount']['value'] ?: 0, Currency::fromIsoCode($rawRequest['amount']['currency'])),
+            $rawRequest['paymentData'] ?: '',
+            $rawRequest['pspReference'] ?: ''
+        );
     }
 }

@@ -6,6 +6,8 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\AdyenGiving\Models\DonationsData;
 use Adyen\Core\BusinessLogic\Domain\Checkout\AdyenGiving\Repositories\DonationsDataRepository;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Factory\PaymentRequestFactory;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateOrderRequest;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateOrderResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\StartTransactionRequestContext;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\StartTransactionResult;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePaymentDetailsRequest;
@@ -142,5 +144,19 @@ class PaymentRequestService
         }
 
         return $result;
+    }
+
+    /**
+     * Updates order amount for paypal transaction.
+     *
+     * @param PayPalUpdateOrderRequest $request
+     *
+     * @return PayPalUpdateOrderResponse
+     *
+     * @throws Exception
+     */
+    public function paypalUpdateOrder(PayPalUpdateOrderRequest $request): PayPalUpdateOrderResponse
+    {
+        return $this->paymentsProxy->paypalUpdateOrder($request);
     }
 }
