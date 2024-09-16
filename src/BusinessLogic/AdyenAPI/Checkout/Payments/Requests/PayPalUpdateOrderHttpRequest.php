@@ -30,7 +30,7 @@ class PayPalUpdateOrderHttpRequest extends HttpRequest
             'pspReference' => $this->request->getPspReference(),
             'paymentData' => $this->request->getPaymentData(),
             'amount' => [
-                'currency' => $this->request->getAmount()->getCurrency(),
+                'currency' => $this->request->getAmount()->getCurrency()->getIsoCode(),
                 'value' => $this->request->getAmount()->getValue(),
             ],
         ];
