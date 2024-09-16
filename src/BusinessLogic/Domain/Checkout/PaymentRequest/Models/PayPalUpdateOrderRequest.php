@@ -63,7 +63,7 @@ class PayPalUpdateOrderRequest
     public static function parse(array $rawRequest): PayPalUpdateOrderRequest
     {
         return new self(
-            Amount::fromFloat($rawRequest['amount']['value'] ?: 0, Currency::fromIsoCode($rawRequest['amount']['currency'])),
+            $rawRequest['amount'] ?: null,
             $rawRequest['paymentData'] ?: '',
             $rawRequest['pspReference'] ?: ''
         );
