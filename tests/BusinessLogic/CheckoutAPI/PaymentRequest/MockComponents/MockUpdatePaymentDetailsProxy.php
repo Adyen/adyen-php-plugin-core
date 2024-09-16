@@ -5,6 +5,8 @@ namespace Adyen\Core\Tests\BusinessLogic\CheckoutAPI\PaymentRequest\MockComponen
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\AvailablePaymentMethodsResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodsRequest;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentRequest;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateOrderRequest;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateOrderResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ResultCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\StartTransactionResult;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePaymentDetailsRequest;
@@ -65,5 +67,10 @@ class MockUpdatePaymentDetailsProxy implements PaymentsProxy
     public function getAvailablePaymentMethods(PaymentMethodsRequest $request): AvailablePaymentMethodsResponse
     {
         return new AvailablePaymentMethodsResponse([]);
+    }
+
+    public function paypalUpdateOrder(PayPalUpdateOrderRequest $request): PayPalUpdateOrderResponse
+    {
+        return new PayPalUpdateOrderResponse('', 'success');
     }
 }

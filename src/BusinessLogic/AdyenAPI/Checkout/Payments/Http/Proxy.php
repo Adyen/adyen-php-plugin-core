@@ -4,6 +4,7 @@ namespace Adyen\Core\BusinessLogic\AdyenAPI\Checkout\Payments\Http;
 
 use Adyen\Core\BusinessLogic\AdyenAPI\Checkout\Payments\Requests\PaymentHttpRequest;
 use Adyen\Core\BusinessLogic\AdyenAPI\Checkout\Payments\Requests\PaymentMethodsHttpRequest;
+use Adyen\Core\BusinessLogic\AdyenAPI\Checkout\Payments\Requests\PayPalUpdateOrderHttpRequest;
 use Adyen\Core\BusinessLogic\AdyenAPI\Checkout\Payments\Requests\UpdatePaymentDetailsHttpRequest;
 use Adyen\Core\BusinessLogic\AdyenAPI\Http\Authorized\AuthorizedProxy;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\AvailablePaymentMethodsResponse;
@@ -11,6 +12,8 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethod
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodsRequest;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentRequest;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateOrderRequest;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateOrderResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ResultCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\StartTransactionResult;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePaymentDetailsRequest;
@@ -83,6 +86,23 @@ class Proxy extends AuthorizedProxy implements PaymentsProxy
                 $request
             ),
             $this->transformStoredCreditCardsResponse($response['storedPaymentMethods'] ?? [])
+        );
+    }
+
+    /**
+     * @param PayPalUpdateOrderRequest $request
+     *
+     * @return PayPalUpdateOrderResponse
+     *
+     * @throws HttpRequestException
+     */
+    public function paypalUpdateOrder(PayPalUpdateOrderRequest $request): PayPalUpdateOrderResponse
+    {
+        $response = $this->post(new PayPalUpdateOrderHttpRequest($request))->decodeBodyToArray();
+
+        return new PayPalUpdateOrderResponse(
+            $response['paymentData'] ?: '',
+            $response['success'] ?: ''
         );
     }
 

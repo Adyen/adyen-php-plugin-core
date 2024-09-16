@@ -5,6 +5,8 @@ namespace Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Proxies;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\AvailablePaymentMethodsResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodsRequest;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentRequest;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateOrderRequest;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateOrderResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\StartTransactionResult;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePaymentDetailsRequest;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePaymentDetailsResult;
@@ -44,4 +46,15 @@ interface PaymentsProxy
      * @throws Exception
      */
     public function getAvailablePaymentMethods(PaymentMethodsRequest $request): AvailablePaymentMethodsResponse;
+
+    /**
+     * Update paypal transaction when amount changes.
+     *
+     * @param PayPalUpdateOrderRequest $request
+     *
+     * @return PayPalUpdateOrderResponse
+     *
+     * @throws Exception
+     */
+    public function paypalUpdateOrder(PayPalUpdateOrderRequest $request): PayPalUpdateOrderResponse;
 }
