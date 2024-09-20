@@ -785,6 +785,20 @@ class PaymentMethodCode
             $codesToCheck[] = self::GIFTCARD;
         }
 
+        $expressCheckoutCodes = [
+            (string)PaymentMethodCode::applePay(),
+            (string)PaymentMethodCode::googlePay(),
+            (string)PaymentMethodCode::payWithGoogle(),
+            (string)PaymentMethodCode::payPal(),
+            (string)PaymentMethodCode::amazonPay(),
+        ];
+
+        // Add scheme always if there are express checkout methods to force Adyen API to return brands field
+        // without this googlepay will not work since it does not have any card brands in returned methods response
+        if (!empty(array_intersect($codesToCheck, $expressCheckoutCodes))) {
+            $codesToCheck[] = self::SCHEME;
+        }
+
         return array_unique($codesToCheck);
     }
 
