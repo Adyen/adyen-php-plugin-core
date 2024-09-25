@@ -43,11 +43,13 @@ interface PaymentMethodConfigRepository
     /**
      * Retrieves all express checkout payment methods that have express checkout feature enabled.
      *
+     * @param bool $isGuest
+     *
      * @return PaymentMethod[] Enabled express checkout payment methods
      *
      * @throws Exception
      */
-    public function getEnabledExpressCheckoutPaymentMethods(): array;
+    public function getEnabledExpressCheckoutPaymentMethods(bool $isGuest): array;
 
     /**
      * Retrieves configured payment method by id.

@@ -24,6 +24,7 @@ use Adyen\Core\BusinessLogic\Domain\Multistore\StoreContext;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\ApplePay;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\CardConfig;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\GooglePay;
+use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\PayPal;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\PaymentMethod;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
 use Adyen\Core\Tests\BusinessLogic\AdminAPI\Store\MockComponents\MockConnectionSettingsRepository;
@@ -254,6 +255,76 @@ class PaymentCheckoutConfigApiTest extends BaseTestCase
 
         $request = new PaymentCheckoutConfigRequest(
             Amount::fromFloat(123.23, Currency::getDefault())
+        );
+
+        // Act
+        $response = CheckoutAPI::get()->checkoutConfig('store1')->getExpressPaymentCheckoutConfig($request);
+
+        // Assert
+        self::assertTrue($response->isSuccessful());
+        self::assertCount(1, $response->getPaymentMethodsConfiguration());
+        self::assertEquals($enabledExpressCheckoutMethodConfig, $response->getPaymentMethodsConfiguration()[0]);
+    }
+
+    public function testExpressPaymentCheckoutConfigGuest(): void
+    {
+        // Arrange
+        $disabledExpressCheckoutMethodConfig = new PaymentMethod(
+            'applePay', (string)PaymentMethodCode::applePay(),
+            'applePay', 'hhtp://test.example.com', true, [], [],
+            'wallet', '', '', '', 0, 0, 'hhtp://test.example.com',
+            new ApplePay()
+        );
+        $enabledExpressCheckoutMethodConfig = new PaymentMethod(
+            'paywithgoogle', (string)PaymentMethodCode::payWithGoogle(),
+            'paywithgoogle', 'hhtp://test.example.com', true, [], [],
+            'wallet', '', '', '', 0, 0, 'hhtp://test.example.com',
+            new GooglePay('', '', true)
+        );
+        $payPalConfig = new PaymentMethod(
+            'paypal', (string)PaymentMethodCode::payPal(),
+            'paypal', 'http://test.example.com', true, [], [],
+            'wallet', '', '', '', 0, 0, 'http://test.example.com',
+            new PayPal(true)
+        );
+
+        StoreContext::doWithStore('store1', function () use ($disabledExpressCheckoutMethodConfig) {
+            $this->connectionSettingsRepo->setConnectionSettings(
+                new ConnectionSettings(
+                    'store1',
+                    'test',
+                    new ConnectionData('01234567', '1234', '', 'test-client-key'),
+                    null
+                )
+            );
+            $this->paymentMethodConfigRepo->saveMethodConfiguration($disabledExpressCheckoutMethodConfig);
+        });
+        StoreContext::doWithStore('store1', function () use ($enabledExpressCheckoutMethodConfig) {
+            $this->connectionSettingsRepo->setConnectionSettings(
+                new ConnectionSettings(
+                    'store1',
+                    'test',
+                    new ConnectionData('01234567', '1234', '', 'test-client-key'),
+                    null
+                )
+            );
+            $this->paymentMethodConfigRepo->saveMethodConfiguration($enabledExpressCheckoutMethodConfig);
+        });
+        StoreContext::doWithStore('store1', function () use ($payPalConfig) {
+            $this->connectionSettingsRepo->setConnectionSettings(
+                new ConnectionSettings(
+                    'store1',
+                    'test',
+                    new ConnectionData('01234567', '1234', '', 'test-client-key'),
+                    null
+                )
+            );
+            $this->paymentMethodConfigRepo->saveMethodConfiguration($payPalConfig);
+        });
+
+        $request = new PaymentCheckoutConfigRequest(
+            Amount::fromFloat(123.23, Currency::getDefault()),
+            null, 'en-US', null, null, null, true
         );
 
         // Act

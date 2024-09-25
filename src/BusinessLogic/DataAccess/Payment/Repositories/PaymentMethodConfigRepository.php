@@ -75,7 +75,7 @@ class PaymentMethodConfigRepository implements BasePaymentMethodConfigRepository
     /**
      * @inheritDoc
      */
-    public function getEnabledExpressCheckoutPaymentMethods(): array
+    public function getEnabledExpressCheckoutPaymentMethods(bool $isGuest): array
     {
         $expressCheckoutCodes = [
             (string)PaymentMethodCode::applePay(),
@@ -84,6 +84,14 @@ class PaymentMethodConfigRepository implements BasePaymentMethodConfigRepository
             (string)PaymentMethodCode::payPal(),
             (string)PaymentMethodCode::amazonPay(),
         ];
+
+        if ($isGuest) {
+            $expressCheckoutCodes = [
+                (string)PaymentMethodCode::applePay(),
+                (string)PaymentMethodCode::googlePay(),
+                (string)PaymentMethodCode::payWithGoogle(),
+            ];
+        }
 
         $queryFilter = new QueryFilter();
         $queryFilter

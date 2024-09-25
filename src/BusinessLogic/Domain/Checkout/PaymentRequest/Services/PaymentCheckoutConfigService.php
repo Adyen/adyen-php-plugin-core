@@ -98,6 +98,8 @@ class PaymentCheckoutConfigService
      * @param Country|null $country
      * @param string $shopperLocale
      * @param ShopperReference|null $shopperReference
+     * @param bool $isGuest
+     *
      * @return PaymentCheckoutConfigResult
      *
      * @throws MissingActiveApiConnectionData
@@ -107,10 +109,11 @@ class PaymentCheckoutConfigService
         Amount $amount,
         Country $country = null,
         string $shopperLocale = 'en-US',
-        ?ShopperReference $shopperReference = null
+        ?ShopperReference $shopperReference = null,
+        bool $isGuest = false
     ): PaymentCheckoutConfigResult {
         return $this->getPaymentCheckoutConfigForConfiguredMethods(
-            $this->paymentMethodConfigRepository->getEnabledExpressCheckoutPaymentMethods(),
+            $this->paymentMethodConfigRepository->getEnabledExpressCheckoutPaymentMethods($isGuest),
             $amount,
             $country,
             $shopperLocale,

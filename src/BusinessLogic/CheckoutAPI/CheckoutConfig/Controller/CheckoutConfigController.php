@@ -61,7 +61,8 @@ class CheckoutConfigController
                 $request->getAmount(),
                 $request->getCountry(),
                 $request->getShopperLocale(),
-                $request->getShopperReference() ? ShopperReference::parse($request->getShopperReference()) : null
+                $request->getShopperReference() ? ShopperReference::parse($request->getShopperReference()) : null,
+                $request->isGuest()
             ),
             $request->getAmount(),
             $request->getShopperLocale(),

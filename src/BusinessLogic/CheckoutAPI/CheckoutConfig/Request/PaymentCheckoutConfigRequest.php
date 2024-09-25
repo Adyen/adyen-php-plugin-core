@@ -36,6 +36,10 @@ class PaymentCheckoutConfigRequest
      * @var string|null
      */
     private $merchantDisplayName;
+    /**
+     * @var bool
+     */
+    private $isGuest;
 
     public function __construct(
         Amount $amount,
@@ -43,7 +47,8 @@ class PaymentCheckoutConfigRequest
         string $shopperLocale = 'en-US',
         string $shopperReference = null,
         string $shopperEmail = null,
-        string $merchantDisplayName = null
+        string $merchantDisplayName = null,
+        bool $isGuest = false
     ){
         $this->amount = $amount;
         $this->country = $country;
@@ -51,6 +56,7 @@ class PaymentCheckoutConfigRequest
         $this->shopperReference = $shopperReference;
         $this->shopperEmail = $shopperEmail;
         $this->merchantDisplayName = $merchantDisplayName;
+        $this->isGuest = $isGuest;
     }
 
     /**
@@ -99,5 +105,13 @@ class PaymentCheckoutConfigRequest
     public function getMerchantDisplayName(): ?string
     {
         return $this->merchantDisplayName;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isGuest(): bool
+    {
+        return $this->isGuest;
     }
 }
