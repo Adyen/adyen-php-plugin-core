@@ -3,6 +3,7 @@
 namespace Adyen\Core\BusinessLogic\CheckoutAPI\PaymentRequest\Response;
 
 use Adyen\Core\BusinessLogic\AdminAPI\Response\Response;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePaymentDetailsResult;
 
 /**
@@ -31,6 +32,14 @@ class UpdatePaymentDetailsResponse extends Response
     public function getPspReference(): ?string
     {
         return $this->result->getPspReference();
+    }
+
+    /**
+     * @return Amount|null
+     */
+    public function getAmount(): ?Amount
+    {
+        return $this->result->getAmount();
     }
 
     public function isSuccessful(): bool

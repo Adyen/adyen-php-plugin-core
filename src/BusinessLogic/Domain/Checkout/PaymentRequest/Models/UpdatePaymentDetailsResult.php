@@ -2,6 +2,8 @@
 
 namespace Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models;
 
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
+
 /**
  * Class UpdatePaymentDetailsResult
  *
@@ -29,13 +31,18 @@ class UpdatePaymentDetailsResult
      * @var string
      */
     private $paymentMethod;
+    /**
+     * @var Amount|null
+     */
+    private $amount;
 
     public function __construct(
         ResultCode $resultCode,
         ?string $pspReference = null,
         string $donationToken = '',
         string $merchantReference = '',
-        string $paymentMethod = ''
+        string $paymentMethod = '',
+        ?Amount $amount = null
     )
     {
         $this->resultCode = $resultCode;
@@ -80,5 +87,13 @@ class UpdatePaymentDetailsResult
     public function getPaymentMethod(): string
     {
         return $this->paymentMethod;
+    }
+
+    /**
+     * @return Amount|null
+     */
+    public function getAmount(): ?Amount
+    {
+        return $this->amount;
     }
 }
