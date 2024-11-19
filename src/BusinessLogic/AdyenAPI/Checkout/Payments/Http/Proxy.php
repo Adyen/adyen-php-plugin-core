@@ -7,6 +7,9 @@ use Adyen\Core\BusinessLogic\AdyenAPI\Checkout\Payments\Requests\PaymentMethodsH
 use Adyen\Core\BusinessLogic\AdyenAPI\Checkout\Payments\Requests\PayPalUpdateOrderHttpRequest;
 use Adyen\Core\BusinessLogic\AdyenAPI\Checkout\Payments\Requests\UpdatePaymentDetailsHttpRequest;
 use Adyen\Core\BusinessLogic\AdyenAPI\Http\Authorized\AuthorizedProxy;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidCurrencyCode;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\AvailablePaymentMethodsResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodResponse;
@@ -55,6 +58,7 @@ class Proxy extends AuthorizedProxy implements PaymentsProxy
      * @return UpdatePaymentDetailsResult
      *
      * @throws HttpRequestException
+     * @throws InvalidCurrencyCode
      */
     public function updatePaymentDetails(UpdatePaymentDetailsRequest $request): UpdatePaymentDetailsResult
     {
@@ -65,7 +69,10 @@ class Proxy extends AuthorizedProxy implements PaymentsProxy
             $response['pspReference'] ?? null,
             $response['donationToken'] ?? '',
             $response['merchantReference'] ?? '',
-            $response['paymentMethod']['type'] ?? ''
+            $response['paymentMethod']['type'] ?? '',
+            isset($response['amount']) ?
+                Amount::fromInt($response['amount']['value'], Currency::fromIsoCode($response['amount']['currency'])) :
+                null
         );
     }
 
@@ -113,7 +120,7 @@ class Proxy extends AuthorizedProxy implements PaymentsProxy
      */
     private function transformPaymentMethodsResponse(array $response): array
     {
-        return array_map(static function(array $method) {
+        return array_map(static function (array $method) {
             $type = $method['type'] ?? '';
             $brand = $method['brand'] ?? '';
 

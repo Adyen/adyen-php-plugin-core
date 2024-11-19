@@ -50,6 +50,7 @@ class UpdatePaymentDetailsResult
         $this->donationToken = $donationToken;
         $this->merchantReference = $merchantReference;
         $this->paymentMethod = $paymentMethod;
+        $this->amount = $amount;
     }
 
     /**
