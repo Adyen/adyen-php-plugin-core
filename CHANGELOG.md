@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [1.2.0 - 1.2.1](https://github.com/Adyen/adyen-php-plugin-core/compare/1.2.0...1.2.1) - 2024-11-28
+- Add amount to update payment details response
+
 ## [1.1.13 - 1.2.0](https://github.com/Adyen/adyen-php-plugin-core/compare/1.1.13...1.2.0) - 2024-09-25
 - Add support for authorization adjustment
 - Add support for click to pay
