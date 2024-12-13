@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4cd31a793a391daa5ab5d92a48e0a89d",
+    "content-hash": "63cfa9421a5eb6ab73e423a37c0c2cf8",
     "packages": [
         {
             "name": "adyen/php-webhook-module",
-            "version": "0.3.0",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "git@github.com:logeecom/adyen-php-webhook-module.git",
-                "reference": "255e76f87aaa324e51431ca25aa50b63b1c99dda"
+                "reference": "a3b8ede0589f1a5a7d16f8e5000fad187df11c4e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/logeecom/adyen-php-webhook-module/zipball/255e76f87aaa324e51431ca25aa50b63b1c99dda",
-                "reference": "255e76f87aaa324e51431ca25aa50b63b1c99dda",
+                "url": "https://api.github.com/repos/logeecom/adyen-php-webhook-module/zipball/a3b8ede0589f1a5a7d16f8e5000fad187df11c4e",
+                "reference": "a3b8ede0589f1a5a7d16f8e5000fad187df11c4e",
                 "shasum": ""
             },
             "require": {
@@ -27,6 +27,7 @@
                 "phpunit/phpunit": "^9.5.0",
                 "squizlabs/php_codesniffer": "^3.5"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -47,7 +48,7 @@
                 }
             ],
             "description": "Webhook module for Adyen Payment Integrations",
-            "time": "2023-12-27T15:17:34+00:00"
+            "time": "2024-04-02T11:40:20+00:00"
         }
     ],
     "packages-dev": [
@@ -1930,7 +1931,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "adyen/php-webhook-module": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
@@ -1942,5 +1945,5 @@
     "platform-overrides": {
         "php": "7.2"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.2.0"
 }
