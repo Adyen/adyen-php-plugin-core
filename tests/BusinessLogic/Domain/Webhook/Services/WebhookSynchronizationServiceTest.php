@@ -118,7 +118,8 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
             true,
             'originalRef',
             0,
-            false
+            false,
+            []
         );
         $this->storeService->setMockDefaultMap([
             PaymentStates::STATE_IN_PROGRESS => '12',
@@ -165,7 +166,8 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
             true,
             'originalPsp',
             0,
-            false
+            false,
+            []
         );
         // act
         $result = StoreContext::doWithStore('1', [$this->service, 'isSynchronizationNeeded'], [$this->webhook]);
@@ -192,7 +194,8 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
             true,
             'originalPsp',
             0,
-            false
+            false,
+            []
         );
         // act
         $result = StoreContext::doWithStore('1', [$this->service, 'isSynchronizationNeeded'], [$this->webhook]);
@@ -220,7 +223,8 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
             true,
             'originalPsp',
             0,
-            false
+            false,
+            []
         );
         // act
         $result = StoreContext::doWithStore('1', [$this->service, 'isSynchronizationNeeded'], [$this->webhook]);
@@ -249,7 +253,8 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
             true,
             'oRef',
             0,
-            false
+            false,
+            []
         );
 
         // act
@@ -282,7 +287,8 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
             true,
             'ref',
             0,
-            false
+            false,
+            []
         );
         $this->transactionService->setTransactionHistory($this->expectedTransaction());
 
@@ -316,7 +322,8 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
             false,
             'ref',
             0,
-            false
+            false,
+            []
         );
         $transactionHistory = $this->expectedTransaction();
         $this->transactionHistoryRepository->setTransactionHistory($transactionHistory);
@@ -353,7 +360,8 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
             true,
             'ref',
             0,
-            false
+            false,
+            []
         );
         $transactionHistory = $this->expectedTransaction();
         $this->transactionHistoryRepository->setTransactionHistory($transactionHistory);
@@ -389,7 +397,8 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
             false,
             'ref',
             0,
-            false
+            false,
+            []
         );
         $this->orderService->setMockOrderExists(true);
 

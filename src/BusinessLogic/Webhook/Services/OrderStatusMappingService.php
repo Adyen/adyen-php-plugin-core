@@ -110,7 +110,8 @@ class OrderStatusMappingService implements OrderStatusProvider
 
         $notificationItem = Notification::createItem([
             'eventCode' => $webhook->getEventCode(),
-            'success' => $webhook->isSuccess()
+            'success' => $webhook->isSuccess(),
+            'additionalData' => $webhook->getAdditionalData(),
         ]);
 
         $processor = ProcessorFactory::create(

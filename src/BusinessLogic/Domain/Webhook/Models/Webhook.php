@@ -75,6 +75,10 @@ class Webhook
      * @var bool
      */
     private $isLive;
+    /**
+     * @var array
+     */
+    private $additionalData;
 
     /**
      * @param Amount $amount
@@ -90,6 +94,7 @@ class Webhook
      * @param string $originalReference
      * @param int $riskScore
      * @param bool $isLive
+     * @param array $additionalData
      */
     public function __construct(
         Amount $amount,
@@ -104,7 +109,8 @@ class Webhook
         bool $success,
         string $originalReference,
         int $riskScore,
-        bool $isLive
+        bool $isLive,
+        array $additionalData
     ) {
         $this->amount = $amount;
         $this->eventCode = $eventCode;
@@ -119,6 +125,7 @@ class Webhook
         $this->originalReference = $originalReference;
         $this->riskScore = $riskScore;
         $this->isLive = $isLive;
+        $this->additionalData = $additionalData;
     }
 
     /**
@@ -223,5 +230,10 @@ class Webhook
     public function isLive(): bool
     {
         return $this->isLive;
+    }
+
+    public function getAdditionalData(): array
+    {
+        return $this->additionalData;
     }
 }

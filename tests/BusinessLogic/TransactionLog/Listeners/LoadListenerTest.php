@@ -57,7 +57,8 @@ class LoadListenerTest extends BaseTestCase
             true,
             'originalRef',
             0,
-            false
+            false,
+            []
         );
     }
 

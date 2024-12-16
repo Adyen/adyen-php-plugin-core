@@ -58,7 +58,8 @@ class TransactionServiceTest extends BaseTestCase
             true,
             'originalPsp',
             0,
-            false
+            false,
+            []
         );
         $this->repository = new MockTransactionRepository();
         TestServiceRegister::registerService(

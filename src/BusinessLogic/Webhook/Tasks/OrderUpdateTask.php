@@ -15,6 +15,7 @@ use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Cancellation
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Cancellation\SuccessfulCancellationEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Capture\FailedCaptureEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Capture\SuccessfulCaptureEvent;
+use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Chargebacks\SuccessfulChargebackEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Event;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Refund\FailedRefundEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Refund\SuccessfulRefundEvent;
@@ -97,7 +98,8 @@ class OrderUpdateTask extends TransactionalTask
                     $array['success'],
                     $array['originalReference'],
                     $array['riskScore'],
-                    $array['live']
+                    $array['live'],
+                    $array['additionalData']
                 )
             );
         });
@@ -127,7 +129,8 @@ class OrderUpdateTask extends TransactionalTask
             'originalReference' => $this->webhook->getOriginalReference(),
             'riskScore' => $this->webhook->getRiskScore(),
             'storeId' => $this->storeId,
-            'live' => $this->webhook->isLive()
+            'live' => $this->webhook->isLive(),
+            'additionalData' => $this->webhook->getAdditionalData(),
         );
     }
 
@@ -242,6 +245,10 @@ class OrderUpdateTask extends TransactionalTask
 
         if ($event === EventCodes::AUTHORISATION_ADJUSTMENT && !$success) {
             return new FailedAuthorizationAdjustmentEvent($merchantReference, $paymentMethod);
+        }
+
+        if ($event === EventCodes::CHARGEBACK && $success) {
+            return new SuccessfulChargebackEvent($merchantReference, $paymentMethod);
         }
 
         return null;

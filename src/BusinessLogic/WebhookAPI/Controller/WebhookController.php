@@ -96,7 +96,8 @@ class WebhookController
             $notificationRequestItem['success'] === 'true',
             $notificationRequestItem['originalReference'] ?? '',
             $notificationRequestItem['additionalData']['totalFraudScore'] ?? 0,
-            $payload['live'] === 'true'
+            $payload['live'] === 'true',
+            $notificationRequestItem['additionalData'] ?? []
         );
     }
 }

@@ -63,7 +63,8 @@ class CreateListenerTest extends BaseTestCase
             true,
             'originalRef',
             0,
-            false
+            false,
+            []
         );
     }
 

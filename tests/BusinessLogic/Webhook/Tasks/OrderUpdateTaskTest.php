@@ -46,7 +46,8 @@ class OrderUpdateTaskTest extends BaseSerializationTestCase
             true,
             'originalRef',
             0,
-            false
+            false,
+            []
         );
 
         $this->serializable = new OrderUpdateTask($this->webhook);
@@ -96,7 +97,8 @@ class OrderUpdateTaskTest extends BaseSerializationTestCase
             false,
             'originalRef',
             0,
-            false
+            false,
+            []
         );
         $task = new OrderUpdateTask($this->webhook);
 
@@ -133,7 +135,8 @@ class OrderUpdateTaskTest extends BaseSerializationTestCase
             true,
             'originalRef',
             0,
-            false
+            false,
+            []
         );
         $task = new OrderUpdateTask($this->webhook);
 
@@ -170,7 +173,8 @@ class OrderUpdateTaskTest extends BaseSerializationTestCase
             false,
             'originalRef',
             0,
-            false
+            false,
+            []
         );
         $task = new OrderUpdateTask($this->webhook);
 
@@ -207,7 +211,8 @@ class OrderUpdateTaskTest extends BaseSerializationTestCase
             true,
             'originalRef',
             0,
-            false
+            false,
+            []
         );
         $task = new OrderUpdateTask($this->webhook);
 
@@ -244,7 +249,8 @@ class OrderUpdateTaskTest extends BaseSerializationTestCase
             false,
             'originalRef',
             0,
-            false
+            false,
+            []
         );
         $task = new OrderUpdateTask($this->webhook);
 
@@ -282,7 +288,8 @@ class OrderUpdateTaskTest extends BaseSerializationTestCase
             true,
             'originalRef',
             0,
-            false
+            false,
+            []
         );
         $task = new OrderUpdateTask($this->webhook);
 
@@ -319,7 +326,8 @@ class OrderUpdateTaskTest extends BaseSerializationTestCase
             false,
             'originalRef',
             0,
-            false
+            false,
+            []
         );
         $task = new OrderUpdateTask($this->webhook);
 
@@ -345,7 +353,7 @@ class OrderUpdateTaskTest extends BaseSerializationTestCase
         // arrange
         $this->webhook = new Webhook(
             Amount::fromInt(1111, Currency::getDefault()),
-            EventCodes::CHARGEBACK,
+            EventCodes::CHARGEBACK_REVERSED,
             '2023-02-01T14:09:24+01:00',
             '123',
             'code',
@@ -356,7 +364,8 @@ class OrderUpdateTaskTest extends BaseSerializationTestCase
             true,
             'originalRef',
             0,
-            false
+            false,
+            []
         );
         $task = new OrderUpdateTask($this->webhook);
 
@@ -390,7 +399,8 @@ class OrderUpdateTaskTest extends BaseSerializationTestCase
             true,
             'originalRef',
             0,
-            false
+            false,
+            []
         );
         $task = new OrderUpdateTask($this->webhook);
 
@@ -427,7 +437,8 @@ class OrderUpdateTaskTest extends BaseSerializationTestCase
             false,
             'originalRef',
             0,
-            false
+            false,
+            []
         );
         $task = new OrderUpdateTask($this->webhook);
 
@@ -441,5 +452,45 @@ class OrderUpdateTaskTest extends BaseSerializationTestCase
         self::assertEquals($notifications[0]->getPaymentMethod(), $this->webhook->getPaymentMethod());
         self::assertEquals($notifications[0]->getOrderId(), $this->webhook->getMerchantReference());
         self::assertEquals('warning', $notifications[0]->getSeverity());
+    }
+
+    public function testChargebackNotification(): void
+    {
+        // arrange
+        $this->webhook = new Webhook(
+            Amount::fromInt(1111, Currency::getDefault()),
+            EventCodes::CHARGEBACK,
+            '2023-02-01T14:09:24+01:00',
+            '123',
+            'code',
+            'reference',
+            'pspReference',
+            'paymentMethod',
+            'reason',
+            true,
+            'originalRef',
+            0,
+            false,
+            [
+                "chargebackReasonCode" => "10.4",
+	            "modificationMerchantReferences" => "",
+	            "chargebackSchemeCode" => "visa",
+	            "defensePeriodEndsAt" => "2021-11-29T01:30:57+01:00",
+	            "autoDefended" => "false",
+	            "defendable" => "true",
+	            "disputeStatus" => "Undefended"
+            ]
+        );
+        $task = new OrderUpdateTask($this->webhook);
+
+        // act
+        $task->execute();
+
+        // assert
+        $notifications = $this->shopNotificationService->getNotifications(1, 0);
+        self::assertNotEmpty($notifications);
+        self::assertEquals($notifications[0]->getPaymentMethod(), $this->webhook->getPaymentMethod());
+        self::assertEquals($notifications[0]->getOrderId(), $this->webhook->getMerchantReference());
+        self::assertEquals('info', $notifications[0]->getSeverity());
     }
 }
