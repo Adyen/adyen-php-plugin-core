@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [1.2.1 - 1.2.2](https://github.com/Adyen/adyen-php-plugin-core/compare/1.2.1...1.2.2) - 2024-12-17
+- Update PHP webhook module dependency
+- Add chargeback webhook handling
+
 ## [1.2.0 - 1.2.1](https://github.com/Adyen/adyen-php-plugin-core/compare/1.2.0...1.2.1) - 2024-11-28
 - Add amount to update payment details response
 
