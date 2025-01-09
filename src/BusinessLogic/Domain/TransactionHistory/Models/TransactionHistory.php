@@ -126,7 +126,9 @@ class TransactionHistory
             );
         }
 
-        if ($item->getEventCode() === 'AUTHORISATION' && $item->getPspReference() !== $this->originalPspReference) {
+        if ($item->getEventCode() === 'AUTHORISATION' &&
+            $item->getPspReference() !== $this->originalPspReference &&
+            $item->getStatus()) {
             $this->originalPspReference = $item->getPspReference();
             $this->paymentLink = null;
         }
@@ -223,7 +225,8 @@ class TransactionHistory
     }
 
     /**
-     * @param string $pspReference PSP reference that belongs to this transaction history based on merchant order reference
+     * @param string $pspReference PSP reference that belongs to this transaction history based on merchant order
+     *     reference
      *
      * @return string
      */

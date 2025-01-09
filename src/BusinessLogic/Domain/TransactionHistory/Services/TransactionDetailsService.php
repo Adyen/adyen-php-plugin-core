@@ -99,9 +99,7 @@ class TransactionDetailsService
             return [];
         }
 
-        $url = $transactionHistory->getAdyenPaymentLinkFor(
-            $transactionHistory->collection()->first()->getPspReference()
-        );
+        $url = $transactionHistory->getAdyenPaymentLinkFor($transactionHistory->getOriginalPspReference());
         $separateCapture = $isMerchantConnected && !empty($paymentMethod) && $this->isSeparateCaptureSupported(
                 $paymentMethod,
                 $transactionHistory,
