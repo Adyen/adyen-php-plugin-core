@@ -12,7 +12,7 @@ class IndexMap
     /**
      * Array of indexed columns.
      *
-     * @var Index[]
+     * @var IndexColumn[]
      */
     private $indexes = array();
 
@@ -25,7 +25,7 @@ class IndexMap
      */
     public function addBooleanIndex($name)
     {
-        return $this->addIndex(new Index(Index::BOOLEAN, $name));
+        return $this->addIndex(new IndexColumn(IndexColumn::BOOLEAN, $name));
     }
 
     /**
@@ -37,7 +37,7 @@ class IndexMap
      */
     public function addDateTimeIndex($name)
     {
-        return $this->addIndex(new Index(Index::DATETIME, $name));
+        return $this->addIndex(new IndexColumn(IndexColumn::DATETIME, $name));
     }
 
     /**
@@ -49,7 +49,7 @@ class IndexMap
      */
     public function addDoubleIndex($name)
     {
-        return $this->addIndex(new Index(Index::DOUBLE, $name));
+        return $this->addIndex(new IndexColumn(IndexColumn::DOUBLE, $name));
     }
 
     /**
@@ -61,7 +61,7 @@ class IndexMap
      */
     public function addIntegerIndex($name)
     {
-        return $this->addIndex(new Index(Index::INTEGER, $name));
+        return $this->addIndex(new IndexColumn(IndexColumn::INTEGER, $name));
     }
 
     /**
@@ -73,13 +73,13 @@ class IndexMap
      */
     public function addStringIndex($name)
     {
-        return $this->addIndex(new Index(Index::STRING, $name));
+        return $this->addIndex(new IndexColumn(IndexColumn::STRING, $name));
     }
 
     /**
      * Returns array of indexes.
      *
-     * @return Index[] Array of indexes.
+     * @return IndexColumn[] Array of indexes.
      */
     public function getIndexes()
     {
@@ -89,11 +89,11 @@ class IndexMap
     /**
      * Adds index to map.
      *
-     * @param Index $index Index to be added.
+     * @param IndexColumn $index Index to be added.
      *
      * @return self This instance for chaining.
      */
-    protected function addIndex(Index $index)
+    protected function addIndex(IndexColumn $index)
     {
         $this->indexes[$index->getProperty()] = $index;
 

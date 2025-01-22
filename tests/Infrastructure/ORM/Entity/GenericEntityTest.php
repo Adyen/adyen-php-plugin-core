@@ -2,7 +2,7 @@
 
 namespace Adyen\Core\Tests\Infrastructure\ORM\Entity;
 
-use Adyen\Core\Infrastructure\ORM\Configuration\Index;
+use Adyen\Core\Infrastructure\ORM\Configuration\IndexColumn;
 use Adyen\Core\Infrastructure\ORM\Entity;
 use PHPUnit\Framework\TestCase;
 
@@ -55,11 +55,11 @@ abstract class GenericEntityTest extends TestCase
         $this->assertInstanceOf("Adyen\Core\Infrastructure\ORM\Configuration\IndexMap", $indexMap);
         /**
          * @var string $key
-         * @var \Adyen\Core\Infrastructure\ORM\Configuration\Index $item
+         * @var \Adyen\Core\Infrastructure\ORM\Configuration\IndexColumn $item
          */
         foreach ($indexMap->getIndexes() as $key => $item) {
             $this->assertNotEmpty($item, "Index configuration for $key must not be empty.");
-            $this->assertInstanceOf("Adyen\Core\Infrastructure\ORM\Configuration\Index", $item);
+            $this->assertInstanceOf("Adyen\Core\Infrastructure\ORM\Configuration\IndexColumn", $item);
 
             $this->assertContains(
                 $item->getType(),
@@ -73,6 +73,6 @@ abstract class GenericEntityTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        new Index('type', 'name');
+        new IndexColumn('type', 'name');
     }
 }

@@ -9,7 +9,7 @@ use InvalidArgumentException;
  *
  * @package Adyen\Core\Infrastructure\ORM\Configuration
  */
-class Index
+class IndexColumn
 {
     /**
      * Boolean index type.
