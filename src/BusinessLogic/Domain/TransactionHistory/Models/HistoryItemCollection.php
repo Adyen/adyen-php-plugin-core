@@ -166,7 +166,7 @@ class HistoryItemCollection
         $lastIndex = false;
 
         foreach (array_reverse($this->historyItems) as $index => $item) {
-            if ($item->getEventCode() === 'AUTHORISATION') {
+            if ($item->getEventCode() === 'AUTHORISATION' && $item->getStatus()) {
                 $lastIndex = count($this->historyItems) - $index - 1;
 
                 break;
