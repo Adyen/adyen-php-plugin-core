@@ -90,7 +90,6 @@ class PaymentMethodConfigRepository implements BasePaymentMethodConfigRepository
                 (string)PaymentMethodCode::applePay(),
                 (string)PaymentMethodCode::googlePay(),
                 (string)PaymentMethodCode::payWithGoogle(),
-                (string)PaymentMethodCode::payPal()
             ];
         }
 
