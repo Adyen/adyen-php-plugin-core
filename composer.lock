@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6b71fa822c199ccb3d3c5b35e13b179f",
+    "content-hash": "9146e2ad2ce304104c3ec1173415936b",
     "packages": [
         {
             "name": "adyen/php-webhook-module",
-            "version": "0.4.0",
+            "version": "0.5.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:logeecom/adyen-php-webhook-module.git",
-                "reference": "a995329cf215e068b2ec5481f30f8ee18bf46e0f"
+                "reference": "b81d13eb8babc8681f2b4c8c45f74a33824e40ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/logeecom/adyen-php-webhook-module/zipball/a995329cf215e068b2ec5481f30f8ee18bf46e0f",
-                "reference": "a995329cf215e068b2ec5481f30f8ee18bf46e0f",
+                "url": "https://api.github.com/repos/logeecom/adyen-php-webhook-module/zipball/b81d13eb8babc8681f2b4c8c45f74a33824e40ca",
+                "reference": "b81d13eb8babc8681f2b4c8c45f74a33824e40ca",
                 "shasum": ""
             },
             "require": {
@@ -47,7 +47,7 @@
                 }
             ],
             "description": "Webhook module for Adyen Payment Integrations",
-            "time": "2024-12-16T12:47:42+00:00"
+            "time": "2025-01-30T09:18:05+00:00"
         }
     ],
     "packages-dev": [
@@ -1819,12 +1819,12 @@
             },
             "type": "library",
             "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/contracts",
+                    "name": "symfony/contracts"
+                },
                 "branch-alias": {
                     "dev-main": "1.1-dev"
-                },
-                "thanks": {
-                    "name": "symfony/contracts",
-                    "url": "https://github.com/symfony/contracts"
                 }
             },
             "autoload": {
