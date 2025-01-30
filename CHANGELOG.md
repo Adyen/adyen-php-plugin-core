@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [1.2.5 - 1.2.6](https://github.com/Adyen/adyen-php-plugin-core/compare/1.2.5...1.2.6) - 2025-01-30
+- Update webhook module version
+
 ## [1.2.4 - 1.2.5](https://github.com/Adyen/adyen-php-plugin-core/compare/1.2.4...1.2.5) - 2025-01-29
 - Fix filtering authorised transaction items
 
