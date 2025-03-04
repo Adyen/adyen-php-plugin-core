@@ -1,0 +1,8 @@
+{
+  "pspReference": "FKSPNCQ8HXSKGK82",
+  "resultCode": "NotEnoughBalance",
+  "balance": {
+    "currency": "EUR",
+    "value": 5000
+  }
+}
