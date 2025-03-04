@@ -33,6 +33,7 @@ use Adyen\Core\BusinessLogic\AdyenAPI\Management\Webhook\Http\Proxy;
 use Adyen\Core\BusinessLogic\Bootstrap\SingleInstance;
 use Adyen\Core\BusinessLogic\CheckoutAPI\CheckoutConfig\Controller\CheckoutConfigController;
 use Adyen\Core\BusinessLogic\CheckoutAPI\Donations\Controller\DonationController;
+use Adyen\Core\BusinessLogic\CheckoutAPI\PartialPayment\Controller\PartialPaymentController;
 use Adyen\Core\BusinessLogic\CheckoutAPI\PaymentRequest\Controller\PaymentRequestController;
 use Adyen\Core\BusinessLogic\DataAccess\AdyenGiving\Entities\DonationsData;
 use Adyen\Core\BusinessLogic\DataAccess\AdyenGivingSettings\Entities\AdyenGivingSettings;
@@ -139,6 +140,8 @@ use Adyen\Core\BusinessLogic\Domain\Merchant\Proxies\MerchantProxy as MerchantPr
 use Adyen\Core\BusinessLogic\Domain\Merchant\Services\MerchantService;
 use Adyen\Core\BusinessLogic\Domain\Multistore\StoreContext;
 use Adyen\Core\BusinessLogic\Domain\NotificationsRemover\Listeners\NotificationsRemoverListener;
+use Adyen\Core\BusinessLogic\Domain\PartialPayments\Proxies\PartialPaymentProxy;
+use Adyen\Core\BusinessLogic\Domain\PartialPayments\Service\PartialPaymentService;
 use Adyen\Core\BusinessLogic\Domain\Payment\Proxies\PaymentProxy;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
 use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
@@ -534,6 +537,16 @@ class BootstrapComponent extends BaseBootstrapComponent
                 );
             })
         );
+
+        ServiceRegister::registerService(
+            PartialPaymentService::class,
+            new SingleInstance(static function () {
+                return new PartialPaymentService(
+                    ServiceRegister::getService(PartialPaymentProxy::class),
+                    ServiceRegister::getService(ConnectionService::class)
+                );
+            })
+        );
     }
 
     /**
@@ -773,6 +786,15 @@ class BootstrapComponent extends BaseBootstrapComponent
                 );
             })
         );
+
+        ServiceRegister::registerService(
+            PartialPaymentController::class,
+            new SingleInstance(static function () {
+                return new PartialPaymentController(
+                    ServiceRegister::getService(PartialPaymentService::class)
+                );
+            })
+        );
     }
 
     /**
@@ -862,6 +884,13 @@ class BootstrapComponent extends BaseBootstrapComponent
             new SingleInstance(static function () {
                 return AdyenAPI\Checkout\ProxyFactory::makeProxy(AuthorizationAdjustmentProxyImplementation::class);
             })
+        );
+
+        ServiceRegister::registerService(
+            PartialPaymentProxy::class,
+            static function () {
+                return AdyenAPI\Checkout\ProxyFactory::makeProxy(AdyenAPI\PartialPayments\Http\Proxy::class);
+            }
         );
     }
 

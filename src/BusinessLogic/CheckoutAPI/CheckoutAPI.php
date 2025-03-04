@@ -7,6 +7,7 @@ use Adyen\Core\BusinessLogic\AdminAPI\Aspects\StoreContextAspect;
 use Adyen\Core\BusinessLogic\Bootstrap\Aspect\Aspects;
 use Adyen\Core\BusinessLogic\CheckoutAPI\CheckoutConfig\Controller\CheckoutConfigController;
 use Adyen\Core\BusinessLogic\CheckoutAPI\Donations\Controller\DonationController;
+use Adyen\Core\BusinessLogic\CheckoutAPI\PartialPayment\Controller\PartialPaymentController;
 use Adyen\Core\BusinessLogic\CheckoutAPI\PaymentRequest\Controller\PaymentRequestController;
 use Exception;
 
@@ -70,5 +71,13 @@ class CheckoutAPI
             ::run(new ErrorHandlingAspect())
             ->andRun(new StoreContextAspect($storeId))
             ->beforeEachMethodOfService(DonationController::class);
+    }
+
+    public function partialPayment(string $storeId): object
+    {
+        return Aspects
+            ::run(new ErrorHandlingAspect())
+            ->andRun(new StoreContextAspect($storeId))
+            ->beforeEachMethodOfService(PartialPaymentController::class);
     }
 }

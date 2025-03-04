@@ -15,6 +15,7 @@ use Adyen\Core\BusinessLogic\AdminAPI\WebhookNotifications\Controller\WebhookNot
 use Adyen\Core\BusinessLogic\AdyenAPI\Management\Connection\Http\Proxy;
 use Adyen\Core\BusinessLogic\AdyenAPI\Management\ProxyFactory;
 use Adyen\Core\BusinessLogic\Bootstrap\SingleInstance;
+use Adyen\Core\BusinessLogic\CheckoutAPI\PartialPayment\Controller\PartialPaymentController;
 use Adyen\Core\BusinessLogic\DataAccess\AdyenGiving\Entities\DonationsData;
 use Adyen\Core\BusinessLogic\DataAccess\AdyenGivingSettings\Entities\AdyenGivingSettings as AdyenGivingSettingsEntity;
 use Adyen\Core\BusinessLogic\DataAccess\AdyenGivingSettings\Repositories\AdyenGivingSettingsRepository;
@@ -66,6 +67,8 @@ use Adyen\Core\BusinessLogic\Domain\Integration\Webhook\WebhookUrlService;
 use Adyen\Core\BusinessLogic\Domain\Merchant\Proxies\MerchantProxy;
 use Adyen\Core\BusinessLogic\Domain\Merchant\Services\MerchantService;
 use Adyen\Core\BusinessLogic\Domain\Multistore\StoreContext;
+use Adyen\Core\BusinessLogic\Domain\PartialPayments\Proxies\PartialPaymentProxy;
+use Adyen\Core\BusinessLogic\Domain\PartialPayments\Service\PartialPaymentService;
 use Adyen\Core\BusinessLogic\Domain\Payment\Proxies\PaymentProxy;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
 use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
@@ -419,6 +422,15 @@ class BaseTestCase extends TestCase
             },
             VersionInfoController::class => function () {
                 return new VersionInfoController(TestServiceRegister::getService(VersionService::class));
+            },
+            PartialPaymentService::class => function () {
+                return new PartialPaymentService(
+                    TestServiceRegister::getService(PartialPaymentProxy::class),
+                    TestServiceRegister::getService(ConnectionService::class)
+                );
+            },
+            PartialPaymentController::class => function () {
+                return new PartialPaymentController(TestServiceRegister::getService(PartialPaymentService::class));
             },
             ShopNotificationChannelAdapter::class => function () {
                 return new NullShopNotificationChannelAdapter();
