@@ -55,15 +55,18 @@ class PartialPaymentApiTest extends BaseTestCase
         ]);
 
         // act
-        $result = CheckoutAPI::get()->partialPayment('1')->checkBalance(
+        $response = CheckoutAPI::get()->partialPayment('1')->checkBalance(
             new BalanceCheckRequest(
                 100.12, 'EUR', ['type' => 'givex', 'cvc' => 737, 'number' => '4126491073027401']
             )
         );
 
         // assert
-        $this->assertEquals('FKSPNCQ8HXSKGK82', $result->getPspReference());
-        $this->assertEquals(Amount::fromInt(5000, Currency::fromIsoCode('EUR')), $result->getBalance());
-        $this->assertEquals('NotEnoughBalance', $result->getResultCode());
+        $result = $response->toArray();
+
+        $this->assertEquals('FKSPNCQ8HXSKGK82', $result['pspReference']);
+        $this->assertEquals(5000, $result['balance']['value']);
+        $this->assertEquals('EUR', $result['balance']['currency']);
+        $this->assertEquals('NotEnoughBalance', $result['resultCode']);
     }
 }
