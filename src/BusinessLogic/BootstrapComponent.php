@@ -618,7 +618,8 @@ class BootstrapComponent extends BaseBootstrapComponent
             PaymentRequestController::class,
             new SingleInstance(static function () {
                 return new PaymentRequestController(
-                    ServiceRegister::getService(PaymentRequestService::class)
+                    ServiceRegister::getService(PaymentRequestService::class),
+                    ServiceRegister::getService(PartialPaymentService::class)
                 );
             })
         );

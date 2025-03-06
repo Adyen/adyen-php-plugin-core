@@ -6,6 +6,8 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
 use Adyen\Core\BusinessLogic\Domain\PartialPayments\Models\BalanceRequest;
 use Adyen\Core\BusinessLogic\Domain\PartialPayments\Models\BalanceResult;
+use Adyen\Core\BusinessLogic\Domain\PartialPayments\Models\OrderCreateRequest;
+use Adyen\Core\BusinessLogic\Domain\PartialPayments\Models\OrderCreateResult;
 use Adyen\Core\BusinessLogic\Domain\PartialPayments\Proxies\PartialPaymentProxy;
 
 /**
@@ -46,5 +48,19 @@ class PartialPaymentService
         $merchantAccount = $connectionSettings ? $connectionSettings->getActiveConnectionData()->getMerchantId() : '';
 
         return $this->proxy->getBalance(new BalanceRequest($paymentMethod, $merchantAccount, $amount));
+    }
+
+    /**
+     * @param $reference
+     * @param Amount $amount
+     *
+     * @return OrderCreateResult
+     */
+    public function createOrder($reference, Amount $amount): OrderCreateResult
+    {
+        $connectionSettings = $this->connectionService->getConnectionData();
+        $merchantAccount = $connectionSettings ? $connectionSettings->getActiveConnectionData()->getMerchantId() : '';
+
+        return $this->proxy->createOrder(new OrderCreateRequest($reference, $merchantAccount, $amount));
     }
 }
