@@ -17,6 +17,8 @@ use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Capture\Fail
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Capture\SuccessfulCaptureEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Chargebacks\SuccessfulChargebackEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Event;
+use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\PartialPayment\FailedOrderClosedEvent;
+use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\PartialPayment\SuccessfulOrderClosedEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Refund\FailedRefundEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Refund\SuccessfulRefundEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Services\ShopNotificationService;
@@ -249,6 +251,14 @@ class OrderUpdateTask extends TransactionalTask
 
         if ($event === EventCodes::CHARGEBACK && $success) {
             return new SuccessfulChargebackEvent($merchantReference, $paymentMethod);
+        }
+
+        if ($event === EventCodes::ORDER_CLOSED && $success) {
+            return new SuccessfulOrderClosedEvent($merchantReference, $paymentMethod);
+        }
+
+        if ($event === EventCodes::ORDER_CLOSED && !$success) {
+            return new FailedOrderClosedEvent($merchantReference, $paymentMethod);
         }
 
         return null;
