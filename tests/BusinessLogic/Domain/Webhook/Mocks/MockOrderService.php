@@ -70,4 +70,9 @@ class MockOrderService implements OrderService
     {
         return Amount::fromInt(1, Currency::getDefault());
     }
+
+    public function cartExists(string $merchantReference): bool
+    {
+        return true;
+    }
 }

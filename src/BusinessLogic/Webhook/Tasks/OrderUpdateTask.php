@@ -182,14 +182,14 @@ class OrderUpdateTask extends TransactionalTask
      */
     private function doExecute(): void
     {
-        if ($this->checkIfOrderExists()) {
+        if ($this->checkIfCartExists()) {
             $event = $this->getEventFromWebhook();
 
             if ($event) {
                 $this->getShopNotificationService()->pushNotification($event);
             }
 
-            $this->getSynchronizationService()->synchronizeChanges($this->webhook);
+            $this->getSynchronizationService()->synchronizeChanges($this->webhook, $this->checkIfOrderExists());
         }
 
         $this->reportProgress(100);
@@ -252,6 +252,16 @@ class OrderUpdateTask extends TransactionalTask
         }
 
         return null;
+    }
+
+    /**
+     * Returns true if cart is created in shop system.
+     *
+     * @return bool
+     */
+    private function checkIfCartExists(): bool
+    {
+        return $this->getOrderService()->cartExists($this->webhook->getMerchantReference());
     }
 
     /**

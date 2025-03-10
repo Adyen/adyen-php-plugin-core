@@ -4,12 +4,15 @@ namespace Adyen\Core\Tests\BusinessLogic\Webhook\Tasks;
 
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
+use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Services\ShopNotificationService;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Models\Webhook;
 use Adyen\Core\BusinessLogic\Webhook\Tasks\OrderUpdateTask;
 use Adyen\Core\Infrastructure\ServiceRegister;
 use Adyen\Core\Infrastructure\TaskExecution\Exceptions\AbortTaskExecutionException;
 use Adyen\Core\Tests\BusinessLogic\Common\BaseSerializationTestCase;
+use Adyen\Core\Tests\BusinessLogic\Common\MockComponents\MockOrderService;
+use Adyen\Core\Tests\Infrastructure\Common\TestServiceRegister;
 use Adyen\Webhook\EventCodes;
 
 /**
@@ -488,6 +491,24 @@ class OrderUpdateTaskTest extends BaseSerializationTestCase
 
         // assert
         $notifications = $this->shopNotificationService->getNotifications(1, 0);
+        self::assertNotEmpty($notifications);
+        self::assertEquals($notifications[0]->getPaymentMethod(), $this->webhook->getPaymentMethod());
+        self::assertEquals($notifications[0]->getOrderId(), $this->webhook->getMerchantReference());
+        self::assertEquals('info', $notifications[0]->getSeverity());
+    }
+
+    public function testOrderNotCreated(): void
+    {
+        // arrange
+        $task = new OrderUpdateTask($this->webhook);
+        MockOrderService::$orderExists = false;
+
+        // act
+        $task->execute();
+
+        // assert
+        $notifications = $this->shopNotificationService->getNotifications(1, 0);
+
         self::assertNotEmpty($notifications);
         self::assertEquals($notifications[0]->getPaymentMethod(), $this->webhook->getPaymentMethod());
         self::assertEquals($notifications[0]->getOrderId(), $this->webhook->getMerchantReference());

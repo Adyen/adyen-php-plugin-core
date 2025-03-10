@@ -17,6 +17,13 @@ interface OrderService
      *
      * @return bool
      */
+    public function cartExists(string $merchantReference): bool;
+
+    /**
+     * @param string $merchantReference
+     *
+     * @return bool
+     */
     public function orderExists(string $merchantReference): bool;
 
     /**

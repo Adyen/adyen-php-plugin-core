@@ -69,7 +69,7 @@ class WebhookSynchronizationService
      *
      * @throws InvalidMerchantReferenceException
      */
-    public function synchronizeChanges(Webhook $webhook): void
+    public function synchronizeChanges(Webhook $webhook, bool $orderCreated = true): void
     {
         $transactionHistory = $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference());
         $newState = $this->orderStatusProvider->getNewPaymentState($webhook, $transactionHistory);
@@ -90,10 +90,10 @@ class WebhookSynchronizationService
 
         $this->transactionHistoryService->setTransactionHistory($transactionHistory);
         $newStateId = $this->orderStatusProvider->getOrderStatus($newState);
-        if (!empty($newStateId)) {
+        if (!empty($newStateId) && $orderCreated) {
             $this->orderService->updateOrderStatus($webhook, $newStateId);
         }
-        if ($webhook->isSuccess() &&
+        if ($orderCreated && $webhook->isSuccess() &&
             $webhook->getEventCode() === 'AUTHORISATION' &&
             $webhook->getPspReference() !== $transactionHistory->getOriginalPspReference()) {
             $this->orderService->updateOrderPayment($webhook);

@@ -31,6 +31,7 @@ use Adyen\Core\BusinessLogic\Domain\Connection\Enums\Mode;
 use Adyen\Core\BusinessLogic\Domain\Connection\Models\ConnectionData;
 use Adyen\Core\BusinessLogic\Domain\Connection\Models\ConnectionSettings;
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
+use Adyen\Core\BusinessLogic\Domain\PartialPayments\Service\PartialPaymentService;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Adyen\Core\Infrastructure\ServiceRegister;
@@ -74,7 +75,8 @@ class PaymentRequestApiTest extends BaseTestCase
                         TestServiceRegister::getService(DonationsDataRepository::class),
                         TestServiceRegister::getService(TransactionHistoryService::class),
                         ServiceRegister::getService(PaymentMethodConfigRepository::class)
-                    )
+                    ),
+                    TestServiceRegister::getService(PartialPaymentService::class)
                 );
             })
         );

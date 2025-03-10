@@ -429,6 +429,10 @@ class BaseTestCase extends TestCase
                     TestServiceRegister::getService(ConnectionService::class)
                 );
             },
+            PartialPaymentProxy::class =>
+                function () {
+                    return new \Adyen\Core\BusinessLogic\AdyenAPI\PartialPayments\Http\Proxy(new TestHttpClient(), 'https://checkout-test.adyen.com', 'v71', '0123456789');
+                },
             PartialPaymentController::class => function () {
                 return new PartialPaymentController(TestServiceRegister::getService(PartialPaymentService::class));
             },

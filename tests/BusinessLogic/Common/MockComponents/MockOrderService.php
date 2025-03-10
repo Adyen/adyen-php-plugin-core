@@ -9,13 +9,14 @@ use Adyen\Core\BusinessLogic\Domain\Webhook\Models\Webhook;
 
 class MockOrderService implements OrderService
 {
+    public static $orderExists = true;
 
     /**
      * @inheritDoc
      */
     public function orderExists(string $merchantReference): bool
     {
-        return true;
+        return static::$orderExists;
     }
 
     /**
@@ -44,5 +45,10 @@ class MockOrderService implements OrderService
     public function getOrderAmount(string $merchantReference): Amount
     {
         return Amount::fromInt(1, Currency::getDefault());
+    }
+
+    public function cartExists(string $merchantReference): bool
+    {
+        return true;
     }
 }
