@@ -56,6 +56,10 @@ class GeneralSettingsRequest extends Request
      * @var int
      */
     private $defaultLinkExpirationTime;
+    /**
+     * @var bool
+     */
+    private $cancelledPartialPayment;
 
     /**
      * @param bool $basketItemSync
@@ -66,6 +70,7 @@ class GeneralSettingsRequest extends Request
      * @param bool $enablePayByLink
      * @param string $payByLinkTitle
      * @param string $defaultLinkExpirationTime
+     * @param bool $cancelledPartialPayment
      */
     public function __construct(
         bool $basketItemSync,
@@ -75,7 +80,8 @@ class GeneralSettingsRequest extends Request
         string $retentionPeriod = '60',
         bool $enablePayByLink = true,
         string $payByLinkTitle = '',
-        string $defaultLinkExpirationTime = '7'
+        string $defaultLinkExpirationTime = '7',
+        bool $cancelledPartialPayment = true
     ) {
         $this->basketItemSync = $basketItemSync;
         $this->captureType = $captureType;
@@ -85,6 +91,7 @@ class GeneralSettingsRequest extends Request
         $this->enablePayByLink = $enablePayByLink;
         $this->payByLinkTitle = $payByLinkTitle;
         $this->defaultLinkExpirationTime = $defaultLinkExpirationTime;
+        $this->cancelledPartialPayment = $cancelledPartialPayment;
     }
 
     /**
@@ -107,7 +114,8 @@ class GeneralSettingsRequest extends Request
             $this->retentionPeriod,
             $this->enablePayByLink,
             !empty($this->payByLinkTitle) ? $this->payByLinkTitle : 'Adyen Pay By Link',
-            !empty($this->defaultLinkExpirationTime) ? $this->defaultLinkExpirationTime : '7'
+            !empty($this->defaultLinkExpirationTime) ? $this->defaultLinkExpirationTime : '7',
+            $this->cancelledPartialPayment
         );
     }
 }

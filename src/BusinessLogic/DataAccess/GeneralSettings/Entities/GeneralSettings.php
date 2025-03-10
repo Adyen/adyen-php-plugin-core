@@ -54,7 +54,8 @@ class GeneralSettings extends Entity
             self::getDataValue($generalSettings, 'retentionPeriod'),
             self::getDataValue($generalSettings, 'enablePayByLink'),
             self::getDataValue($generalSettings, 'payByLinkTitle'),
-            self::getDataValue($generalSettings, 'defaultLinkExpirationTime', 7)
+            self::getDataValue($generalSettings, 'defaultLinkExpirationTime', 7),
+            self::getDataValue($generalSettings, 'cancelledPartialPayment')
         );
     }
 
@@ -210,7 +211,8 @@ class GeneralSettings extends Entity
             'retentionPeriod' => $this->generalSettings->getRetentionPeriod(),
             'enablePayByLink' => $this->generalSettings->isEnablePayByLink(),
             'payByLinkTitle' => $this->generalSettings->getPayByLinkTitle(),
-            'defaultLinkExpirationTime' => $this->generalSettings->getDefaultLinkExpirationTime()
+            'defaultLinkExpirationTime' => $this->generalSettings->getDefaultLinkExpirationTime(),
+            'cancelledPartialPayment' => $this->generalSettings->isCancelledPartialPayment(),
         ];
     }
 }

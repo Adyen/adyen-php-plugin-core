@@ -53,6 +53,10 @@ class GeneralSettings
      * @var int
      */
     private $defaultLinkExpirationTime;
+    /**
+     * @var bool
+     */
+    private $cancelledPartialPayment;
 
     /**
      * @param bool $basketItemSync
@@ -63,10 +67,11 @@ class GeneralSettings
      * @param bool $enablePayByLink
      * @param string $payByLinkTitle
      * @param string $defaultLinkExpirationTime
+     * @param bool $cancelledPartialPayment
      *
      * @throws InvalidCaptureDelayException
-     * @throws InvalidRetentionPeriodException
      * @throws InvalidDefaultExpirationTimeException
+     * @throws InvalidRetentionPeriodException
      */
     public function __construct(
         bool $basketItemSync,
@@ -76,7 +81,8 @@ class GeneralSettings
         string $retentionPeriod = '60',
         bool $enablePayByLink = true,
         string $payByLinkTitle = 'Adyen Pay By Link',
-        string $defaultLinkExpirationTime = '7'
+        string $defaultLinkExpirationTime = '7',
+        bool $cancelledPartialPayment = true
     ) {
         $this->validate($captureDelay, $retentionPeriod, $defaultLinkExpirationTime);
 
@@ -88,6 +94,7 @@ class GeneralSettings
         $this->enablePayByLink = $enablePayByLink;
         $this->payByLinkTitle = $payByLinkTitle;
         $this->defaultLinkExpirationTime = $defaultLinkExpirationTime;
+        $this->cancelledPartialPayment = $cancelledPartialPayment;
     }
 
     /**
@@ -168,6 +175,11 @@ class GeneralSettings
     public function getDefaultLinkExpirationTime(): int
     {
         return $this->defaultLinkExpirationTime;
+    }
+
+    public function isCancelledPartialPayment(): bool
+    {
+        return $this->cancelledPartialPayment;
     }
 
     /**

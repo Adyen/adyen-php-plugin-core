@@ -71,7 +71,8 @@ class GeneralSettingsServiceTest extends BaseTestCase
             60,
             true,
             'Title',
-            '7'
+            '7',
+            true
         );
         $settingsEntity = new GeneralSettingsEntity();
         $settingsEntity->setGeneralSettings($settings);
@@ -131,7 +132,8 @@ class GeneralSettingsServiceTest extends BaseTestCase
             60,
             true,
             'Title',
-            '7'
+            '7',
+            false
         );
 
         // act
