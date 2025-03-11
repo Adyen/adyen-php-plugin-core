@@ -532,7 +532,8 @@ class BaseTestCase extends TestCase
                 return new WebhookSynchronizationService(
                     TestServiceRegister::getService(TransactionHistoryService::class),
                     TestServiceRegister::getService(OrderService::class),
-                    TestServiceRegister::getService(OrderStatusMappingService::class)
+                    TestServiceRegister::getService(OrderStatusMappingService::class),
+                    TestServiceRegister::getService(GeneralSettingsService::class)
                 );
             }
         );

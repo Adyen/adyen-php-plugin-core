@@ -3,12 +3,14 @@
 namespace Adyen\Core\BusinessLogic\Domain\Webhook\Services;
 
 use Adyen\Core\BusinessLogic\AdyenAPI\Management\Webhook\Http\Proxy;
+use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsService;
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Models\Webhook;
+use Adyen\Webhook\EventCodes;
 
 /**
  * Class WebhookSynchronizationService
@@ -31,20 +33,28 @@ class WebhookSynchronizationService
      * @var OrderStatusProvider
      */
     protected $orderStatusProvider;
+    /**
+     * @var GeneralSettingsService
+     */
+    protected $settingsService;
 
     /**
      * @param TransactionHistoryService $transactionHistoryService
      * @param OrderService $orderService
      * @param OrderStatusProvider $orderStatusProvider
+     * @param GeneralSettingsService $settingsService
      */
     public function __construct(
         TransactionHistoryService $transactionHistoryService,
-        OrderService $orderService,
-        OrderStatusProvider $orderStatusProvider
-    ) {
+        OrderService              $orderService,
+        OrderStatusProvider       $orderStatusProvider,
+        GeneralSettingsService    $settingsService
+    )
+    {
         $this->transactionHistoryService = $transactionHistoryService;
         $this->orderService = $orderService;
         $this->orderStatusProvider = $orderStatusProvider;
+        $this->settingsService = $settingsService;
     }
 
     /**
@@ -89,12 +99,25 @@ class WebhookSynchronizationService
         );
 
         $this->transactionHistoryService->setTransactionHistory($transactionHistory);
+
+        if ($webhook->getEventCode() === EventCodes::AUTHORISATION) {
+            return;
+        }
+
+        $settings = $this->settingsService->getGeneralSettings();
+
+        if ($settings && $webhook->getEventCode() === EventCodes::CANCELLATION
+            && !$settings->isCancelledPartialPayment()) {
+            return;
+        }
+
         $newStateId = $this->orderStatusProvider->getOrderStatus($newState);
         if (!empty($newStateId) && $orderCreated) {
             $this->orderService->updateOrderStatus($webhook, $newStateId);
         }
+
         if ($orderCreated && $webhook->isSuccess() &&
-            $webhook->getEventCode() === 'AUTHORISATION' &&
+            $webhook->getEventCode() === EventCodes::ORDER_CLOSED &&
             $webhook->getPspReference() !== $transactionHistory->getOriginalPspReference()) {
             $this->orderService->updateOrderPayment($webhook);
         }
@@ -114,7 +137,6 @@ class WebhookSynchronizationService
             $webhook->getEventCode()
         )->filterByStatus($webhook->isSuccess());
 
-        return !$duplicatedItems->isEmpty() && $webhook->getOriginalReference(
-            ) === $transactionHistory->getOriginalPspReference();
+        return !$duplicatedItems->isEmpty() && $webhook->getOriginalReference() === $transactionHistory->getOriginalPspReference();
     }
 }
