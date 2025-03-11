@@ -58,10 +58,10 @@ class Proxy extends AuthorizedProxy implements PartialPaymentProxy
             isset($response['amount']) ?
                 Amount::fromInt($response['amount']['value'], Currency::fromIsoCode($response['amount']['currency'])) :
                 null,
-            $result['expiresAt'] ?? '',
-            $result['orderData'] ?? '',
-            $result['pspReference'] ?? '',
-            $result['reference'] ?? '',
+            $response['expiresAt'] ?? '',
+            $response['orderData'] ?? '',
+            $response['pspReference'] ?? '',
+            $response['reference'] ?? '',
             isset($response['remainingAmount']) ?
                 Amount::fromInt($response['remainingAmount']['value'], Currency::fromIsoCode($response['remainingAmount']['currency'])) :
                 null

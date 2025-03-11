@@ -58,6 +58,13 @@ class PaymentHttpRequest extends HttpRequest
             'shopperLocale' => $this->request->getShopperLocale(),
         ];
 
+        if ($this->request->getOrder() !== null) {
+            $body['order'] = [
+                'orderData' => $this->request->getOrder()->getOrderData(),
+                'pspReference' => $this->request->getOrder()->getPspReference(),
+            ];
+        }
+
         if ($this->request->getShopperInteraction() !== null) {
             $body['shopperInteraction'] = $this->request->getShopperInteraction();
         }

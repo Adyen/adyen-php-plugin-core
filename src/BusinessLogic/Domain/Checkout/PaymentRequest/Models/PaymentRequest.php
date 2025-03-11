@@ -142,6 +142,10 @@ class PaymentRequest
      * @var AuthorizationType
      */
     private $authorizationType;
+    /**
+     * @var Order
+     */
+    private $order;
 
     /**
      * @param Amount $amount
@@ -176,6 +180,7 @@ class PaymentRequest
      * @param array $bankAccount
      * @param ApplicationInfo|null $applicationInfo
      * @param AuthorizationType|null $authorizationType
+     * @param Order|null $order
      */
     public function __construct(
         Amount $amount,
@@ -209,7 +214,8 @@ class PaymentRequest
         string $deviceFingerprint = '',
         array $bankAccount = [],
         ApplicationInfo $applicationInfo = null,
-        AuthorizationType $authorizationType = null
+        AuthorizationType $authorizationType = null,
+        Order $order = null
     ) {
         $this->amount = $amount;
         $this->merchantId = $merchantId;
@@ -243,6 +249,7 @@ class PaymentRequest
         $this->bankAccount = $bankAccount;
         $this->applicationInfo = $applicationInfo;
         $this->authorizationType = $authorizationType;
+        $this->order = $order;
     }
 
     /**
@@ -499,5 +506,15 @@ class PaymentRequest
     public function getAuthorizationType(): ?AuthorizationType
     {
         return $this->authorizationType;
+    }
+
+    public function getOrder(): ?Order
+    {
+        return $this->order;
+    }
+
+    public function setOrder(?Order $order): void
+    {
+        $this->order = $order;
     }
 }

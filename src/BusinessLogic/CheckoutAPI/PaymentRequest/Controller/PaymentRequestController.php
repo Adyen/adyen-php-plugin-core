@@ -9,6 +9,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidCu
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidPaymentMethodCodeException;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\DataBag;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Order;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateOrderRequest;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateOrderResponse;
@@ -77,22 +78,25 @@ class PaymentRequestController
      */
     public function startPartialTransaction(array $requests, Amount $amount, string $reference): array
     {
-        $this->partialPaymentService->createOrder($reference, $amount);
+        $orderCreateResult = $this->partialPaymentService->createOrder($reference, $amount);
+        $order = new Order($orderCreateResult->getOrderData(), $orderCreateResult->getPspReference());
 
         $result = [];
 
         foreach ($requests as $request) {
+            $startTransactionRequest =  new StartTransactionRequestContext(
+                PaymentMethodCode::parse($request->getPaymentMethodType()),
+                $request->getAmount(),
+                $request->getReference(),
+                $request->getReturnUrl(),
+                new DataBag($request->getStateData()),
+                new DataBag($request->getSessionData()),
+                $request->getShopperReference()
+            );
+
             $result[] = new StartTransactionResponse(
                 $this->service->startTransaction(
-                    new StartTransactionRequestContext(
-                        PaymentMethodCode::parse($request->getPaymentMethodType()),
-                        $request->getAmount(),
-                        $request->getReference(),
-                        $request->getReturnUrl(),
-                        new DataBag($request->getStateData()),
-                        new DataBag($request->getSessionData()),
-                        $request->getShopperReference()
-                    )
+                   $startTransactionRequest, $order
                 )
             );
         }

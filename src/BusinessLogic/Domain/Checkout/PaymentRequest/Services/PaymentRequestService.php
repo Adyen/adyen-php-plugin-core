@@ -5,6 +5,7 @@ namespace Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Services;
 use Adyen\Core\BusinessLogic\Domain\Checkout\AdyenGiving\Models\DonationsData;
 use Adyen\Core\BusinessLogic\Domain\Checkout\AdyenGiving\Repositories\DonationsDataRepository;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Factory\PaymentRequestFactory;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Order;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateOrderRequest;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateOrderResponse;
@@ -74,9 +75,14 @@ class PaymentRequestService
     /**
      * @throws Exception
      */
-    public function startTransaction(StartTransactionRequestContext $context): StartTransactionResult
+    public function startTransaction(StartTransactionRequestContext $context, Order $order = null): StartTransactionResult
     {
         $request = $this->paymentRequestFactory->crate($context);
+
+        if ($order) {
+            $request->setOrder($order);
+        }
+
         $result = $this->paymentsProxy->startPaymentTransaction($request);
 
         if ($result->getResultCode()->isSuccessful()) {
