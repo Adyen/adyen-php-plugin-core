@@ -431,7 +431,8 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
                     Amount::fromInt(1, Currency::getDefault()),
                     'Method',
                     0,
-                    false
+                    false,
+                    'oRef'
                 )
             ]
         );

@@ -12,6 +12,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Factory\PaymentReque
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ResultCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePaymentDetailsResult;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Services\PaymentRequestService;
+use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
 use Adyen\Core\BusinessLogic\Domain\PartialPayments\Service\PartialPaymentService;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
@@ -52,7 +53,8 @@ class UpdatePaymentDetailsApiTest extends BaseTestCase
                     new PaymentRequestFactory(),
                     TestServiceRegister::getService(DonationsDataRepository::class),
                     TestServiceRegister::getService(TransactionHistoryService::class),
-                    TestServiceRegister::getService(PaymentMethodConfigRepository::class)
+                    TestServiceRegister::getService(PaymentMethodConfigRepository::class),
+                    TestServiceRegister::getService(ConnectionService::class)
                 ),
                     TestServiceRegister::getService(PartialPaymentService::class));
             })

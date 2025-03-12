@@ -14,9 +14,12 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\StartTransact
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePaymentDetailsRequest;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePaymentDetailsResult;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Proxies\PaymentsProxy;
+use Adyen\Core\BusinessLogic\Domain\Connection\Enums\Mode;
+use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
+use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Exception;
 
@@ -50,6 +53,10 @@ class PaymentRequestService
      * @var PaymentMethodConfigRepository
      */
     private $methodConfigRepository;
+    /**
+     * @var ConnectionService
+     */
+    private $connectionService;
 
     /**
      * @param PaymentsProxy $paymentsProxy
@@ -57,19 +64,23 @@ class PaymentRequestService
      * @param DonationsDataRepository $donationsDataRepository
      * @param TransactionHistoryService $transactionHistoryService
      * @param PaymentMethodConfigRepository $methodConfigRepository
+     * @param ConnectionService $connectionService
      */
     public function __construct(
-        PaymentsProxy $paymentsProxy,
-        PaymentRequestFactory $paymentRequestFactory,
-        DonationsDataRepository $donationsDataRepository,
-        TransactionHistoryService $transactionHistoryService,
-        PaymentMethodConfigRepository $methodConfigRepository
-    ) {
+        PaymentsProxy                 $paymentsProxy,
+        PaymentRequestFactory         $paymentRequestFactory,
+        DonationsDataRepository       $donationsDataRepository,
+        TransactionHistoryService     $transactionHistoryService,
+        PaymentMethodConfigRepository $methodConfigRepository,
+        ConnectionService             $connectionService
+    )
+    {
         $this->paymentsProxy = $paymentsProxy;
         $this->paymentRequestFactory = $paymentRequestFactory;
         $this->donationsDataRepository = $donationsDataRepository;
         $this->transactionHistoryService = $transactionHistoryService;
         $this->methodConfigRepository = $methodConfigRepository;
+        $this->connectionService = $connectionService;
     }
 
     /**
@@ -96,22 +107,39 @@ class PaymentRequestService
                 (string)$context->getPaymentMethodCode()
             );
 
-            if($configuredPaymentMethod){
+            if ($configuredPaymentMethod) {
                 $authorizationType = $configuredPaymentMethod->getAuthorizationType();
             }
 
-            if($configuredPaymentMethod &&
+            if ($configuredPaymentMethod &&
                 $configuredPaymentMethod->getAuthorizationType() &&
-                $configuredPaymentMethod->getAuthorizationType()->equal(AuthorizationType::preAuthorization())){
-
+                $configuredPaymentMethod->getAuthorizationType()->equal(AuthorizationType::preAuthorization())) {
                 $captureType = CaptureType::manual();
             }
+
+            $connectionSettings = $this->connectionService->getConnectionData();
+
+            $historyItem = new HistoryItem(
+                $result->getPspReference() ?? $context->getReference(),
+                $context->getReference(),
+                'PAYMENT_REQUESTED',
+                '',
+                (new \DateTime())->format('Y-m-d H:i:s'),
+                true,
+                $context->getAmount(),
+                $context->getPaymentMethodCode(),
+                0,
+                $connectionSettings && $connectionSettings->getMode() === Mode::MODE_LIVE,
+                $result->getPspReference() ?? ''
+                );
 
             $this->transactionHistoryService->createTransactionHistory(
                 $context->getReference(),
                 $context->getAmount()->getCurrency(),
                 $captureType,
-                $authorizationType
+                $authorizationType,
+                $historyItem,
+                $order
             );
         }
 

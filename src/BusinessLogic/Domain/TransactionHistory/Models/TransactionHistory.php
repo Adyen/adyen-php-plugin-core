@@ -10,6 +10,7 @@ use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\Infrastructure\Utility\TimeProvider;
+use Adyen\Webhook\EventCodes;
 
 /**
  * Class TransactionHistory
@@ -72,14 +73,29 @@ class TransactionHistory
      * @var AuthorizationType|null
      */
     private $authorizationType;
+    /**
+     * @var string
+     */
+    private $orderData;
+    /**
+     * @var string
+     */
+    private $orderPspReference;
+    /**
+     * @var string[]
+     */
+    private $authorizationPspReferences;
 
     /**
      * @param string $merchantReference
      * @param CaptureType $captureType
      * @param int $captureDelay
      * @param Currency|null $currency
-     * @param array $historyItems
      * @param AuthorizationType|null $authorizationType
+     * @param array $historyItems
+     * @param string $orderData
+     * @param string $orderPspReference
+     * @param array $authorizationPspReferences
      *
      * @throws InvalidMerchantReferenceException
      */
@@ -89,7 +105,10 @@ class TransactionHistory
         int $captureDelay = 0,
         Currency $currency = null,
         AuthorizationType $authorizationType = null,
-        array $historyItems = []
+        array $historyItems = [],
+        string $orderData = '',
+        string $orderPspReference = '',
+        array $authorizationPspReferences = []
     ) {
         $this->merchantReference = $merchantReference;
         $this->captureType = $captureType;
@@ -97,6 +116,9 @@ class TransactionHistory
         $this->currency = $currency;
         $this->historyItemCollection = new HistoryItemCollection();
         $this->authorizationType = $authorizationType;
+        $this->orderData = $orderData;
+        $this->orderPspReference = $orderPspReference;
+        $this->authorizationPspReferences = $authorizationPspReferences;
 
         foreach ($historyItems as $item) {
             $this->add($item);
@@ -142,6 +164,10 @@ class TransactionHistory
 
         if ($item->getRiskScore() > 0 && $this->riskScore !== $item->getRiskScore()) {
             $this->riskScore = $item->getRiskScore();
+        }
+
+        if ($item->getEventCode() === EventCodes::ORDER_CLOSED) {
+            $this->paymentMethod = $item->getPaymentMethod();
         }
 
         $this->historyItemCollection->add($item);
@@ -232,7 +258,7 @@ class TransactionHistory
      */
     public function getAdyenPaymentLinkFor(string $pspReference): string
     {
-        if (!$this->collection()->isEmpty()) {
+        if ($this->collection()->isEmpty()) {
             $pspReference = $this->getOriginalPspReference();
         }
 
@@ -373,5 +399,35 @@ class TransactionHistory
     public function setAuthorizationType(AuthorizationType $authorizationType): void
     {
         $this->authorizationType = $authorizationType;
+    }
+
+    public function getOrderData(): string
+    {
+        return $this->orderData;
+    }
+
+    public function setOrderData(string $orderData): void
+    {
+        $this->orderData = $orderData;
+    }
+
+    public function getOrderPspReference(): string
+    {
+        return $this->orderPspReference;
+    }
+
+    public function setOrderPspReference(string $orderPspReference): void
+    {
+        $this->orderPspReference = $orderPspReference;
+    }
+
+    public function getAuthorizationPspReferences(): array
+    {
+        return $this->authorizationPspReferences;
+    }
+
+    public function setAuthorizationPspReferences(array $authorizationPspReferences): void
+    {
+        $this->authorizationPspReferences = $authorizationPspReferences;
     }
 }

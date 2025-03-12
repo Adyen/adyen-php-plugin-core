@@ -94,13 +94,19 @@ class WebhookSynchronizationService
                 $webhook->getAmount(),
                 $webhook->getPaymentMethod(),
                 $webhook->getRiskScore(),
-                $webhook->isLive()
+                $webhook->isLive(),
+                $webhook->getOriginalReference()
             )
         );
 
+        if ($webhook->getEventCode() === EventCodes::CANCELLATION) {
+            $references = $transactionHistory->getAuthorizationPspReferences();
+            $transactionHistory->setAuthorizationPspReferences(array_diff($references, [$webhook->getOriginalReference()]));
+        }
+
         $this->transactionHistoryService->setTransactionHistory($transactionHistory);
 
-        if ($webhook->getEventCode() === EventCodes::AUTHORISATION) {
+        if (in_array($webhook->getEventCode(), [EventCodes::AUTHORISATION, EventCodes::ORDER_OPENED], true)) {
             return;
         }
 

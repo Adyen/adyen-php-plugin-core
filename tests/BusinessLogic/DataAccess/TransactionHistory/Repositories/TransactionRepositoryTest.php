@@ -242,7 +242,9 @@ class TransactionRepositoryTest extends BaseTestCase
                 Amount::fromInt(1111, Currency::getDefault()),
                 'visa',
                 0,
-                false
+                false,
+                'ps1',
+                CaptureType::manual()
             ),
             new HistoryItem(
                 'psp2',
@@ -254,7 +256,9 @@ class TransactionRepositoryTest extends BaseTestCase
                 Amount::fromInt(1111, Currency::getDefault()),
                 'visa',
                 0,
-                false
+                false,
+                'ps1',
+                CaptureType::manual()
             ),
             new HistoryItem(
                 'psp3',
@@ -266,7 +270,9 @@ class TransactionRepositoryTest extends BaseTestCase
                 Amount::fromInt(1111, Currency::getDefault()),
                 'visa',
                 0,
-                false
+                false,
+                'ps1',
+                CaptureType::manual()
             )
         ];
     }

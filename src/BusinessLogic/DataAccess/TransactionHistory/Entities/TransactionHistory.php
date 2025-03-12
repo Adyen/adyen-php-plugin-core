@@ -189,7 +189,10 @@ class TransactionHistory extends Entity
                 'amount' => $this->amountToArray($transactionHistoryItem->getAmount()),
                 'paymentMethod' => $transactionHistoryItem->getPaymentMethod(),
                 'riskScore' => $transactionHistoryItem->getRiskScore(),
-                'isLive' => $transactionHistoryItem->isLive()
+                'isLive' => $transactionHistoryItem->isLive(),
+                'authorizationPspReference' => $transactionHistoryItem->getAuthorizationPspReference(),
+                'captureType' => $transactionHistoryItem->getCaptureType() ?
+                    $transactionHistoryItem->getCaptureType()->getType() : '',
             ];
         }
 
@@ -202,6 +205,7 @@ class TransactionHistory extends Entity
      * @return array
      *
      * @throws InvalidCurrencyCode
+     * @throws InvalidCaptureTypeException
      */
     private function historyItemCollectionFromArray(array $transactionHistoryArray): array
     {
@@ -218,7 +222,10 @@ class TransactionHistory extends Entity
                 $this->amountFromArray($value['amount']),
                 $value['paymentMethod'],
                 $value['riskScore'],
-                $value['isLive']
+                $value['isLive'],
+                static::getDataValue($value, 'authorizationPspReference'),
+                static::getDataValue($value, 'captureType', '') ?
+                    CaptureType::fromState(static::getDataValue($value, 'captureType')) : CaptureType::unknown()
             );
         }
 

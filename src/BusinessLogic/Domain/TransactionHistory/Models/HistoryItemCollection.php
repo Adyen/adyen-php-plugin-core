@@ -61,6 +61,20 @@ class HistoryItemCollection
     }
 
     /**
+     * @param string $reference
+     *
+     * @return $this
+     */
+    public function filterByOriginalReference(string $reference): self
+    {
+        return new self (
+            array_filter($this->getAll(), static function ($item) use ($reference) {
+                return $item->getAuthorizationPspReference() === $reference;
+            })
+        );
+    }
+
+    /**
      * @param string $eventCode
      *
      * @return $this
@@ -126,6 +140,24 @@ class HistoryItemCollection
         }
 
         return array_reduce($this->filterAuthorisedItems(), static function (?Amount $totalAmount, HistoryItem $item) {
+            return $totalAmount ? $totalAmount->plus($item->getAmount()) : $item->getAmount();
+        });
+    }
+
+    /**
+     * @param Currency $currency
+     *
+     * @return Amount
+     *
+     * @throws CurrencyMismatchException
+     */
+    public function getAmount(Currency $currency): Amount
+    {
+        if ($this->isEmpty()) {
+            return Amount::fromInt(0, $currency);
+        }
+
+        return array_reduce($this->historyItems, static function (?Amount $totalAmount, HistoryItem $item) {
             return $totalAmount ? $totalAmount->plus($item->getAmount()) : $item->getAmount();
         });
     }

@@ -291,7 +291,8 @@ class BootstrapComponent extends BaseBootstrapComponent
                     new PaymentRequestFactory(),
                     ServiceRegister::getService(DonationsDataRepository::class),
                     ServiceRegister::getService(TransactionHistoryService::class),
-                    ServiceRegister::getService(PaymentMethodConfigRepository::class)
+                    ServiceRegister::getService(PaymentMethodConfigRepository::class),
+                    ServiceRegister::getService(ConnectionService::class)
                 );
             })
         );

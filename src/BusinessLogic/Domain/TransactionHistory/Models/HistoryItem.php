@@ -3,6 +3,7 @@
 namespace Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models;
 
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
+use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 
 /**
  * Class HistoryItem
@@ -15,6 +16,10 @@ class HistoryItem
      * @var string
      */
     private $pspReference;
+    /**
+     * @var string
+     */
+    private $authorizationPspReference;
 
     /**
      * @var string
@@ -60,6 +65,10 @@ class HistoryItem
      * @var bool
      */
     private $isLive;
+    /**
+     * @var CaptureType
+     */
+    private $captureType;
 
     /**
      * @param string $pspReference
@@ -72,6 +81,8 @@ class HistoryItem
      * @param string $paymentMethod
      * @param int $riskScore
      * @param bool $isLive
+     * @param string $authorizationPspReference
+     * @param CaptureType|null $captureType
      */
     public function __construct(
         string $pspReference,
@@ -83,7 +94,9 @@ class HistoryItem
         Amount $amount,
         string $paymentMethod,
         int $riskScore,
-        bool $isLive
+        bool $isLive,
+        string $authorizationPspReference = '',
+        CaptureType $captureType = null
     ) {
         $this->pspReference = $pspReference;
         $this->merchantReference = $merchantReference;
@@ -95,6 +108,8 @@ class HistoryItem
         $this->paymentMethod = $paymentMethod;
         $this->riskScore = $riskScore;
         $this->isLive = $isLive;
+        $this->authorizationPspReference = $authorizationPspReference;
+        $this->captureType = $captureType;
     }
 
     /**
@@ -175,5 +190,21 @@ class HistoryItem
     public function isLive(): bool
     {
         return $this->isLive;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAuthorizationPspReference(): string
+    {
+        return $this->authorizationPspReference;
+    }
+
+    /**
+     * @return CaptureType|null
+     */
+    public function getCaptureType(): ?CaptureType
+    {
+        return $this->captureType;
     }
 }

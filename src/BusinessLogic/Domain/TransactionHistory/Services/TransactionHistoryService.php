@@ -5,11 +5,12 @@ namespace Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Repositories\GeneralSettingsRepository;
+use Adyen\Core\BusinessLogic\Domain\PartialPayments\Models\Order;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
+use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Repositories\TransactionHistoryRepository;
-use Exception;
 
 /**
  * Interface TransactionHistoryService
@@ -54,7 +55,9 @@ class TransactionHistoryService
         string $merchantReference,
         Currency $currency = null,
         CaptureType $captureType = null,
-        AuthorizationType $authorizationType = null
+        AuthorizationType $authorizationType = null,
+        HistoryItem $historyItem = null,
+        Order $order = null
     ): TransactionHistory {
         $transactionHistory = $this->transactionRepository->getTransactionHistory($merchantReference);
 
@@ -71,7 +74,20 @@ class TransactionHistoryService
                 $captureType,
                 $captureDelayHours,
                 $currency ?? Currency::getDefault(),
-                $authorizationType
+                $authorizationType,
+                $historyItem ? [$historyItem] : [],
+                $order ? $order->getOrderData() : '',
+                $order ? $order->getPspReference() : ''
+            );
+        }
+
+        if ($transactionHistory && $historyItem) {
+            $transactionHistory->add($historyItem);
+            $transactionHistory->setAuthorizationPspReferences(
+                array_merge(
+                    $transactionHistory->getAuthorizationPspReferences(),
+                    [$historyItem->getAuthorizationPspReference()]
+                )
             );
         }
 
@@ -102,22 +118,12 @@ class TransactionHistoryService
         string $merchantReference,
         Currency $currency,
         CaptureType $captureType = null,
-        AuthorizationType $authorizationType = null
+        AuthorizationType $authorizationType = null,
+        HistoryItem $historyItem = null,
+        Order $order = null
     ): void {
-        $history = $this->getTransactionHistory($merchantReference, $currency, $captureType, $authorizationType);
+        $history = $this->getTransactionHistory($merchantReference, $currency, $captureType, $authorizationType, $historyItem, $order);
 
         $this->setTransactionHistory($history);
-    }
-
-    /**
-     * @param array $merchantReferences
-     *
-     * @return TransactionHistory[]
-     *
-     * @throws Exception
-     */
-    public function getTransactionHistoriesByReferences(array $merchantReferences): array
-    {
-        return $this->transactionRepository->getTransactionHistoriesByMerchantReferences($merchantReferences);
     }
 }

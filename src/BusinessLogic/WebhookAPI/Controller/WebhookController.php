@@ -11,6 +11,7 @@ use Adyen\Core\BusinessLogic\Domain\Webhook\Models\Webhook;
 use Adyen\Core\BusinessLogic\Webhook\Handler\WebhookHandler;
 use Adyen\Core\BusinessLogic\Webhook\Validator\WebhookValidator;
 use Adyen\Core\BusinessLogic\WebhookAPI\Response\WebhookSuccessResponse;
+use Adyen\Webhook\EventCodes;
 use Adyen\Webhook\Exception\AuthenticationException;
 use Adyen\Webhook\Exception\HMACKeyValidationException;
 use Adyen\Webhook\Exception\InvalidDataException;
@@ -77,6 +78,18 @@ class WebhookController
     private function fromPayload(array $payload): Webhook
     {
         $notificationRequestItem = $payload['notificationItems'][0]['NotificationRequestItem'];
+        $paymentMethod = $notificationRequestItem['paymentMethod'] ?? '';
+
+        if ($notificationRequestItem['eventCode'] === EventCodes::ORDER_CLOSED) {
+            $additionalData = $notificationRequestItem['additionalData'];
+            ksort($additionalData);
+
+            foreach ($additionalData as $key => $value) {
+                if (str_contains($key, 'paymentMethod')) {
+                    $paymentMethod = $value;
+                }
+            }
+        }
 
         return new Webhook(
             Amount::fromInt(
@@ -91,7 +104,7 @@ class WebhookController
             $notificationRequestItem['merchantAccountCode'] ?? '',
             $notificationRequestItem['merchantReference'] ?? '',
             $notificationRequestItem['pspReference'] ?? '',
-            $notificationRequestItem['paymentMethod'] ?? '',
+            $paymentMethod,
             $notificationRequestItem['reason'] ?? '',
             $notificationRequestItem['success'] === 'true',
             $notificationRequestItem['originalReference'] ?? '',
