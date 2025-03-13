@@ -3,6 +3,7 @@
 namespace Adyen\Core\BusinessLogic\Domain\Webhook\Services;
 
 use Adyen\Core\BusinessLogic\AdyenAPI\Management\Webhook\Http\Proxy;
+use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsService;
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
@@ -83,6 +84,10 @@ class WebhookSynchronizationService
     {
         $transactionHistory = $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference());
         $newState = $this->orderStatusProvider->getNewPaymentState($webhook, $transactionHistory);
+
+        $generalSettings = $this->settingsService->getGeneralSettings();
+        $captureType = $generalSettings ? $generalSettings->getCapture() : CaptureType::immediate();
+
         $transactionHistory->add(
             new HistoryItem(
                 $webhook->getPspReference(),
@@ -95,7 +100,8 @@ class WebhookSynchronizationService
                 $webhook->getPaymentMethod(),
                 $webhook->getRiskScore(),
                 $webhook->isLive(),
-                $webhook->getEventCode() === EventCodes::AUTHORISATION ? $webhook->getPspReference() : $webhook->getOriginalReference()
+                $webhook->getEventCode() === EventCodes::AUTHORISATION ? $webhook->getPspReference() : $webhook->getOriginalReference(),
+                $captureType
             )
         );
 

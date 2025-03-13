@@ -107,7 +107,7 @@ class TransactionDetailsService
 
             try {
                 if (in_array($item->getEventCode(), [EventCodes::ORDER_OPENED, EventCodes::ORDER_CLOSED], true)) {
-                    $result[] = [
+                    $result[] = [[
                         'pspReference' => $item->getPspReference(),
                         'date' => $item->getDateAndTime(),
                         'status' => $item->getStatus(),
@@ -118,7 +118,7 @@ class TransactionDetailsService
                             $connectionSettings->getActiveConnectionData()->getMerchantId() : '',
                         'merchantReference' => $item->getMerchantReference(),
                         'storeId' => $storeId,
-                    ];
+                    ]];
                 }
 
                 if ($item->getEventCode() === EventCodes::AUTHORISATION) {
@@ -190,7 +190,7 @@ class TransactionDetailsService
     {
         try {
             return !empty($code) && $this->parseCode($code)->isPartialCaptureSupported()
-                && !$collection
+                && $collection
                     ->filterByEventCode(EventCodes::CANCELLATION)
                     ->filterByStatus(true)
                     ->isEmpty()

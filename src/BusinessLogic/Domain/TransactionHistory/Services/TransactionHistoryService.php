@@ -75,13 +75,11 @@ class TransactionHistoryService
                 $captureDelayHours,
                 $currency ?? Currency::getDefault(),
                 $authorizationType,
-                $historyItem ? [$historyItem] : [],
-                $order ? $order->getOrderData() : '',
-                $order ? $order->getPspReference() : ''
+                $historyItem ? [$historyItem] : []
             );
         }
 
-        if ($transactionHistory && $historyItem) {
+        if ($historyItem) {
             $transactionHistory->add($historyItem);
             $transactionHistory->setAuthorizationPspReferences(
                 array_merge(
@@ -89,6 +87,11 @@ class TransactionHistoryService
                     [$historyItem->getAuthorizationPspReference()]
                 )
             );
+        }
+
+        if ($order) {
+            $transactionHistory->setOrderData($order->getOrderData());
+            $transactionHistory->setOrderPspReference($order->getPspReference());
         }
 
         return $transactionHistory;

@@ -433,7 +433,8 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
                     'Method',
                     0,
                     false,
-                    '7914073381342284'
+                    '7914073381342284',
+                    CaptureType::immediate()
                 )
             ],
             '',

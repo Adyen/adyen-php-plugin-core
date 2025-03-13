@@ -305,8 +305,6 @@ class OrderUpdateTask extends TransactionalTask
 
                 return $this->checkIfOrderExists($retryCount);
             }
-
-            throw $exception;
         }
 
         return $order;
