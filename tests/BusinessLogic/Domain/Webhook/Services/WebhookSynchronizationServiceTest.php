@@ -251,7 +251,7 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
             'Method',
             'reason',
             true,
-            'oRef',
+            '',
             0,
             false,
             []
@@ -262,8 +262,9 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
 
         // assert
         $transaction = $this->transactionService->getTransactionHistory($this->webhook->getMerchantReference());
+        $expected = $this->expectedTransaction();
 
-        self::assertEquals($this->expectedTransaction(), $transaction);
+        self::assertEquals($expected, $transaction);
     }
 
     /**
@@ -432,9 +433,12 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
                     'Method',
                     0,
                     false,
-                    'oRef'
+                    '7914073381342284'
                 )
-            ]
+            ],
+            '',
+            '',
+            ['7914073381342284']
         );
     }
 

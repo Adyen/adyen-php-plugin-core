@@ -5,7 +5,6 @@ namespace Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Services;
 use Adyen\Core\BusinessLogic\Domain\Checkout\AdyenGiving\Models\DonationsData;
 use Adyen\Core\BusinessLogic\Domain\Checkout\AdyenGiving\Repositories\DonationsDataRepository;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Factory\PaymentRequestFactory;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Order;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateOrderRequest;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateOrderResponse;
@@ -17,6 +16,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Proxies\PaymentsProx
 use Adyen\Core\BusinessLogic\Domain\Connection\Enums\Mode;
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
+use Adyen\Core\BusinessLogic\Domain\PartialPayments\Models\Order;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
@@ -91,7 +91,8 @@ class PaymentRequestService
         $request = $this->paymentRequestFactory->crate($context);
 
         if ($order) {
-            $request->setOrder($order);
+            $paymentOrder = new \Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Order($order->getOrderData(), $order->getPspReference());
+            $request->setOrder($paymentOrder);
         }
 
         $result = $this->paymentsProxy->startPaymentTransaction($request);

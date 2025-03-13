@@ -80,7 +80,10 @@ class TransactionHistory extends Entity
             Currency::fromIsoCode(self::getDataValue($transactionHistory, 'currency')),
             self::getDataValue($transactionHistory, 'authorizationType') ?
                 AuthorizationType::fromState(self::getDataValue($transactionHistory, 'authorizationType')) : null,
-            $this->historyItemCollectionFromArray(self::getDataValue($transactionHistory, 'historyItemCollection'))
+            $this->historyItemCollectionFromArray(self::getDataValue($transactionHistory, 'historyItemCollection')),
+            self::getDataValue($transactionHistory, 'orderData'),
+            self::getDataValue($transactionHistory, 'orderPspReference'),
+            self::getDataValue($transactionHistory, 'authorizationPspReferences', [])
         );
 
         $paymentLink = self::getDataValue($transactionHistory, 'paymentLink');
@@ -167,7 +170,10 @@ class TransactionHistory extends Entity
             'captureDelay' => $this->transactionHistory->getCaptureDelay(),
             'currency' => $this->transactionHistory->getCurrency() ? $this->transactionHistory->getCurrency()->getIsoCode() : Currency::getDefault()->getIsoCode(),
             'paymentLink' => $this->paymentLinkToArray($this->transactionHistory->getPaymentLink()),
-            'authorizationType' => $this->transactionHistory->getAuthorizationType() ? $this->transactionHistory->getAuthorizationType()->getType() : null
+            'authorizationType' => $this->transactionHistory->getAuthorizationType() ? $this->transactionHistory->getAuthorizationType()->getType() : null,
+            'orderData' => $this->transactionHistory->getOrderData(),
+            'orderPspReference' => $this->transactionHistory->getOrderPspReference(),
+            'authorizationPspReferences' => $this->transactionHistory->getAuthorizationPspReferences()
         ];
     }
 

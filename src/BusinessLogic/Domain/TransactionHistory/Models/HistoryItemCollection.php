@@ -74,6 +74,24 @@ class HistoryItemCollection
         );
     }
 
+    public function filterAllByEventCode(string $eventCode): self
+    {
+        return new self  (
+            array_filter($this->getAll(), static function ($item) use ($eventCode) {
+                return $item->getEventCode() === $eventCode;
+            })
+        );
+    }
+
+    public function filterAllByStatus(bool $status): self
+    {
+        return new self  (
+            array_filter($this->getAll(), static function ($item) use ($status) {
+                return $item->getStatus() === $status;
+            })
+        );
+    }
+
     /**
      * @param string $eventCode
      *

@@ -40,7 +40,8 @@ class GeneralSettingsGetResponse extends Response
             'retentionPeriod' => '60',
             'enablePayByLink' => false,
             'payByLinkTitle' => 'Adyen Pay By Link',
-            'defaultLinkExpirationTime' => 7
+            'defaultLinkExpirationTime' => 7,
+            'cancelledPartialPayment' => true
         ];
     }
 
@@ -57,7 +58,8 @@ class GeneralSettingsGetResponse extends Response
             'retentionPeriod' => $this->generalSettings->getRetentionPeriod(),
             'enablePayByLink' => $this->generalSettings->isEnablePayByLink(),
             'payByLinkTitle' => $this->generalSettings->getPayByLinkTitle(),
-            'defaultLinkExpirationTime' => $this->generalSettings->getDefaultLinkExpirationTime()
+            'defaultLinkExpirationTime' => $this->generalSettings->getDefaultLinkExpirationTime(),
+            'cancelledPartialPayment' => $this->generalSettings->isCancelledPartialPayment(),
         ];
     }
 }

@@ -210,7 +210,8 @@ class GeneralSettingsApiTest extends BaseTestCase
             'retentionPeriod' => 60,
             'enablePayByLink' => true,
             'payByLinkTitle' => 'Title',
-            'defaultLinkExpirationTime' => 7
+            'defaultLinkExpirationTime' => 7,
+            'cancelledPartialPayment' => true,
         ];
     }
 }

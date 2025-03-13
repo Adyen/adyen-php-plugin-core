@@ -153,6 +153,7 @@ class TransactionHistory
             $item->getStatus()) {
             $this->originalPspReference = $item->getPspReference();
             $this->paymentLink = null;
+            $this->authorizationPspReferences = array_unique(array_merge($this->authorizationPspReferences, [$item->getPspReference()]));
         }
 
         if ($this->historyItemCollection->isEmpty()) {
