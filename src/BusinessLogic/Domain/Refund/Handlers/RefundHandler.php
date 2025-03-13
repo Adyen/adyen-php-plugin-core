@@ -13,8 +13,10 @@ use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Services\ShopNotificationS
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
+use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionDetailsService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Adyen\Core\Infrastructure\Utility\TimeProvider;
+use Adyen\Webhook\EventCodes;
 use DateTimeInterface;
 use Exception;
 
@@ -44,23 +46,30 @@ class RefundHandler
      * @var ConnectionService
      */
     private $connectionService;
+    /**
+     * @var TransactionDetailsService
+     */
+    private $transactionDetailsService;
 
     /**
      * @param TransactionHistoryService $transactionHistoryService
      * @param ShopNotificationService $shopNotificationService
      * @param RefundProxy $refundProxy
      * @param ConnectionService $connectionService
+     * @param TransactionDetailsService $transactionDetailsService
      */
     public function __construct(
         TransactionHistoryService $transactionHistoryService,
         ShopNotificationService $shopNotificationService,
         RefundProxy $refundProxy,
-        ConnectionService $connectionService
+        ConnectionService $connectionService,
+        TransactionDetailsService $transactionDetailsService
     ) {
         $this->transactionHistoryService = $transactionHistoryService;
         $this->shopNotificationService = $shopNotificationService;
         $this->refundProxy = $refundProxy;
         $this->connectionService = $connectionService;
+        $this->transactionDetailsService = $transactionDetailsService;
     }
 
     /**
@@ -73,23 +82,77 @@ class RefundHandler
      *
      * @throws InvalidMerchantReferenceException
      */
-    public function handle(string $merchantReference, Amount $amount): bool
+    public function handle(string $merchantReference, Amount $amount, string $pspReference = ''): bool
     {
         $transactionHistory = $this->transactionHistoryService->getTransactionHistory($merchantReference);
 
         try {
-            $pspReference = $transactionHistory->getOriginalPspReference();
+            if (empty($pspReference) &&
+                $transactionHistory->collection()->filterAllByEventCode(EventCodes::ORDER_OPENED)->isEmpty()) {
+                $pspReference = $transactionHistory->getOriginalPspReference();
+            }
+
             $connectionSettings = $this->connectionService->getConnectionData();
             $merchantAccount = $connectionSettings ? $connectionSettings->getActiveConnectionData()->getMerchantId(
             ) : '';
-            $success = $this->refundProxy->refundPayment(new RefundRequest($pspReference, $amount, $merchantAccount));
-            $this->addHistoryItem($transactionHistory, $amount, $success);
-            $this->pushNotification($success, $transactionHistory);
+
+            if ($pspReference) {
+                return $this->refund($pspReference, $amount, $merchantAccount, $transactionHistory);
+            }
+
+            $success = true;
+
+            foreach ($transactionHistory->collection()->filterAllByEventCode(EventCodes::AUTHORISATION)->getAll() as $item) {
+                if ($amount->getValue() === 0) {
+                    break;
+                }
+
+                $samePaymentItems = $transactionHistory->collection()->filterByOriginalReference($item->getPspReference());
+
+                if (!$samePaymentItems->filterAllByEventCode(EventCodes::CANCELLATION)->isEmpty() ||
+                    $samePaymentItems->filterAllByEventCode(EventCodes::REFUND)->isEmpty()) {
+                    continue;
+                }
+
+                $refundedAmount = $samePaymentItems->filterByEventCode(EventCodes::REFUND)->getAmount($transactionHistory->getCurrency());
+                $captureAmount = $this->transactionDetailsService->getCapturedAmount($transactionHistory, $samePaymentItems);
+                $cancelledAmount = $samePaymentItems->filterByEventCode(EventCodes::CANCELLATION)->getAmount($transactionHistory->getCurrency());
+                $refund = $this->transactionDetailsService->isRefundSupported($item->getPaymentMethod(), $refundedAmount, $captureAmount,
+                        $cancelledAmount);
+                $partialRefund = $this->transactionDetailsService->isPartialRefundSupported(
+                        $item->getPaymentMethod(),
+                        $refundedAmount,
+                        $captureAmount,
+                        $cancelledAmount
+                    );
+                $refundableAmount = $captureAmount->minus($refundedAmount);
+
+                if (!$refund || $refundableAmount->getValue() <= 0) {
+                    continue;
+                }
+
+                if ($refundableAmount->getValue() < $amount->getValue()) {
+                    if (!$partialRefund && $refundableAmount->getValue() < $captureAmount->getValue()) {
+                        continue;
+                    }
+
+                    $success &= $this->refund($item->getPspReference(), $refundableAmount , $merchantAccount, $transactionHistory);
+                    $amount->minus($refundableAmount);
+                } else {
+                    if (!$partialRefund && $refundableAmount->getValue() > $amount->getValue()) {
+                        continue;
+                    }
+
+                    $success &= $this->refund($item->getPspReference(), $amount, $merchantAccount, $transactionHistory);
+                    $amount = Amount::fromInt(0, $amount->getCurrency());
+                }
+            }
 
             return $success;
         } catch (Exception $exception) {
             $this->addHistoryItem($transactionHistory, $amount, false);
             $this->pushNotification(false, $transactionHistory);
+
 
             throw $exception;
         }
@@ -151,5 +214,21 @@ class RefundHandler
         $this->shopNotificationService->pushNotification(
             new FailedRefundRequestEvent($history->getMerchantReference(), $history->getPaymentMethod())
         );
+    }
+
+    /**
+     * @param string $pspReference
+     * @param Amount $amount
+     * @param string $merchantAccount
+     * @param TransactionHistory $transactionHistory
+     * @return bool
+     * @throws InvalidMerchantReferenceException
+     */
+    public function refund(string $pspReference, Amount $amount, string $merchantAccount, TransactionHistory $transactionHistory): bool
+    {
+        $success = $this->refundProxy->refundPayment(new RefundRequest($pspReference, $amount, $merchantAccount));
+        $this->addHistoryItem($transactionHistory, $amount, $success);
+        $this->pushNotification($success, $transactionHistory);
+        return $success;
     }
 }

@@ -40,10 +40,19 @@ class CaptureController
      * @throws InvalidMerchantReferenceException
      * @throws InvalidCurrencyCode
      */
-    public function handle(string $merchantReference, float $value, string $currency): CaptureResponse
+    public function handle(
+        string $merchantReference,
+        float $value,
+        string $currency,
+        string $pspReference = ''
+    ): CaptureResponse
     {
         return new CaptureResponse(
-            $this->handler->handle($merchantReference, Amount::fromFloat($value, Currency::fromIsoCode($currency)))
+            $this->handler->handle(
+                $merchantReference,
+                Amount::fromFloat($value, Currency::fromIsoCode($currency)),
+                $pspReference
+            )
         );
     }
 }

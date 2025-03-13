@@ -79,6 +79,7 @@ use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Services\ShopNotificationS
 use Adyen\Core\BusinessLogic\Domain\Stores\Services\StoreService as DomainStoreService;
 use Adyen\Core\BusinessLogic\Domain\TaskCleanup\Interfaces\TaskCleanupRepository as TaskCleanupRepositoryInterface;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Repositories\TransactionHistoryRepository as TransactionRepositoryInterface;
+use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionDetailsService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Proxies\WebhookProxy;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Repositories\WebhookConfigRepository;
@@ -457,6 +458,14 @@ class BaseTestCase extends TestCase
                     TestServiceRegister::getService(StoreContext::class),
                     TestRepositoryRegistry::getRepository(DisconnectTime::getClassName())
                 );
+            },
+            TransactionDetailsService::class => function () {
+                return new TransactionDetailsService(
+                    TestServiceRegister::getService(ConnectionService::class),
+                    TestServiceRegister::getService(TransactionHistoryService::class),
+                    TestServiceRegister::getService(GeneralSettingsService::class),
+                    TestServiceRegister::getService(OrderService::class)
+                );
             }
         ]);
 
@@ -484,7 +493,8 @@ class BaseTestCase extends TestCase
                     TestServiceRegister::getService(TransactionHistoryService::class),
                     TestServiceRegister::getService(ShopNotificationService::class),
                     TestServiceRegister::getService(CaptureProxy::class),
-                    TestServiceRegister::getService(ConnectionService::class)
+                    TestServiceRegister::getService(ConnectionService::class),
+                    TestServiceRegister::getService(TransactionDetailsService::class)
                 );
             }
         );
@@ -509,7 +519,8 @@ class BaseTestCase extends TestCase
                     TestServiceRegister::getService(TransactionHistoryService::class),
                     TestServiceRegister::getService(ShopNotificationService::class),
                     TestServiceRegister::getService(CancelProxy::class),
-                    TestServiceRegister::getService(ConnectionService::class)
+                    TestServiceRegister::getService(ConnectionService::class),
+                    TestServiceRegister::getService(PartialPaymentService::class)
                 );
             }
         );
@@ -521,7 +532,8 @@ class BaseTestCase extends TestCase
                     TestServiceRegister::getService(TransactionHistoryService::class),
                     TestServiceRegister::getService(ShopNotificationService::class),
                     TestServiceRegister::getService(RefundProxy::class),
-                    TestServiceRegister::getService(ConnectionService::class)
+                    TestServiceRegister::getService(ConnectionService::class),
+                    TestServiceRegister::getService(TransactionDetailsService::class)
                 );
             }
         );

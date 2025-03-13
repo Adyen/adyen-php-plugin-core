@@ -208,7 +208,7 @@ class TransactionDetailsService
      *
      * @return bool
      */
-    private function isPartialRefundSupported(
+    public function isPartialRefundSupported(
         string $code,
         Amount $refundAmount,
         Amount $captureAmount,
@@ -234,7 +234,7 @@ class TransactionDetailsService
      *
      * @return bool
      */
-    private function isRefundSupported(
+    public function isRefundSupported(
         string $code,
         Amount $refundAmount,
         Amount $captureAmount,

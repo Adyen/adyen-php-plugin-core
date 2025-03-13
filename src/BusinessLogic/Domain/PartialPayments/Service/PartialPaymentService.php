@@ -6,6 +6,9 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
 use Adyen\Core\BusinessLogic\Domain\PartialPayments\Models\BalanceRequest;
 use Adyen\Core\BusinessLogic\Domain\PartialPayments\Models\BalanceResult;
+use Adyen\Core\BusinessLogic\Domain\PartialPayments\Models\Order;
+use Adyen\Core\BusinessLogic\Domain\PartialPayments\Models\OrderCancelRequest;
+use Adyen\Core\BusinessLogic\Domain\PartialPayments\Models\OrderCancelResult;
 use Adyen\Core\BusinessLogic\Domain\PartialPayments\Models\OrderCreateRequest;
 use Adyen\Core\BusinessLogic\Domain\PartialPayments\Models\OrderCreateResult;
 use Adyen\Core\BusinessLogic\Domain\PartialPayments\Proxies\PartialPaymentProxy;
@@ -62,5 +65,19 @@ class PartialPaymentService
         $merchantAccount = $connectionSettings ? $connectionSettings->getActiveConnectionData()->getMerchantId() : '';
 
         return $this->proxy->createOrder(new OrderCreateRequest($reference, $merchantAccount, $amount));
+    }
+
+    /**
+     * @param $reference
+     * @param $data
+     *
+     * @return OrderCancelResult
+     */
+    public function cancelOrder($reference, $data): OrderCancelResult
+    {
+        $connectionSettings = $this->connectionService->getConnectionData();
+        $merchantAccount = $connectionSettings ? $connectionSettings->getActiveConnectionData()->getMerchantId() : '';
+
+        return $this->proxy->cancelOrder(new OrderCancelRequest($merchantAccount, new Order($data, $reference)));
     }
 }

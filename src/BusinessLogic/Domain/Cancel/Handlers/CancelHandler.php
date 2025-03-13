@@ -5,6 +5,7 @@ namespace Adyen\Core\BusinessLogic\Domain\Cancel\Handlers;
 use Adyen\Core\BusinessLogic\Domain\Cancel\Models\CancelRequest;
 use Adyen\Core\BusinessLogic\Domain\Cancel\Proxies\CancelProxy;
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
+use Adyen\Core\BusinessLogic\Domain\PartialPayments\Service\PartialPaymentService;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Cancellation\FailedCancellationRequestEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Cancellation\SuccessfulCancellationRequestEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\ShopEvents;
@@ -43,23 +44,30 @@ class CancelHandler
      * @var ConnectionService
      */
     private $connectionService;
+    /**
+     * @var PartialPaymentService
+     */
+    private $partialService;
 
     /**
      * @param TransactionHistoryService $transactionHistoryService
      * @param ShopNotificationService $shopNotificationService
      * @param CancelProxy $captureProxy
      * @param ConnectionService $connectionService
+     * @param PartialPaymentService $partialService
      */
     public function __construct(
         TransactionHistoryService $transactionHistoryService,
         ShopNotificationService $shopNotificationService,
         CancelProxy $captureProxy,
-        ConnectionService $connectionService
+        ConnectionService $connectionService,
+        PartialPaymentService $partialService
     ) {
         $this->transactionHistoryService = $transactionHistoryService;
         $this->shopNotificationService = $shopNotificationService;
         $this->captureProxy = $captureProxy;
         $this->connectionService = $connectionService;
+        $this->partialService = $partialService;
     }
 
     /**
@@ -76,13 +84,7 @@ class CancelHandler
         $transactionHistory = $this->transactionHistoryService->getTransactionHistory($merchantReference);
 
         try {
-            $pspReference = $transactionHistory->getOriginalPspReference();
-            $connectionSettings = $this->connectionService->getConnectionData();
-            $merchantAccount = $connectionSettings ? $connectionSettings->getActiveConnectionData()->getMerchantId(
-            ) : '';
-            $success = $this->captureProxy->cancelPayment(
-                new CancelRequest($pspReference, $merchantReference, $merchantAccount)
-            );
+            $success = $this->cancel($transactionHistory, $merchantReference);
 
             $this->addHistoryItem($transactionHistory, $success);
             $this->pushNotification($success, $transactionHistory);
@@ -94,6 +96,29 @@ class CancelHandler
 
             throw $exception;
         }
+    }
+
+    /**
+     * @param TransactionHistory $transactionHistory
+     * @param string $merchantReference
+     *
+     * @return bool
+     */
+    private function cancel(TransactionHistory $transactionHistory, string $merchantReference): bool
+    {
+        if ($transactionHistory->getOrderPspReference()) {
+            return strtolower($this->partialService->cancelOrder(
+                $transactionHistory->getOrderPspReference(), $transactionHistory->getOrderData()
+            )->getResultCode()) === 'received';
+        }
+
+        $pspReference = $transactionHistory->getOriginalPspReference();
+        $connectionSettings = $this->connectionService->getConnectionData();
+        $merchantAccount = $connectionSettings ? $connectionSettings->getActiveConnectionData()->getMerchantId(
+        ) : '';
+        return $this->captureProxy->cancelPayment(
+            new CancelRequest($pspReference, $merchantReference, $merchantAccount)
+        );
     }
 
     /**

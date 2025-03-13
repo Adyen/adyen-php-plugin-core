@@ -40,10 +40,19 @@ class RefundController
      * @throws InvalidMerchantReferenceException
      * @throws InvalidCurrencyCode
      */
-    public function handle(string $merchantReference, float $value, string $currency): RefundResponse
+    public function handle(
+        string $merchantReference,
+        float $value,
+        string $currency,
+        string $pspReference = ''
+    ): RefundResponse
     {
         return new RefundResponse(
-            $this->handler->handle($merchantReference, Amount::fromFloat($value, Currency::fromIsoCode($currency)))
+            $this->handler->handle(
+                $merchantReference,
+                Amount::fromFloat($value, Currency::fromIsoCode($currency)),
+                $pspReference
+            )
         );
     }
 }
