@@ -148,7 +148,8 @@ class CancelHandler
                 $lastItem->getAmount(),
                 $history->getPaymentMethod(),
                 $history->getRiskScore(),
-                $history->isLive()
+                $history->isLive(),
+                $history->getOriginalPspReference()
             )
         );
 

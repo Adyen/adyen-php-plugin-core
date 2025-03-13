@@ -187,7 +187,8 @@ class CaptureHandler
                 $amount,
                 $history->getPaymentMethod(),
                 $history->getRiskScore(),
-                $history->isLive()
+                $history->isLive(),
+                $pspReference
             )
         );
 

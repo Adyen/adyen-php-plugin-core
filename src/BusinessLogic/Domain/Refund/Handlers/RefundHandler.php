@@ -150,7 +150,7 @@ class RefundHandler
 
             return $success;
         } catch (Exception $exception) {
-            $this->addHistoryItem($transactionHistory, $amount, false);
+            $this->addHistoryItem($transactionHistory, $amount, false, $pspReference);
             $this->pushNotification(false, $transactionHistory);
 
 
@@ -169,7 +169,7 @@ class RefundHandler
      *
      * @throws InvalidMerchantReferenceException
      */
-    private function addHistoryItem(TransactionHistory $history, Amount $amount, bool $success): void
+    private function addHistoryItem(TransactionHistory $history, Amount $amount, bool $success, string $pspReference): void
     {
         $lastItem = $history->collection()->last();
         $refundRequestCount = count(
@@ -177,7 +177,7 @@ class RefundHandler
         );
         $history->add(
             new HistoryItem(
-                'refund' . ++$refundRequestCount . '_' . $history->getOriginalPspReference(),
+                'refund' . ++$refundRequestCount . '_' . $pspReference,
                 $history->getMerchantReference(),
                 ShopEvents::REFUND_REQUEST,
                 $lastItem ? $lastItem->getPaymentState() : '',
@@ -186,7 +186,8 @@ class RefundHandler
                 $amount,
                 $history->getPaymentMethod(),
                 $history->getRiskScore(),
-                $history->isLive()
+                $history->isLive(),
+                $pspReference
             )
         );
 
@@ -227,7 +228,7 @@ class RefundHandler
     public function refund(string $pspReference, Amount $amount, string $merchantAccount, TransactionHistory $transactionHistory): bool
     {
         $success = $this->refundProxy->refundPayment(new RefundRequest($pspReference, $amount, $merchantAccount));
-        $this->addHistoryItem($transactionHistory, $amount, $success);
+        $this->addHistoryItem($transactionHistory, $amount, $success, $pspReference);
         $this->pushNotification($success, $transactionHistory);
         return $success;
     }
