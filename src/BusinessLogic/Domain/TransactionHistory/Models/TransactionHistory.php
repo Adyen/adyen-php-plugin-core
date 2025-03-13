@@ -134,7 +134,8 @@ class TransactionHistory
      */
     public function add(HistoryItem $item): void
     {
-        if (!$this->historyItemCollection->filterByPspReference($item->getPspReference())->isEmpty()) {
+        if ($item->getEventCode() !== EventCodes::ORDER_CLOSED &&
+            !$this->historyItemCollection->filterByPspReference($item->getPspReference())->isEmpty()) {
             return;
         }
 
