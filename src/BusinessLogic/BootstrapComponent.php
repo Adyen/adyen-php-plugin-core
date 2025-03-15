@@ -292,7 +292,8 @@ class BootstrapComponent extends BaseBootstrapComponent
                     ServiceRegister::getService(DonationsDataRepository::class),
                     ServiceRegister::getService(TransactionHistoryService::class),
                     ServiceRegister::getService(PaymentMethodConfigRepository::class),
-                    ServiceRegister::getService(ConnectionService::class)
+                    ServiceRegister::getService(ConnectionService::class),
+                    ServiceRegister::getService(PartialPaymentService::class)
                 );
             })
         );
@@ -444,7 +445,8 @@ class BootstrapComponent extends BaseBootstrapComponent
                     ServiceRegister::getService(ShopNotificationService::class),
                     ServiceRegister::getService(CancelProxy::class),
                     ServiceRegister::getService(ConnectionService::class),
-                    ServiceRegister::getService(PartialPaymentService::class)
+                    ServiceRegister::getService(RefundProxy::class),
+                    ServiceRegister::getService(TransactionDetailsService::class)
                 );
             })
         );

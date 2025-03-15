@@ -134,7 +134,7 @@ class TransactionHistory
      */
     public function add(HistoryItem $item): void
     {
-        if ($item->getEventCode() !== EventCodes::ORDER_CLOSED &&
+        if (!in_array($item->getEventCode(), [EventCodes::ORDER_CLOSED, 'PAYMENT_REQUESTED'], true) &&
             !$this->historyItemCollection->filterByPspReference($item->getPspReference())->isEmpty()) {
             return;
         }
@@ -431,5 +431,10 @@ class TransactionHistory
     public function setAuthorizationPspReferences(array $authorizationPspReferences): void
     {
         $this->authorizationPspReferences = $authorizationPspReferences;
+    }
+
+    public function setCollection(HistoryItemCollection $historyItemCollection): void
+    {
+        $this->historyItemCollection = $historyItemCollection;
     }
 }

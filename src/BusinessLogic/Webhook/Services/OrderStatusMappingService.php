@@ -99,10 +99,17 @@ class OrderStatusMappingService implements OrderStatusProvider
      */
     public function getNewPaymentState(Webhook $webhook, TransactionHistory $transactionHistory): ?string
     {
-        $lastTransactionHistoryItem = $transactionHistory->collection()->last();
+        $lastTransactionHistoryItem = $transactionHistory->collection()->filterByOriginalReference($webhook->getOriginalReference())->last();
         $previousPaymentState = $lastTransactionHistoryItem ? $lastTransactionHistoryItem->getPaymentState() : '';
         $capturedAmount = $transactionHistory->getCapturedAmount();
+        $authorizedAmount = $transactionHistory->getAuthorizedAmount();
         $refundedAmount = $transactionHistory->getTotalAmountForEventCode(EventCodes::REFUND);
+
+        if ($webhook->getEventCode() === EventCodes::ORDER_CLOSED && !$webhook->isSuccess() &&
+            count($transactionHistory->collection()->filterAllByEventCode('PAYMENT_REQUESTED')
+                ->filterByPspReference($webhook->getPspReference())->getAll()) === 0) {
+            return $previousPaymentState;
+        }
 
         if (empty($previousPaymentState)) {
             $previousPaymentState = PaymentStates::STATE_IN_PROGRESS;
@@ -127,7 +134,7 @@ class OrderStatusMappingService implements OrderStatusProvider
         }
 
         if ($webhook->isSuccess() && $webhook->getEventCode() === EventCodes::REFUND &&
-            $refundedAmount->plus($webhook->getAmount())->getValue() < $capturedAmount->getValue()) {
+            $refundedAmount->plus($webhook->getAmount())->getValue() < $authorizedAmount->getValue()) {
             $newState = PaymentStates::STATE_PARTIALLY_REFUNDED;
         }
 

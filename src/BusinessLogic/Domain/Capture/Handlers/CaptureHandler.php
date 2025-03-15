@@ -5,7 +5,6 @@ namespace Adyen\Core\BusinessLogic\Domain\Capture\Handlers;
 use Adyen\Core\BusinessLogic\Domain\Capture\Models\CaptureRequest;
 use Adyen\Core\BusinessLogic\Domain\Capture\Proxies\CaptureProxy;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
-use Adyen\Core\BusinessLogic\Domain\Connection\Models\ConnectionSettings;
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Capture\FailedCaptureRequestEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Capture\SuccessfulCaptureRequestEvent;
@@ -111,8 +110,7 @@ class CaptureHandler
 
                 $samePaymentItems = $transactionHistory->collection()->filterByOriginalReference($item->getPspReference());
 
-                if (!$samePaymentItems->filterAllByEventCode(EventCodes::CANCELLATION)->isEmpty() ||
-                    $samePaymentItems->filterAllByEventCode(EventCodes::REFUND)->isEmpty()) {
+                if (!$samePaymentItems->filterAllByEventCode(EventCodes::CANCELLATION)->isEmpty()) {
                     continue;
                 }
 

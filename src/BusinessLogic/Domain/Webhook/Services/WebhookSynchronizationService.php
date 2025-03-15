@@ -4,10 +4,12 @@ namespace Adyen\Core\BusinessLogic\Domain\Webhook\Services;
 
 use Adyen\Core\BusinessLogic\AdyenAPI\Management\Webhook\Http\Proxy;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
+use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\GeneralSettings;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsService;
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
+use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItemCollection;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Models\Webhook;
@@ -116,15 +118,18 @@ class WebhookSynchronizationService
         }
 
         $this->transactionHistoryService->setTransactionHistory($transactionHistory);
+        $settings = $this->settingsService->getGeneralSettings();
 
-        if (in_array($webhook->getEventCode(), [EventCodes::AUTHORISATION, EventCodes::ORDER_OPENED], true)) {
+        if ($this->shouldHandleWebhook($webhook, $settings, $transactionHistory)) {
             return;
         }
 
-        $settings = $this->settingsService->getGeneralSettings();
+        if ($webhook->getEventCode() === EventCodes::ORDER_CLOSED && !$webhook->isSuccess() &&
+            count($transactionHistory->collection()->filterAllByEventCode('PAYMENT_REQUESTED')
+                ->filterByPspReference($webhook->getPspReference())->getAll()) === 0
+        ) {
+            $this->handleOrderClosedFailure($webhook, $transactionHistory);
 
-        if ($settings && $webhook->getEventCode() === EventCodes::CANCELLATION
-            && !$settings->isCancelledPartialPayment()) {
             return;
         }
 
@@ -155,5 +160,56 @@ class WebhookSynchronizationService
         )->filterByStatus($webhook->isSuccess());
 
         return !$duplicatedItems->isEmpty() && $webhook->getOriginalReference() === $transactionHistory->getOriginalPspReference();
+    }
+
+    /**
+     * @param Webhook $webhook
+     * @param GeneralSettings|null $settings
+     * @param TransactionHistory $transactionHistory
+     * @return bool
+     */
+    protected function shouldHandleWebhook(Webhook $webhook, ?GeneralSettings $settings, TransactionHistory $transactionHistory): bool
+    {
+        return in_array($webhook->getEventCode(), [EventCodes::AUTHORISATION, EventCodes::ORDER_OPENED], true) ||
+            ($settings && $webhook->getEventCode() === EventCodes::CANCELLATION
+                && !$settings->isCancelledPartialPayment() &&
+                count($transactionHistory->getAuthorizationPspReferences()) > 0);
+    }
+
+    /**
+     * @param Webhook $webhook
+     * @param TransactionHistory $transactionHistory
+     *
+     * @return void
+     */
+    protected function handleOrderClosedFailure(Webhook $webhook, TransactionHistory $transactionHistory): void
+    {
+        $references = [];
+
+        foreach ($webhook->getAdditionalData() as $key => $value) {
+            if (strpos($key, 'pspReference') !== false) {
+                $references[] = $value;
+            }
+        }
+
+        $obsoleteItems = [];
+
+        foreach ($references as $reference) {
+            $obsoleteItems[] = $transactionHistory->collection()->filterByPspReference($reference);
+            $obsoleteItems[] = $transactionHistory->collection()->filterByOriginalReference($reference);
+        }
+
+        $allItems = $transactionHistory->collection()->getAll();
+        $items = [];
+
+        foreach ($allItems as $item) {
+            if (!in_array($item, $obsoleteItems, true)) {
+                $items[] = $item;
+            }
+        }
+
+        $transactionHistory->setAuthorizationPspReferences(array_diff($transactionHistory->getAuthorizationPspReferences(), $references));
+        $transactionHistory->setCollection(new HistoryItemCollection($items));
+        $this->transactionHistoryService->setTransactionHistory($transactionHistory);
     }
 }

@@ -17,9 +17,13 @@ use Adyen\Core\BusinessLogic\Domain\Connection\Enums\Mode;
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\PartialPayments\Models\Order;
+use Adyen\Core\BusinessLogic\Domain\PartialPayments\Service\PartialPaymentService;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
+use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
+use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItemCollection;
+use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Exception;
 
@@ -57,6 +61,10 @@ class PaymentRequestService
      * @var ConnectionService
      */
     private $connectionService;
+    /**
+     * @var PartialPaymentService
+     */
+    private $partialPaymentsService;
 
     /**
      * @param PaymentsProxy $paymentsProxy
@@ -65,6 +73,7 @@ class PaymentRequestService
      * @param TransactionHistoryService $transactionHistoryService
      * @param PaymentMethodConfigRepository $methodConfigRepository
      * @param ConnectionService $connectionService
+     * @param PartialPaymentService $partialPaymentService
      */
     public function __construct(
         PaymentsProxy                 $paymentsProxy,
@@ -72,7 +81,8 @@ class PaymentRequestService
         DonationsDataRepository       $donationsDataRepository,
         TransactionHistoryService     $transactionHistoryService,
         PaymentMethodConfigRepository $methodConfigRepository,
-        ConnectionService             $connectionService
+        ConnectionService             $connectionService,
+        PartialPaymentService $partialPaymentService
     )
     {
         $this->paymentsProxy = $paymentsProxy;
@@ -81,6 +91,7 @@ class PaymentRequestService
         $this->transactionHistoryService = $transactionHistoryService;
         $this->methodConfigRepository = $methodConfigRepository;
         $this->connectionService = $connectionService;
+        $this->partialPaymentsService = $partialPaymentService;
     }
 
     /**
@@ -121,7 +132,7 @@ class PaymentRequestService
             $connectionSettings = $this->connectionService->getConnectionData();
 
             $historyItem = new HistoryItem(
-                $context->getReference(),
+                $order ? $order->getPspReference() : $context->getReference(),
                 $context->getReference(),
                 'PAYMENT_REQUESTED',
                 '',
@@ -132,7 +143,7 @@ class PaymentRequestService
                 0,
                 $connectionSettings && $connectionSettings->getMode() === Mode::MODE_LIVE,
                 $result->getPspReference() ?? ''
-                );
+            );
 
             $this->transactionHistoryService->createTransactionHistory(
                 $context->getReference(),
@@ -142,6 +153,10 @@ class PaymentRequestService
                 $historyItem,
                 $order
             );
+        }
+
+        if (!$result->getResultCode()->isSuccessful()) {
+            $this->removeTransactionHistoryItems($context->getReference());
         }
 
         if ($result->getDonationToken() &&
@@ -178,6 +193,10 @@ class PaymentRequestService
             $this->donationsDataRepository->saveDonationsData($donationsData);
         }
 
+        if (!$result->getResultCode()->isSuccessful()) {
+            $this->removeTransactionHistoryItems($result->getMerchantReference());
+        }
+
         return $result;
     }
 
@@ -193,5 +212,43 @@ class PaymentRequestService
     public function paypalUpdateOrder(PayPalUpdateOrderRequest $request): PayPalUpdateOrderResponse
     {
         return $this->paymentsProxy->paypalUpdateOrder($request);
+    }
+
+    /**
+     * @param string $merchantReference
+     * @return void
+     *
+     * @throws InvalidMerchantReferenceException
+     */
+    public function removeTransactionHistoryItems(string $merchantReference): void
+    {
+        $transactionHistory = $this->transactionHistoryService->getTransactionHistory($merchantReference);
+        $historyItems = [];
+
+        foreach ($transactionHistory->collection()->getAll() as $transactionHistoryItem) {
+            if ($transactionHistoryItem->getEventCode() === 'PAYMENT_REQUESTED') {
+                continue;
+            }
+
+            $historyItems[] = $transactionHistoryItem;
+        }
+
+        $newHistory = new TransactionHistory(
+            $merchantReference,
+            $transactionHistory->getCaptureType(),
+            $transactionHistory->getCaptureDelay(),
+            $transactionHistory->getCurrency(),
+            $transactionHistory->getAuthorizationType(),
+            $historyItems,
+            $transactionHistory->getOrderData() ?: '',
+            $transactionHistory->getOrderPspReference() ?: '',
+            $transactionHistory->getAuthorizationPspReferences()
+        );
+
+        $this->transactionHistoryService->setTransactionHistory($newHistory);
+
+        if ($transactionHistory->getOrderData()) {
+            $this->partialPaymentsService->cancelOrder($transactionHistory->getOrderPspReference(), $transactionHistory->getOrderData());
+        }
     }
 }

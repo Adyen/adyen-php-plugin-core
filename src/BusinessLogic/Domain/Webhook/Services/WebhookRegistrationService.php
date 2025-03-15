@@ -141,7 +141,7 @@ class WebhookRegistrationService
      *
      * @throws Exception
      */
-    private function updateWebhook(string $merchantId): WebhookConfig
+    public function updateWebhook(string $merchantId): WebhookConfig
     {
         $config = $this->proxy->getWebhookConfigFromUrl($merchantId, $this->webhookUrlService->getWebhookUrl());
         $password = uniqid($merchantId . '_', true);

@@ -520,7 +520,8 @@ class BaseTestCase extends TestCase
                     TestServiceRegister::getService(ShopNotificationService::class),
                     TestServiceRegister::getService(CancelProxy::class),
                     TestServiceRegister::getService(ConnectionService::class),
-                    TestServiceRegister::getService(PartialPaymentService::class)
+                    TestServiceRegister::getService(RefundProxy::class),
+                    TestServiceRegister::getService(TransactionDetailsService::class)
                 );
             }
         );

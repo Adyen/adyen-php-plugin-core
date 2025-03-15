@@ -60,6 +60,15 @@ class HistoryItemCollection
         );
     }
 
+    public function filterAllByPspReference(string $pspReference): self
+    {
+        return new self  (
+            array_filter($this->getAll(), static function ($item) use ($pspReference) {
+                return $item->getPspReference() === $pspReference;
+            })
+        );
+    }
+
     /**
      * @param string $reference
      *

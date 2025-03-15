@@ -74,8 +74,7 @@ class TransactionHistoryService
                 $captureType,
                 $captureDelayHours,
                 $currency ?? Currency::getDefault(),
-                $authorizationType,
-                $historyItem ? [$historyItem] : []
+                $authorizationType
             );
         }
 

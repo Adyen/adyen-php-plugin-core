@@ -10,6 +10,7 @@ use Adyen\Core\BusinessLogic\Domain\Connection\Repositories\ConnectionSettingsRe
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\Integration\Store\StoreService;
+use Adyen\Core\BusinessLogic\Domain\Refund\Proxies\RefundProxy;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\ShopEvents;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Services\ShopNotificationService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
@@ -21,6 +22,7 @@ use Adyen\Core\Tests\BusinessLogic\Common\BaseTestCase;
 use Adyen\Core\Tests\BusinessLogic\Domain\Cancel\Mocks\MockCancelProxy;
 use Adyen\Core\Tests\BusinessLogic\Domain\Capture\Mocks\MockConnectionService;
 use Adyen\Core\Tests\BusinessLogic\Domain\MockComponents\MockStoreService;
+use Adyen\Core\Tests\BusinessLogic\Domain\Refund\Mocks\MockRefundProxy;
 use Adyen\Core\Tests\Infrastructure\Common\TestServiceRegister;
 use Adyen\Webhook\EventCodes;
 use Adyen\Webhook\PaymentStates;
@@ -66,6 +68,13 @@ class CancelHandlerTest extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        TestServiceRegister::registerService(
+            RefundProxy::class,
+            function () {
+                return new MockRefundProxy();
+            }
+        );
 
         $this->proxy = new MockCancelProxy();
         TestServiceRegister::registerService(

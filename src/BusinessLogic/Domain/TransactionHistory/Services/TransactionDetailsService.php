@@ -316,6 +316,11 @@ class TransactionDetailsService
 
         foreach ($transactionHistory->getAuthorizationPspReferences() as $pspReference) {
             $items = $transactionHistory->collection()->filterByOriginalReference($pspReference);
+
+            if ($items->isEmpty()) {
+                continue;
+            }
+
             $item = $items->last();
 
             $cancelled &= $item->getPaymentState() === 'cancelled';

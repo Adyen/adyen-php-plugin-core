@@ -4,17 +4,23 @@ namespace Adyen\Core\BusinessLogic\Domain\Cancel\Handlers;
 
 use Adyen\Core\BusinessLogic\Domain\Cancel\Models\CancelRequest;
 use Adyen\Core\BusinessLogic\Domain\Cancel\Proxies\CancelProxy;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\CurrencyMismatchException;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidCurrencyCode;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
-use Adyen\Core\BusinessLogic\Domain\PartialPayments\Service\PartialPaymentService;
+use Adyen\Core\BusinessLogic\Domain\Refund\Models\RefundRequest;
+use Adyen\Core\BusinessLogic\Domain\Refund\Proxies\RefundProxy;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Cancellation\FailedCancellationRequestEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Cancellation\SuccessfulCancellationRequestEvent;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\ShopEvents;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Services\ShopNotificationService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
+use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionDetailsService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
 use Adyen\Core\Infrastructure\Utility\TimeProvider;
+use Adyen\Webhook\EventCodes;
 use DateTimeInterface;
 use Exception;
 
@@ -38,36 +44,44 @@ class CancelHandler
     /**
      * @var CancelProxy
      */
-    private $captureProxy;
+    private $cancelProxy;
 
     /**
      * @var ConnectionService
      */
     private $connectionService;
     /**
-     * @var PartialPaymentService
+     * @var RefundProxy
      */
-    private $partialService;
+    private $refundProxy;
+    /**
+     * @var TransactionDetailsService
+     */
+    private $transactionDetailsService;
 
     /**
      * @param TransactionHistoryService $transactionHistoryService
      * @param ShopNotificationService $shopNotificationService
      * @param CancelProxy $captureProxy
      * @param ConnectionService $connectionService
-     * @param PartialPaymentService $partialService
+     * @param RefundProxy $refundProxy
+     * @param TransactionDetailsService $transactionDetailsService
      */
     public function __construct(
         TransactionHistoryService $transactionHistoryService,
-        ShopNotificationService $shopNotificationService,
-        CancelProxy $captureProxy,
-        ConnectionService $connectionService,
-        PartialPaymentService $partialService
-    ) {
+        ShopNotificationService   $shopNotificationService,
+        CancelProxy               $captureProxy,
+        ConnectionService         $connectionService,
+        RefundProxy               $refundProxy,
+        TransactionDetailsService $transactionDetailsService
+    )
+    {
         $this->transactionHistoryService = $transactionHistoryService;
         $this->shopNotificationService = $shopNotificationService;
-        $this->captureProxy = $captureProxy;
+        $this->cancelProxy = $captureProxy;
         $this->connectionService = $connectionService;
-        $this->partialService = $partialService;
+        $this->refundProxy = $refundProxy;
+        $this->transactionDetailsService = $transactionDetailsService;
     }
 
     /**
@@ -84,14 +98,9 @@ class CancelHandler
         $transactionHistory = $this->transactionHistoryService->getTransactionHistory($merchantReference);
 
         try {
-            $success = $this->cancel($transactionHistory, $merchantReference);
-
-            $this->addHistoryItem($transactionHistory, $success);
-            $this->pushNotification($success, $transactionHistory);
-
-            return $success;
+            return $this->cancel($transactionHistory, $merchantReference);
         } catch (Exception $exception) {
-            $this->addHistoryItem($transactionHistory, false);
+            $this->addHistoryItem($transactionHistory, false, ShopEvents::CANCELLATION_REQUEST, 'cancel');
             $this->pushNotification(false, $transactionHistory);
 
             throw $exception;
@@ -103,22 +112,84 @@ class CancelHandler
      * @param string $merchantReference
      *
      * @return bool
+     *
+     * @throws CurrencyMismatchException
+     * @throws InvalidCurrencyCode
+     * @throws InvalidMerchantReferenceException
      */
     private function cancel(TransactionHistory $transactionHistory, string $merchantReference): bool
     {
+        $connectionSettings = $this->connectionService->getConnectionData();
+        $merchantAccount = $connectionSettings ? $connectionSettings->getActiveConnectionData()->getMerchantId() : '';
+
         if ($transactionHistory->getOrderPspReference()) {
-            return strtolower($this->partialService->cancelOrder(
-                $transactionHistory->getOrderPspReference(), $transactionHistory->getOrderData()
-            )->getResultCode()) === 'received';
+            $success = true;
+
+            foreach ($transactionHistory->getAuthorizationPspReferences() as $authorizationPspReference) {
+                $success &= $this->cancelOrRefund($transactionHistory, $authorizationPspReference, $merchantAccount);
+            }
+
+            return $success;
         }
 
         $pspReference = $transactionHistory->getOriginalPspReference();
-        $connectionSettings = $this->connectionService->getConnectionData();
-        $merchantAccount = $connectionSettings ? $connectionSettings->getActiveConnectionData()->getMerchantId(
-        ) : '';
-        return $this->captureProxy->cancelPayment(
+
+        $success = $this->cancelProxy->cancelPayment(
             new CancelRequest($pspReference, $merchantReference, $merchantAccount)
         );
+        $this->addHistoryItem($transactionHistory, $success, ShopEvents::CANCELLATION_REQUEST, 'cancel');
+        $this->pushNotification($success, $transactionHistory);
+
+        return $success;
+    }
+
+    /**
+     * @throws CurrencyMismatchException
+     * @throws InvalidMerchantReferenceException
+     * @throws InvalidCurrencyCode
+     */
+    private function cancelOrRefund(TransactionHistory $transactionHistory, string $authorizationPspReference, string $merchantAccount): bool
+    {
+        $authorization = $transactionHistory->collection()->filterAllByPspReference($authorizationPspReference)->first();
+
+        if (!$authorization) {
+            return true;
+        }
+
+        $cancelled = $transactionHistory->collection()->filterByOriginalReference($authorizationPspReference)->filterAllByEventCode(EventCodes::CANCELLATION);
+
+        if (!$cancelled->isEmpty()) {
+            return true;
+        }
+
+        $refunded = $transactionHistory->collection()->filterByOriginalReference($authorizationPspReference)->filterAllByEventCode(EventCodes::REFUND);
+        $refundedAmount = $refunded->getAmount(Currency::fromIsoCode($transactionHistory->getCurrency()));
+
+        if ($authorization->getAmount()->getValue() === $refundedAmount->getValue()) {
+            return true;
+        }
+
+        $capturedAmount = $this->transactionDetailsService->getCapturedAmount(
+            $transactionHistory,
+            $transactionHistory->collection()->filterByOriginalReference($authorizationPspReference)
+        );
+
+        $refund = true;
+        $cancellation = true;
+
+        if ($capturedAmount->getValue() > 0) {
+            $refund = $this->refundProxy->refundPayment(new RefundRequest($authorizationPspReference, $capturedAmount, $merchantAccount));
+            $this->addHistoryItem($transactionHistory, $refund, ShopEvents::REFUND_REQUEST, 'refund');
+            $this->pushNotification($refund, $transactionHistory);
+        }
+
+        if ($capturedAmount->getValue() < $authorization->getAmount()->getValue()) {
+            $cancellation = $this->cancelProxy->cancelPayment(new CancelRequest($authorizationPspReference, $transactionHistory->getMerchantReference(), $merchantAccount));
+            $this->addHistoryItem($transactionHistory, $cancellation, ShopEvents::CANCELLATION_REQUEST, 'cancel');
+            $this->pushNotification($cancellation, $transactionHistory);
+        }
+
+        return $cancellation && $refund;
     }
 
     /**
@@ -131,17 +202,17 @@ class CancelHandler
      *
      * @throws InvalidMerchantReferenceException
      */
-    private function addHistoryItem(TransactionHistory $history, bool $success): void
+    private function addHistoryItem(TransactionHistory $history, bool $success, string $statusCode, string $action): void
     {
         $lastItem = $history->collection()->last();
         $cancelRequestCount = count(
-            $history->collection()->filterByEventCode(ShopEvents::CANCELLATION_REQUEST)->getAll()
+            $history->collection()->filterByEventCode($statusCode)->getAll()
         );
         $history->add(
             new HistoryItem(
-                'cancel' . ++$cancelRequestCount . '_' . $history->getOriginalPspReference(),
+                $action . ++$cancelRequestCount . '_' . $history->getOriginalPspReference(),
                 $history->getMerchantReference(),
-                ShopEvents::CANCELLATION_REQUEST,
+                $statusCode,
                 $lastItem ? $lastItem->getPaymentState() : '',
                 TimeProvider::getInstance()->getCurrentLocalTime()->format(DateTimeInterface::ATOM),
                 $success,

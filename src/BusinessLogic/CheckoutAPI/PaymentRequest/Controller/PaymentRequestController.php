@@ -94,11 +94,17 @@ class PaymentRequestController
                 $request->getShopperReference()
             );
 
-            $result[] = new StartTransactionResponse(
+            $response = new StartTransactionResponse(
                 $this->service->startTransaction(
-                   $startTransactionRequest, $order
+                    $startTransactionRequest, $order
                 )
             );
+
+            $result[] = $response;
+
+            if (!$response->isSuccessful()) {
+                break;
+            }
         }
 
         return $result;

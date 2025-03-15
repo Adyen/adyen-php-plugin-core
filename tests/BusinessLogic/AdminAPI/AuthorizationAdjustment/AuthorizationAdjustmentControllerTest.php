@@ -17,6 +17,7 @@ use Adyen\Core\BusinessLogic\Domain\Cancel\Proxies\CancelProxy;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\CurrencyMismatchException;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidCurrencyCode;
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
+use Adyen\Core\BusinessLogic\Domain\Refund\Proxies\RefundProxy;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Services\ShopNotificationService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
@@ -24,6 +25,7 @@ use Adyen\Core\Tests\BusinessLogic\AdminAPI\AuthorizationAdjustment\Mocks\MockAu
 use Adyen\Core\Tests\BusinessLogic\Common\BaseTestCase;
 use Adyen\Core\Tests\BusinessLogic\Domain\AuthorizationAdjustment\Mocks\MockAdjustmentProxy;
 use Adyen\Core\Tests\BusinessLogic\Domain\Cancel\Mocks\MockCancelProxy;
+use Adyen\Core\Tests\BusinessLogic\Domain\Refund\Mocks\MockRefundProxy;
 use Adyen\Core\Tests\Infrastructure\Common\TestServiceRegister;
 use Exception;
 
@@ -56,6 +58,13 @@ class AuthorizationAdjustmentControllerTest extends BaseTestCase
             AuthorizationAdjustmentProxy::class,
             function () {
                 return $this->proxy;
+            }
+        );
+
+        TestServiceRegister::registerService(
+            RefundProxy::class,
+            function () {
+                return new MockRefundProxy();
             }
         );
 

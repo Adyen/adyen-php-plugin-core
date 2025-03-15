@@ -54,7 +54,8 @@ class UpdatePaymentDetailsApiTest extends BaseTestCase
                     TestServiceRegister::getService(DonationsDataRepository::class),
                     TestServiceRegister::getService(TransactionHistoryService::class),
                     TestServiceRegister::getService(PaymentMethodConfigRepository::class),
-                    TestServiceRegister::getService(ConnectionService::class)
+                    TestServiceRegister::getService(ConnectionService::class),
+                    TestServiceRegister::getService(PartialPaymentService::class)
                 ),
                     TestServiceRegister::getService(PartialPaymentService::class));
             })

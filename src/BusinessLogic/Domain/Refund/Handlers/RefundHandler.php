@@ -15,6 +15,7 @@ use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionDetailsService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
+use Adyen\Core\Infrastructure\Exceptions\BaseException;
 use Adyen\Core\Infrastructure\Utility\TimeProvider;
 use Adyen\Webhook\EventCodes;
 use DateTimeInterface;
@@ -93,14 +94,14 @@ class RefundHandler
             }
 
             $connectionSettings = $this->connectionService->getConnectionData();
-            $merchantAccount = $connectionSettings ? $connectionSettings->getActiveConnectionData()->getMerchantId(
-            ) : '';
+            $merchantAccount = $connectionSettings ? $connectionSettings->getActiveConnectionData()->getMerchantId() : '';
 
             if ($pspReference) {
                 return $this->refund($pspReference, $amount, $merchantAccount, $transactionHistory);
             }
 
             $success = true;
+            $refundRequests = [];
 
             foreach ($transactionHistory->collection()->filterAllByEventCode(EventCodes::AUTHORISATION)->getAll() as $item) {
                 if ($amount->getValue() === 0) {
@@ -109,8 +110,7 @@ class RefundHandler
 
                 $samePaymentItems = $transactionHistory->collection()->filterByOriginalReference($item->getPspReference());
 
-                if (!$samePaymentItems->filterAllByEventCode(EventCodes::CANCELLATION)->isEmpty() ||
-                    $samePaymentItems->filterAllByEventCode(EventCodes::REFUND)->isEmpty()) {
+                if (!$samePaymentItems->filterAllByEventCode(EventCodes::CANCELLATION)->isEmpty()) {
                     continue;
                 }
 
@@ -136,16 +136,35 @@ class RefundHandler
                         continue;
                     }
 
-                    $success &= $this->refund($item->getPspReference(), $refundableAmount , $merchantAccount, $transactionHistory);
+                    $refundRequests[] = [
+                        'pspReference' => $item->getPspReference(),
+                        'refundableAmount' => $refundableAmount
+                    ];
                     $amount->minus($refundableAmount);
                 } else {
                     if (!$partialRefund && $refundableAmount->getValue() > $amount->getValue()) {
                         continue;
                     }
 
-                    $success &= $this->refund($item->getPspReference(), $amount, $merchantAccount, $transactionHistory);
+                    $refundRequests[] = [
+                        'pspReference' => $item->getPspReference(),
+                        'refundableAmount' => $amount
+                    ];
                     $amount = Amount::fromInt(0, $amount->getCurrency());
                 }
+            }
+
+            if ($amount->getValue() > 0) {
+                throw new BaseException('Refund failed.');
+            }
+
+            foreach ($refundRequests as $refundRequest) {
+                $success &= $this->refund(
+                    $refundRequest['pspReference'],
+                    $refundRequest['refundableAmount'],
+                    $merchantAccount,
+                    $transactionHistory
+                );
             }
 
             return $success;
