@@ -287,7 +287,8 @@ class BaseTestCase extends TestCase
                 return new WebhookRegistrationService(
                     TestServiceRegister::getService(WebhookProxy::class),
                     TestServiceRegister::getService(MerchantProxy::class),
-                    TestServiceRegister::getService(WebhookUrlService::class)
+                    TestServiceRegister::getService(WebhookUrlService::class),
+                    TestServiceRegister::getService(WebhookConfigRepository::class)
                 );
             },
             WebhookConfigRepository::class => function () {

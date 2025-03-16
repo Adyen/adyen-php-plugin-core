@@ -337,7 +337,8 @@ class BootstrapComponent extends BaseBootstrapComponent
                 return new WebhookRegistrationService(
                     ServiceRegister::getService(WebhookProxy::class),
                     ServiceRegister::getService(MerchantProxyInterface::class),
-                    ServiceRegister::getService(WebhookUrlService::class)
+                    ServiceRegister::getService(WebhookUrlService::class),
+                    ServiceRegister::getService(WebhookConfigRepository::class)
                 );
             }
         );

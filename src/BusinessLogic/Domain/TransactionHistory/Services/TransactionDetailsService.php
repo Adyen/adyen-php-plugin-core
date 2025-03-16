@@ -99,7 +99,7 @@ class TransactionDetailsService
         });
 
         foreach ($transactions as $item) {
-            if (!empty($transactionHistory->getAuthorizationPspReferences()) &&
+            if ($transactionHistory->getOrderData() && !empty($transactionHistory->getAuthorizationPspReferences()) &&
                 $item->getEventCode() === EventCodes::AUTHORISATION &&
                 !in_array($item->getAuthorizationPspReference(), $transactionHistory->getAuthorizationPspReferences(), true)) {
                 continue;
@@ -452,6 +452,10 @@ class TransactionDetailsService
         $isCaptureTypeKnown = $item->getCaptureType() && $item->getCaptureType()->equal(CaptureType::unknown());
         $authorizationAmount = $item->getAmount();
         $samePaymentItems = $transactionHistory->collection()->filterByOriginalReference($item->getPspReference());
+
+        if (!$item->getAuthorizationPspReference()) {
+            $samePaymentItems = new HistoryItemCollection(array_merge([$item], $samePaymentItems->getAll()));
+        }
 
         if ($samePaymentItems->isEmpty()) {
             $samePaymentItems = $transactionHistory->collection();

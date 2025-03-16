@@ -11,6 +11,7 @@ use Adyen\Core\BusinessLogic\Domain\Webhook\Exceptions\MerchantDoesNotExistExcep
 use Adyen\Core\BusinessLogic\Domain\Webhook\Models\WebhookConfig;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Models\WebhookRequest;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Proxies\WebhookProxy;
+use Adyen\Core\BusinessLogic\Domain\Webhook\Repositories\WebhookConfigRepository;
 use Adyen\Core\Infrastructure\Logger\Logger;
 use Exception;
 
@@ -33,21 +34,28 @@ class WebhookRegistrationService
      * @var WebhookUrlService
      */
     protected $webhookUrlService;
+    /**
+     * @var WebhookConfigRepository
+     */
+    protected $webhookConfigRepository;
 
     /**
      * @param WebhookProxy $proxy
      * @param MerchantProxy $merchantProxy
      * @param WebhookUrlService $webhookUrlService
+     * @param WebhookConfigRepository $webhookConfigRepository
      */
     public function __construct(
         WebhookProxy      $proxy,
         MerchantProxy     $merchantProxy,
-        WebhookUrlService $webhookUrlService
+        WebhookUrlService $webhookUrlService,
+        WebhookConfigRepository $webhookConfigRepository
     )
     {
         $this->proxy = $proxy;
         $this->merchantProxy = $merchantProxy;
         $this->webhookUrlService = $webhookUrlService;
+        $this->webhookConfigRepository = $webhookConfigRepository;
     }
 
     /**
@@ -101,6 +109,23 @@ class WebhookRegistrationService
 
     /**
      * @param string $merchantId
+     *
+     * @return void
+     *
+     * @throws FailedToGenerateHmacException
+     * @throws Exception
+     */
+    public function update(string $merchantId): void
+    {
+        $webhookConfig = $this->updateWebhook($merchantId);
+        $hmac = $this->generateHmac($merchantId, $webhookConfig->getId());
+        $webhookConfig->setHmac($hmac);
+
+        $this->webhookConfigRepository->setWebhookConfig($webhookConfig);
+    }
+
+    /**
+     * @param string $merchantId
      * @param string $webhookId
      * @return string
      *
@@ -141,7 +166,7 @@ class WebhookRegistrationService
      *
      * @throws Exception
      */
-    public function updateWebhook(string $merchantId): WebhookConfig
+    private function updateWebhook(string $merchantId): WebhookConfig
     {
         $config = $this->proxy->getWebhookConfigFromUrl($merchantId, $this->webhookUrlService->getWebhookUrl());
         $password = uniqid($merchantId . '_', true);
