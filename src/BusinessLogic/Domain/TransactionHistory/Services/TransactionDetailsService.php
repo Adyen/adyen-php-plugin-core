@@ -453,10 +453,6 @@ class TransactionDetailsService
         $authorizationAmount = $item->getAmount();
         $samePaymentItems = $transactionHistory->collection()->filterByOriginalReference($item->getPspReference());
 
-        if (!$item->getAuthorizationPspReference()) {
-            $samePaymentItems = new HistoryItemCollection(array_merge([$item], $samePaymentItems->getAll()));
-        }
-
         if ($samePaymentItems->isEmpty()) {
             $samePaymentItems = $transactionHistory->collection();
         }
@@ -531,6 +527,7 @@ class TransactionDetailsService
                 'authorizationAdjustmentAvailable' => $this->isAuthorizationAdjustmentAvailable($transactionHistory),
                 'authorizationAdjustmentDate' => $this->getAuthorizationAdjustmentDate($transactionHistory),
                 'authorizationAdjustmentAmount' => $authorizationAdjustmentAmount ? $authorizationAdjustmentAmount->getPriceInCurrencyUnits() : '',
+                'authorizationPspReference' => $item->getAuthorizationPspReference() ?? ''
             ];
         }
 
