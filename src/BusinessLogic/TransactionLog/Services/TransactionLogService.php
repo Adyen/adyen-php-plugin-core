@@ -9,6 +9,7 @@ use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchan
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Adyen\Core\BusinessLogic\TransactionLog\Contracts\TransactionLogAware;
 use Adyen\Core\BusinessLogic\TransactionLog\Repositories\TransactionLogRepository;
+use Adyen\Core\Infrastructure\Logger\Logger;
 use Adyen\Core\Infrastructure\ORM\Exceptions\QueryFilterInvalidParamException;
 use Adyen\Core\Infrastructure\TaskExecution\Exceptions\QueueItemDeserializationException;
 use Adyen\Core\Infrastructure\TaskExecution\QueueItem;
@@ -66,26 +67,34 @@ class TransactionLogService
      */
     public function create(QueueItem $item): void
     {
+        Logger::logError('SUPPORT - queue item id: ' . $item->getId());
+
         /** @var Task | TransactionLogAware $task */
         $task = $item->getTask();
         if ($task === null) {
+            Logger::logError('SUPPORT - task is null');
             return;
         }
 
         if (!($task instanceof TransactionLogAware)) {
+            Logger::logError('SUPPORT - task is not instance of TransactionLogAware');
+
             return;
         }
 
         if ($item->getParentId() !== null) {
+            Logger::logError('SUPPORT - queue item is from composite task');
             return;
         }
 
         if ($item->getId() && ($log = $this->transactionLogRepository->getItemByExecutionId($item->getId())) !== null) {
+            Logger::logError('SUPPORT - has item by execution id: ' . $log->getId());
             $log->setQueueStatus(QueueItem::FAILED);
             $this->update($log);
         }
 
         $transactionLog = $this->createTransactionLogInstance($item);
+        Logger::logError('SUPPORT - before save transaction log');
         $this->save($transactionLog);
 
         $task->setTransactionLog($transactionLog);

@@ -2,6 +2,7 @@
 
 namespace Adyen\Core\BusinessLogic\TransactionLog\Listeners;
 
+use Adyen\Core\Infrastructure\Logger\Logger;
 use Adyen\Core\Infrastructure\TaskExecution\Events\BaseQueueItemEvent;
 use Adyen\Core\Infrastructure\TaskExecution\Exceptions\QueueItemDeserializationException;
 
@@ -26,11 +27,13 @@ class CreateListener extends Listener
         }
 
         if ($this->getService()->hasQueueItem($queueItem)) {
+            Logger::logError('SUPPORT - CreateListener already hasQueueItem');
             $this->getService()->load($queueItem);
 
             return;
         }
 
+        Logger::logError('SUPPORT - CreateListener create');
         $this->getService()->create($queueItem);
     }
 }

@@ -6,6 +6,7 @@ use Adyen\Core\BusinessLogic\DataAccess\TransactionLog\Contracts\ShopLogsReposit
 use Adyen\Core\BusinessLogic\DataAccess\TransactionLog\Entities\TransactionLog;
 use Adyen\Core\BusinessLogic\Domain\Multistore\StoreContext;
 use Adyen\Core\BusinessLogic\TransactionLog\Repositories\TransactionLogRepository as TransactionLogRepositoryInterface;
+use Adyen\Core\Infrastructure\Logger\Logger;
 use Adyen\Core\Infrastructure\ORM\Exceptions\QueryFilterInvalidParamException;
 use Adyen\Core\Infrastructure\ORM\QueryFilter\Operators;
 use Adyen\Core\Infrastructure\ORM\QueryFilter\QueryFilter;
@@ -55,7 +56,9 @@ class TransactionLogRepository implements TransactionLogRepositoryInterface
      */
     public function setTransactionLog(TransactionLog $transactionLog): void
     {
-        $this->repository->save($transactionLog);
+        $id = $this->repository->save($transactionLog);
+
+        Logger::logError('SUPPORT - saved transaction log id: ' . $id);
     }
 
     /**
