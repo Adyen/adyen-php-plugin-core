@@ -142,8 +142,7 @@ class SystemInfoResponse extends Response
                     'failureDescription' => $log->getFailureDescription() ?? '',
                     'adyenLink' => $log->getAdyenLink(),
                     'shopLink' => $log->getShopLink()
-                ],
-                'logo' => $this->getLogo($log->getPaymentMethod())
+                ]
             ];
         }
 

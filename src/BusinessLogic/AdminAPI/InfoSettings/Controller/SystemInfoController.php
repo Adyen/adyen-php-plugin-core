@@ -6,6 +6,7 @@ use Adyen\Core\BusinessLogic\AdminAPI\AdminAPI;
 use Adyen\Core\BusinessLogic\AdminAPI\InfoSettings\Response\SystemInfoResponse;
 use Adyen\Core\BusinessLogic\DataAccess\Connection\Entities\ConnectionSettings;
 use Adyen\Core\BusinessLogic\Domain\Integration\SystemInfo\SystemInfoService;
+use Adyen\Core\BusinessLogic\Domain\Multistore\StoreContext;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
 use Adyen\Core\BusinessLogic\Domain\Stores\Services\StoreService;
 use Adyen\Core\BusinessLogic\TransactionLog\Repositories\TransactionLogRepository;
@@ -124,11 +125,15 @@ class SystemInfoController
     /**
      * @return QueueItem[]
      *
-     * @throws QueryFilterInvalidParamException
+     * @throws QueryFilterInvalidParamException|Exception
      */
     private function transactionLogs(): array
     {
-        return $this->transactionLogRepository->find(20,0);
+        return StoreContext::doWithStore(
+            1,
+            [$this->transactionLogRepository, 'find'],
+            [20, 0]
+        );
     }
 
     /**
