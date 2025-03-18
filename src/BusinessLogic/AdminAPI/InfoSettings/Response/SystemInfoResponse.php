@@ -5,8 +5,11 @@ namespace Adyen\Core\BusinessLogic\AdminAPI\InfoSettings\Response;
 use Adyen\Core\BusinessLogic\AdminAPI\Response\Response;
 use Adyen\Core\BusinessLogic\DataAccess\Connection\Entities\ConnectionSettings;
 use Adyen\Core\BusinessLogic\DataAccess\Payment\Entities\PaymentMethod;
+use Adyen\Core\BusinessLogic\DataAccess\TransactionLog\Entities\TransactionLog;
 use Adyen\Core\BusinessLogic\Domain\InfoSettings\Models\SystemInfo;
 use Adyen\Core\Infrastructure\TaskExecution\QueueItem;
+use Adyen\Core\Infrastructure\Utility\TimeProvider;
+use DateTimeInterface;
 
 /**
  * Class SystemInfoResponse
@@ -34,6 +37,10 @@ class SystemInfoResponse extends Response
      * @var QueueItem[]
      */
     private $queueItems;
+    /**
+     * @var TransactionLog[]
+     */
+    private $transactionLogs;
 
     /**
      * @var ConnectionSettings[]
@@ -50,6 +57,7 @@ class SystemInfoResponse extends Response
      * @param SystemInfo $systemInfo
      * @param array $paymentMethods
      * @param array $queueItems
+     * @param array $transactionLogs
      * @param array $connectionItems
      * @param string $webhookValidation
      */
@@ -58,6 +66,7 @@ class SystemInfoResponse extends Response
         SystemInfo $systemInfo,
         array $paymentMethods,
         array $queueItems,
+        array $transactionLogs,
         array $connectionItems,
         string $webhookValidation
     ) {
@@ -65,6 +74,7 @@ class SystemInfoResponse extends Response
         $this->systemInfo = $systemInfo;
         $this->paymentMethods = $paymentMethods;
         $this->queueItems = $queueItems;
+        $this->transactionLogs = $transactionLogs;
         $this->connectionItems = $connectionItems;
         $this->webhookValidation = $webhookValidation;
     }
@@ -88,6 +98,7 @@ class SystemInfoResponse extends Response
             ],
             'paymentMethods' => $this->paymentMethodsToArray(),
             'queueItems' => $this->queueItemsToArray(),
+            'transactionLogs' => $this->logsToArray(),
             'connectionSettings' => $this->connectionItemsToArray(),
             'webhookValidation' => $this->webhookValidation
         ];
@@ -105,6 +116,38 @@ class SystemInfoResponse extends Response
         }
 
         return $items;
+    }
+
+    private function logsToArray(): array
+    {
+        $logsToArray = [];
+
+        foreach ($this->transactionLogs as $log) {
+            $logsToArray[] = [
+                'orderId' => $log->getMerchantReference(),
+                'paymentMethod' => $log->getPaymentMethod(),
+                'notificationId' => $log->getId(),
+                'dateAndTime' => TimeProvider::getInstance()
+                    ->getDateTime($log->getTimestamp())
+                    ->format(DateTimeInterface::ATOM),
+                'code' => $log->getEventCode(),
+                'successful' => $log->isSuccessful(),
+                'status' => $log->getQueueStatus(),
+                'hasDetails' => !(empty($log->getReason()))
+                    || !(empty($log->getFailureDescription()))
+                    || !(empty($log->getAdyenLink()))
+                    || !(empty($log->getShopLink())),
+                'details' => [
+                    'reason' => $log->getReason() ?? '',
+                    'failureDescription' => $log->getFailureDescription() ?? '',
+                    'adyenLink' => $log->getAdyenLink(),
+                    'shopLink' => $log->getShopLink()
+                ],
+                'logo' => $this->getLogo($log->getPaymentMethod())
+            ];
+        }
+
+        return $logsToArray;
     }
 
     /**

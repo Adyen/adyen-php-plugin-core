@@ -8,6 +8,7 @@ use Adyen\Core\BusinessLogic\DataAccess\Connection\Entities\ConnectionSettings;
 use Adyen\Core\BusinessLogic\Domain\Integration\SystemInfo\SystemInfoService;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
 use Adyen\Core\BusinessLogic\Domain\Stores\Services\StoreService;
+use Adyen\Core\BusinessLogic\TransactionLog\Repositories\TransactionLogRepository;
 use Adyen\Core\Infrastructure\ORM\Exceptions\QueryFilterInvalidParamException;
 use Adyen\Core\Infrastructure\ORM\Interfaces\RepositoryInterface;
 use Adyen\Core\Infrastructure\ORM\QueryFilter\Operators;
@@ -43,6 +44,11 @@ class SystemInfoController
     private $connectionSettingsRepository;
 
     /**
+     * @var TransactionLogRepository
+     */
+    private $transactionLogRepository;
+
+    /**
      * @var StoreService
      */
     private $storeService;
@@ -51,6 +57,7 @@ class SystemInfoController
      * @param SystemInfoService $systemInfoService
      * @param PaymentMethodConfigRepository $paymentMethodRepository
      * @param RepositoryInterface $queueItemRepository
+     * @param TransactionLogRepository $transactionLogRepository
      * @param RepositoryInterface $connectionSettingsRepository
      * @param StoreService $storeService
      */
@@ -58,6 +65,7 @@ class SystemInfoController
         SystemInfoService $systemInfoService,
         PaymentMethodConfigRepository $paymentMethodRepository,
         RepositoryInterface $queueItemRepository,
+        TransactionLogRepository $transactionLogRepository,
         RepositoryInterface $connectionSettingsRepository,
         StoreService $storeService
     ) {
@@ -65,6 +73,7 @@ class SystemInfoController
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->queueItemRepository = $queueItemRepository;
         $this->connectionSettingsRepository = $connectionSettingsRepository;
+        $this->transactionLogRepository = $transactionLogRepository;
         $this->storeService = $storeService;
     }
 
@@ -81,6 +90,7 @@ class SystemInfoController
             $this->systemInfoService->getSystemInfo(),
             $this->paymentMethodRepository->getConfiguredPaymentMethodsEntities(),
             $this->notCompletedQueueItems(),
+            $this->transactionLogs(),
             $this->connectionSettings(),
             $this->webhookValidation()
         );
@@ -109,6 +119,16 @@ class SystemInfoController
         $query->where('status', Operators::NOT_EQUALS, QueueItem::COMPLETED);
 
         return $this->queueItemRepository->select($query);
+    }
+
+    /**
+     * @return QueueItem[]
+     *
+     * @throws QueryFilterInvalidParamException
+     */
+    private function transactionLogs(): array
+    {
+        return $this->transactionLogRepository->find(20,0);
     }
 
     /**
