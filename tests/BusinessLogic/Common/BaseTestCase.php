@@ -47,7 +47,9 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\AdyenGiving\Repositories\DonationsD
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Factory\PaymentLinkRequestFactory;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Proxies\PaymentLinkProxy;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Services\PaymentLinkService;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Factory\PaymentRequestFactory;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Proxies\PaymentsProxy;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Services\PaymentRequestService;
 use Adyen\Core\BusinessLogic\Domain\Connection\Proxies\ConnectionProxy;
 use Adyen\Core\BusinessLogic\Domain\Connection\Repositories\ConnectionSettingsRepository;
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
@@ -425,6 +427,17 @@ class BaseTestCase extends TestCase
             VersionInfoController::class => function () {
                 return new VersionInfoController(TestServiceRegister::getService(VersionService::class));
             },
+            PaymentRequestService::class => function () {
+                return new PaymentRequestService(
+                    TestServiceRegister::getService(PaymentsProxy::class),
+                    new PaymentRequestFactory(),
+                    TestServiceRegister::getService(DonationsDataRepository::class),
+                    TestServiceRegister::getService(TransactionHistoryService::class),
+                    TestServiceRegister::getService(PaymentMethodConfigRepository::class),
+                    TestServiceRegister::getService(ConnectionService::class),
+                    TestServiceRegister::getService(PartialPaymentService::class)
+                );
+            },
             PartialPaymentService::class => function () {
                 return new PartialPaymentService(
                     TestServiceRegister::getService(PartialPaymentProxy::class),
@@ -436,7 +449,10 @@ class BaseTestCase extends TestCase
                     return new \Adyen\Core\BusinessLogic\AdyenAPI\PartialPayments\Http\Proxy(new TestHttpClient(), 'https://checkout-test.adyen.com', 'v71', '0123456789');
                 },
             PartialPaymentController::class => function () {
-                return new PartialPaymentController(TestServiceRegister::getService(PartialPaymentService::class));
+                return new PartialPaymentController(
+                    TestServiceRegister::getService(PaymentRequestService::class),
+                    TestServiceRegister::getService(PartialPaymentService::class)
+                );
             },
             ShopNotificationChannelAdapter::class => function () {
                 return new NullShopNotificationChannelAdapter();
