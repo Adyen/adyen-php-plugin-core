@@ -200,11 +200,9 @@ class PaymentRequestService
         $requests = $giftCardsTransactionRequests['requests'];
         $deductedAmount = $giftCardsTransactionRequests['deductedAmount'];
 
-        if (count($partialTransactionRequest->getPaymentMethodStateData()) !== 0) {
-            $requests[] = $this
-                ->createPaymentMethodTransactionRequest($partialTransactionRequest, $deductedAmount);
-        }
-
+        $requests[] = $this
+            ->createPaymentMethodTransactionRequest($partialTransactionRequest, $deductedAmount);
+        
         $amount = Amount::fromFloat(
             $partialTransactionRequest->getOrderTotalAmount(),
             Currency::fromIsoCode($partialTransactionRequest->getCurrency())
