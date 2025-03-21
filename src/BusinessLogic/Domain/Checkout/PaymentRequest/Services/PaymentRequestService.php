@@ -367,6 +367,7 @@ class PaymentRequestService
      * @param Order $order
      * @return StartTransactionResponse
      * @throws InvalidPaymentMethodCodeException
+     * @throws Exception
      */
     private function startTransactions(array $requests, Order $order): StartTransactionResponse
     {
