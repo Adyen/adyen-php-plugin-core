@@ -2,9 +2,17 @@
 
 namespace Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Services;
 
+use Adyen\Core\BusinessLogic\CheckoutAPI\PartialPayment\Request\StartPartialTransactionsRequest;
+use Adyen\Core\BusinessLogic\CheckoutAPI\PaymentRequest\Request\StartTransactionRequest;
+use Adyen\Core\BusinessLogic\CheckoutAPI\PaymentRequest\Response\StartTransactionResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\AdyenGiving\Models\DonationsData;
 use Adyen\Core\BusinessLogic\Domain\Checkout\AdyenGiving\Repositories\DonationsDataRepository;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidCurrencyCode;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidPaymentMethodCodeException;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Factory\PaymentRequestFactory;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\DataBag;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateOrderRequest;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateOrderResponse;
@@ -22,13 +30,12 @@ use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
-use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItemCollection;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Exception;
 
 /**
- * Class PaymentService
+ * Class PaymentRequestService
  *
  * @package Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Services
  */
@@ -82,7 +89,7 @@ class PaymentRequestService
         TransactionHistoryService     $transactionHistoryService,
         PaymentMethodConfigRepository $methodConfigRepository,
         ConnectionService             $connectionService,
-        PartialPaymentService $partialPaymentService
+        PartialPaymentService         $partialPaymentService
     )
     {
         $this->paymentsProxy = $paymentsProxy;
@@ -175,6 +182,42 @@ class PaymentRequestService
     }
 
     /**
+     * Creates order and partial transactions on Adyen.
+     *
+     * @param StartPartialTransactionsRequest $partialTransactionRequest
+     *
+     * @return StartTransactionResponse
+     * @throws InvalidCurrencyCode
+     * @throws InvalidPaymentMethodCodeException
+     * @throws Exception
+     */
+    public function startPartialTransactions(StartPartialTransactionsRequest $partialTransactionRequest): StartTransactionResponse
+    {
+        $deductedAmount = 0;
+        $giftCardsTransactionRequests = $this
+            ->createGiftCardsTransactionRequests($partialTransactionRequest, $deductedAmount);
+
+        $requests = $giftCardsTransactionRequests['requests'];
+        $deductedAmount = $giftCardsTransactionRequests['deductedAmount'];
+
+        if (count($partialTransactionRequest->getPaymentMethodStateData()) !== 0) {
+            $requests[] = $this
+                ->createPaymentMethodTransactionRequest($partialTransactionRequest, $deductedAmount);
+        }
+
+        $amount = Amount::fromFloat(
+            $partialTransactionRequest->getOrderTotalAmount(),
+            Currency::fromIsoCode($partialTransactionRequest->getCurrency())
+        );
+
+        $orderCreateResult = $this->partialPaymentsService
+            ->createOrder($partialTransactionRequest->getReference(), $amount);
+        $order = new Order($orderCreateResult->getOrderData(), $orderCreateResult->getPspReference());
+
+        return $this->startTransactions($requests, $order);
+    }
+
+    /**
      * @throws Exception
      */
     public function updatePaymentDetails(UpdatePaymentDetailsRequest $request): UpdatePaymentDetailsResult
@@ -250,5 +293,109 @@ class PaymentRequestService
         if ($transactionHistory->getOrderData()) {
             $this->partialPaymentsService->cancelOrder($transactionHistory->getOrderPspReference(), $transactionHistory->getOrderData());
         }
+    }
+
+    /**
+     * Creates partial transaction requests for gift cards.
+     *
+     * @param StartPartialTransactionsRequest $partialTransactionRequest
+     * @param float $deductedAmount
+     * @return array
+     * @throws InvalidCurrencyCode
+     */
+    private function createGiftCardsTransactionRequests(
+        StartPartialTransactionsRequest $partialTransactionRequest,
+        float                           $deductedAmount
+    ): array
+    {
+        $requests = [];
+        foreach ($partialTransactionRequest->getGiftCardsStateData() as $giftCardData) {
+            $giftCardAmount = Amount::fromInt(
+                $giftCardData['cardAmount'],
+                Currency::fromIsoCode($partialTransactionRequest->getCurrency())
+            );
+            $requests[] = new StartTransactionRequest(
+                $giftCardData['paymentMethod']['brand'],
+                $giftCardAmount,
+                $partialTransactionRequest->getReference(),
+                $partialTransactionRequest->getReturnUrl(),
+                $giftCardData,
+                [],
+                $partialTransactionRequest->getShopperReference()
+            );
+
+            $deductedAmount += $giftCardAmount->getPriceInCurrencyUnits();
+        }
+
+        return [
+            'requests' => $requests,
+            'deductedAmount' => $deductedAmount
+        ];
+    }
+
+    /**
+     * Creates partial transaction request for payment method.
+     *
+     * @param StartPartialTransactionsRequest $partialTransactionRequest
+     * @param float $deductedAmount
+     * @return StartTransactionRequest
+     * @throws InvalidCurrencyCode
+     */
+    private function createPaymentMethodTransactionRequest(
+        StartPartialTransactionsRequest $partialTransactionRequest,
+        float                           $deductedAmount
+    ): StartTransactionRequest
+    {
+        return new StartTransactionRequest(
+            $partialTransactionRequest->getPaymentMethodType(),
+            Amount::fromFloat(
+                $partialTransactionRequest->getOrderTotalAmount() - $deductedAmount,
+                Currency::fromIsoCode($partialTransactionRequest->getCurrency())
+            ),
+            $partialTransactionRequest->getReference(),
+            $partialTransactionRequest->getReturnUrl(),
+            $partialTransactionRequest->getPaymentMethodStateData(),
+            [],
+            $partialTransactionRequest->getShopperReference()
+        );
+    }
+
+    /**
+     * Creates transactions on Adyen for every transaction request.
+     *
+     * @param array $requests
+     * @param Order $order
+     * @return StartTransactionResponse
+     * @throws InvalidPaymentMethodCodeException
+     */
+    private function startTransactions(array $requests, Order $order): StartTransactionResponse
+    {
+        $results = [];
+
+        foreach ($requests as $request) {
+            $startTransactionRequest = new StartTransactionRequestContext(
+                PaymentMethodCode::parse($request->getPaymentMethodType()),
+                $request->getAmount(),
+                $request->getReference(),
+                $request->getReturnUrl(),
+                new DataBag($request->getStateData()),
+                new DataBag($request->getSessionData()),
+                $request->getShopperReference()
+            );
+
+            $response = new StartTransactionResponse(
+                $this->startTransaction(
+                    $startTransactionRequest, $order
+                )
+            );
+
+            $results[] = $response;
+
+            if (!$response->isSuccessful()) {
+                break;
+            }
+        }
+
+        return end($results);
     }
 }

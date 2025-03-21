@@ -56,6 +56,21 @@ class CheckoutAPI
             ::run(new ErrorHandlingAspect())
             ->andRun(new StoreContextAspect($storeId))
             ->beforeEachMethodOfService(PaymentRequestController::class);
+    }   
+    
+    /**
+     * @param string $storeId
+     *
+     * @return PartialPaymentController
+     *
+     * @throws Exception
+     */
+    public function partialPaymentRequest(string $storeId): object
+    {
+        return Aspects
+            ::run(new ErrorHandlingAspect())
+            ->andRun(new StoreContextAspect($storeId))
+            ->beforeEachMethodOfService(PartialPaymentController::class);
     }
 
     /**

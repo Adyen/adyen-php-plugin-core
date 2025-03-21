@@ -3,11 +3,14 @@
 namespace Adyen\Core\BusinessLogic\CheckoutAPI\PartialPayment\Controller;
 
 use Adyen\Core\BusinessLogic\CheckoutAPI\PartialPayment\Request\BalanceCheckRequest;
+use Adyen\Core\BusinessLogic\CheckoutAPI\PartialPayment\Request\StartPartialTransactionsRequest;
 use Adyen\Core\BusinessLogic\CheckoutAPI\PartialPayment\Response\BalanceCheckResponse;
+use Adyen\Core\BusinessLogic\CheckoutAPI\PartialPayment\Response\StartPartialTransactionsResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidCurrencyCode;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidPaymentMethodCodeException;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
-use Adyen\Core\BusinessLogic\Domain\PartialPayments\Models\BalanceResult;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Services\PaymentRequestService;
 use Adyen\Core\BusinessLogic\Domain\PartialPayments\Service\PartialPaymentService;
 
 /**
@@ -18,6 +21,10 @@ use Adyen\Core\BusinessLogic\Domain\PartialPayments\Service\PartialPaymentServic
 class PartialPaymentController
 {
     /**
+     * @var PaymentRequestService
+     */
+    private $service;
+    /**
      * @var PartialPaymentService
      */
     private $partialPaymentService;
@@ -25,8 +32,9 @@ class PartialPaymentController
     /**
      * @param PartialPaymentService $partialPaymentService
      */
-    public function __construct(PartialPaymentService $partialPaymentService)
+    public function __construct(PaymentRequestService $service, PartialPaymentService $partialPaymentService)
     {
+        $this->service = $service;
         $this->partialPaymentService = $partialPaymentService;
     }
 
@@ -47,5 +55,24 @@ class PartialPaymentController
             ),
             $balanceCheckRequest->getPaymentMethod()
         ));
+    }
+
+    /**
+     * Handles partial payments.
+     *
+     * @param StartPartialTransactionsRequest $partialTransactionRequest
+     * @return StartPartialTransactionsResponse
+     * @throws InvalidCurrencyCode
+     * @throws InvalidPaymentMethodCodeException
+     */
+    public function startPartialTransactions(
+        StartPartialTransactionsRequest $partialTransactionRequest
+    ): StartPartialTransactionsResponse
+    {
+        return new StartPartialTransactionsResponse(
+            $this->service->startPartialTransactions(
+                $partialTransactionRequest
+            )
+        );
     }
 }

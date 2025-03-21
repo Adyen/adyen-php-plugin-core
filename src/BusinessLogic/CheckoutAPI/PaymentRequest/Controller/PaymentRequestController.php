@@ -7,7 +7,6 @@ use Adyen\Core\BusinessLogic\CheckoutAPI\PaymentRequest\Response\StartTransactio
 use Adyen\Core\BusinessLogic\CheckoutAPI\PaymentRequest\Response\UpdatePaymentDetailsResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidCurrencyCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidPaymentMethodCodeException;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\DataBag;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateOrderRequest;
@@ -15,8 +14,6 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PayPalUpdateO
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\StartTransactionRequestContext;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePaymentDetailsRequest;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Services\PaymentRequestService;
-use Adyen\Core\BusinessLogic\Domain\PartialPayments\Models\Order;
-use Adyen\Core\BusinessLogic\Domain\PartialPayments\Service\PartialPaymentService;
 use Exception;
 
 /**
@@ -30,19 +27,13 @@ class PaymentRequestController
      * @var PaymentRequestService
      */
     private $service;
-    /**
-     * @var PartialPaymentService
-     */
-    private $partialPaymentService;
 
     /**
      * @param PaymentRequestService $service
-     * @param PartialPaymentService $partialPaymentService
      */
-    public function __construct(PaymentRequestService $service, PartialPaymentService $partialPaymentService)
+    public function __construct(PaymentRequestService $service)
     {
         $this->service = $service;
-        $this->partialPaymentService = $partialPaymentService;
     }
 
     /**
@@ -64,50 +55,6 @@ class PaymentRequestController
                 )
             )
         );
-    }
-
-    /**
-     * @param StartTransactionRequest[] $requests
-     * @param Amount $amount
-     * @param string $reference
-     *
-     * @return array
-     *
-     * @throws InvalidPaymentMethodCodeException
-     * @throws Exception
-     */
-    public function startPartialTransaction(array $requests, Amount $amount, string $reference): array
-    {
-        $orderCreateResult = $this->partialPaymentService->createOrder($reference, $amount);
-        $order = new Order($orderCreateResult->getOrderData(), $orderCreateResult->getPspReference());
-
-        $result = [];
-
-        foreach ($requests as $request) {
-            $startTransactionRequest =  new StartTransactionRequestContext(
-                PaymentMethodCode::parse($request->getPaymentMethodType()),
-                $request->getAmount(),
-                $request->getReference(),
-                $request->getReturnUrl(),
-                new DataBag($request->getStateData()),
-                new DataBag($request->getSessionData()),
-                $request->getShopperReference()
-            );
-
-            $response = new StartTransactionResponse(
-                $this->service->startTransaction(
-                    $startTransactionRequest, $order
-                )
-            );
-
-            $result[] = $response;
-
-            if (!$response->isSuccessful()) {
-                break;
-            }
-        }
-
-        return $result;
     }
 
     /**

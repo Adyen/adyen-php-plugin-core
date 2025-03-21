@@ -24,9 +24,9 @@ class BalanceResult
     /**
      * @param string $pspReference
      * @param string $resultCode
-     * @param Amount $balance
+     * @param Amount|null $balance
      */
-    public function __construct(string $pspReference, string $resultCode, Amount $balance)
+    public function __construct(string $pspReference, string $resultCode, ?Amount $balance)
     {
         $this->pspReference = $pspReference;
         $this->resultCode = $resultCode;
@@ -43,7 +43,7 @@ class BalanceResult
         return $this->resultCode;
     }
 
-    public function getBalance(): Amount
+    public function getBalance(): ?Amount
     {
         return $this->balance;
     }
