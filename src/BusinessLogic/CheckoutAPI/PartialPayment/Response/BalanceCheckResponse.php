@@ -27,13 +27,15 @@ class BalanceCheckResponse extends Response
 
     public function toArray(): array
     {
+        $balance = $this->result->getBalance();
+
         return [
             'pspReference' => $this->result->getPspReference(),
             'resultCode' => $this->result->getResultCode(),
-            'balance' => [
-                'currency' => $this->result->getBalance()->getCurrency()->getIsoCode(),
-                'value' => $this->result->getBalance()->getValue()
-            ]
+            'balance' => $balance ? [
+                'currency' => $balance->getCurrency()->getIsoCode(),
+                'value' => $balance->getValue(),
+            ] : null,
         ];
     }
 }
