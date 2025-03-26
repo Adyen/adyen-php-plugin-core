@@ -17,7 +17,7 @@ class BalanceResult
      */
     private $resultCode;
     /**
-     * @var Amount
+     * @var Amount|null
      */
     private $balance;
 
