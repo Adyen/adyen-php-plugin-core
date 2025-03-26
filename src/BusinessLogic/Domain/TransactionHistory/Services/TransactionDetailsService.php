@@ -163,7 +163,7 @@ class TransactionDetailsService
     {
         try {
             return !empty($code) && $this->parseCode($code)->isCaptureSupported()
-                && !$collection
+                && $collection
                     ->filterByEventCode(EventCodes::CANCELLATION)
                     ->filterByStatus(true)
                     ->isEmpty()
@@ -449,7 +449,7 @@ class TransactionDetailsService
     ): array
     {
         $paymentMethod = $item->getPaymentMethod();
-        $isCaptureTypeKnown = $item->getCaptureType() && $item->getCaptureType()->equal(CaptureType::unknown());
+        $isCaptureTypeKnown = $item->getCaptureType() && !$item->getCaptureType()->equal(CaptureType::unknown());
         $authorizationAmount = $item->getAmount();
         $samePaymentItems = $transactionHistory->collection()->filterByOriginalReference($item->getPspReference());
 
