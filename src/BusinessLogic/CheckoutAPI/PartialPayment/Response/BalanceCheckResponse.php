@@ -25,6 +25,11 @@ class BalanceCheckResponse extends Response
         $this->result = $result;
     }
 
+    public function isSuccessful(): bool
+    {
+        return $this->result->getBalance() !== null;
+    }
+
     public function toArray(): array
     {
         $balance = $this->result->getBalance();
