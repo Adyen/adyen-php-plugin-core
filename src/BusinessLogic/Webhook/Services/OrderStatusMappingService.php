@@ -105,9 +105,11 @@ class OrderStatusMappingService implements OrderStatusProvider
         $authorizedAmount = $transactionHistory->getAuthorizedAmount();
         $refundedAmount = $transactionHistory->getTotalAmountForEventCode(EventCodes::REFUND);
 
-        if ($webhook->getEventCode() === EventCodes::ORDER_CLOSED && !$webhook->isSuccess() &&
-            count($transactionHistory->collection()->filterAllByEventCode('PAYMENT_REQUESTED')
-                ->filterByPspReference($webhook->getPspReference())->getAll()) === 0) {
+        if ($webhook->getEventCode() === EventCodes::ORDER_CLOSED &&
+            !$webhook->isSuccess() &&
+            !$transactionHistory->collection()->filterAllByEventCode(EventCodes::AUTHORISATION)
+                ->filterAllByStatus(true)->isEmpty()
+        ) {
             return $previousPaymentState;
         }
 

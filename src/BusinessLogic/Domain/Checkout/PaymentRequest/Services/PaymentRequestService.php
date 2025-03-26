@@ -264,26 +264,16 @@ class PaymentRequestService
     public function removeTransactionHistoryItems(string $merchantReference): void
     {
         $transactionHistory = $this->transactionHistoryService->getTransactionHistory($merchantReference);
-        $historyItems = [];
-
-        foreach ($transactionHistory->collection()->getAll() as $transactionHistoryItem) {
-            if ($transactionHistoryItem->getEventCode() === 'PAYMENT_REQUESTED') {
-                continue;
-            }
-
-            $historyItems[] = $transactionHistoryItem;
-        }
-
         $newHistory = new TransactionHistory(
             $merchantReference,
             $transactionHistory->getCaptureType(),
             $transactionHistory->getCaptureDelay(),
-            $transactionHistory->getCurrency(),
-            $transactionHistory->getAuthorizationType(),
-            $historyItems,
-            $transactionHistory->getOrderData() ?: '',
-            $transactionHistory->getOrderPspReference() ?: '',
-            $transactionHistory->getAuthorizationPspReferences()
+            null,
+            null,
+            [],
+            '',
+            '',
+            []
         );
 
         $this->transactionHistoryService->setTransactionHistory($newHistory);

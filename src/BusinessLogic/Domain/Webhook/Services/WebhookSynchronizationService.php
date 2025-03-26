@@ -85,6 +85,22 @@ class WebhookSynchronizationService
     public function synchronizeChanges(Webhook $webhook, bool $orderCreated = true): void
     {
         $transactionHistory = $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference());
+
+        if ($webhook->getEventCode() === EventCodes::OFFER_CLOSED &&
+            !$transactionHistory->collection()->filterAllByEventCode(EventCodes::AUTHORISATION)
+                ->filterAllByStatus(true)->isEmpty()) {
+            return;
+        }
+
+        if ($webhook->getEventCode() === EventCodes::ORDER_CLOSED && !$webhook->isSuccess()) {
+            $this->handleOrderClosedFailure($webhook, $transactionHistory);
+
+            if (!$transactionHistory->collection()->filterAllByEventCode(EventCodes::AUTHORISATION)
+                ->filterAllByStatus(true)->isEmpty()) {
+                return;
+            }
+        }
+
         $newState = $this->orderStatusProvider->getNewPaymentState($webhook, $transactionHistory);
 
         $generalSettings = $this->settingsService->getGeneralSettings();
@@ -121,15 +137,6 @@ class WebhookSynchronizationService
         $settings = $this->settingsService->getGeneralSettings();
 
         if ($this->shouldHandleWebhook($webhook, $settings, $transactionHistory)) {
-            return;
-        }
-
-        if ($webhook->getEventCode() === EventCodes::ORDER_CLOSED && !$webhook->isSuccess() &&
-            count($transactionHistory->collection()->filterAllByEventCode('PAYMENT_REQUESTED')
-                ->filterByPspReference($webhook->getPspReference())->getAll()) === 0
-        ) {
-            $this->handleOrderClosedFailure($webhook, $transactionHistory);
-
             return;
         }
 
@@ -184,6 +191,7 @@ class WebhookSynchronizationService
      */
     protected function handleOrderClosedFailure(Webhook $webhook, TransactionHistory $transactionHistory): void
     {
+        $eventPSPReference = $webhook->getPspReference();
         $references = [];
 
         foreach ($webhook->getAdditionalData() as $key => $value) {
@@ -195,10 +203,12 @@ class WebhookSynchronizationService
         $obsoleteItems = [];
 
         foreach ($references as $reference) {
-            $obsoleteItems[] = $transactionHistory->collection()->filterByPspReference($reference);
-            $obsoleteItems[] = $transactionHistory->collection()->filterByOriginalReference($reference);
+            $obsoleteItems[] = $transactionHistory->collection()->filterByPspReference($eventPSPReference)->getAll();
+            $obsoleteItems[] = $transactionHistory->collection()->filterByPspReference($reference)->getAll();
+            $obsoleteItems[] = $transactionHistory->collection()->filterByOriginalReference($reference)->getAll();
         }
 
+        $obsoleteItems = array_merge(...$obsoleteItems);
         $allItems = $transactionHistory->collection()->getAll();
         $items = [];
 
