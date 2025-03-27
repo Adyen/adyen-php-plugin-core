@@ -236,4 +236,20 @@ class Webhook
     {
         return $this->additionalData;
     }
+
+    /**
+     * @return array Found PSP references in additional data
+     */
+    public function getPspReferencesFromAdditionalData(): array
+    {
+        $references = [];
+
+        foreach ($this->getAdditionalData() as $key => $value) {
+            if (strpos($key, 'pspReference') !== false) {
+                $references[] = $value;
+            }
+        }
+
+        return $references;
+    }
 }

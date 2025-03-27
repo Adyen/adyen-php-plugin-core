@@ -5,6 +5,7 @@ namespace Adyen\Core\Tests\BusinessLogic\Domain\Webhook\Services;
 use Adyen\Core\BusinessLogic\Bootstrap\SingleInstance;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\Integration\Store\StoreService;
@@ -248,7 +249,7 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
             'TestMerchant',
             'merchantRef',
             '7914073381342284',
-            'Method',
+            (string)PaymentMethodCode::giftCard(),
             'reason',
             true,
             '',
@@ -283,7 +284,7 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
             'TestMerchant',
             'merchantRef',
             '79140733813422890',
-            'Method',
+            (string)PaymentMethodCode::giftCard(),
             'reason',
             true,
             'ref',
@@ -318,7 +319,7 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
             'TestMerchant',
             'merchantRef',
             '79140733813422890',
-            'Method',
+            (string)PaymentMethodCode::giftCard(),
             'reason',
             false,
             '7914073381342284',
@@ -430,7 +431,7 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
                     '2023-02-01T14:09:24+01:00',
                     true,
                     Amount::fromInt(1, Currency::getDefault()),
-                    'Method',
+                    (string)PaymentMethodCode::giftCard(),
                     0,
                     false,
                     '7914073381342284',
