@@ -200,10 +200,9 @@ class WebhookSynchronizationService
             }
         }
 
-        $obsoleteItems = [];
+        $obsoleteItems = $transactionHistory->collection()->filterByPspReference($eventPSPReference)->getAll();
 
         foreach ($references as $reference) {
-            $obsoleteItems[] = $transactionHistory->collection()->filterByPspReference($eventPSPReference)->getAll();
             $obsoleteItems[] = $transactionHistory->collection()->filterByPspReference($reference)->getAll();
             $obsoleteItems[] = $transactionHistory->collection()->filterByOriginalReference($reference)->getAll();
         }
