@@ -139,7 +139,7 @@ class PaymentRequestService
             $connectionSettings = $this->connectionService->getConnectionData();
 
             $historyItem = new HistoryItem(
-                $order ? $order->getPspReference() : $context->getReference(),
+                'PAYMENT_REQUESTED_' . ($order ? $order->getPspReference() : $context->getReference()),
                 $context->getReference(),
                 'PAYMENT_REQUESTED',
                 '',
