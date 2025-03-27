@@ -212,6 +212,10 @@ class PaymentMethod
      */
     public static function getLogoUrl(string $code): string
     {
+        if ($code === '') {
+            return '';
+        }
+
         if ($code === PaymentService::CREDIT_CARD_CODE) {
             $code = self::CREDIT_CARD_LOGO;
         }
