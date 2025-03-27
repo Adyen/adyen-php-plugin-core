@@ -102,20 +102,32 @@ class CaptureHandler
             }
 
             $success = true;
+            $cancelableItems = $transactionHistory->collection()
+                ->filterAllByEventCode(EventCodes::AUTHORISATION)
+                ->filterAllByStatus(true)
+                ->getAll();
 
-            foreach ($transactionHistory->collection()->filterAllByEventCode(EventCodes::AUTHORISATION)->getAll() as $item) {
+            foreach ($cancelableItems as $item) {
                 if ($amount->getValue() === 0) {
                     break;
                 }
 
-                $samePaymentItems = $transactionHistory->collection()->filterByOriginalReference($item->getPspReference());
+                $samePaymentItems = $transactionHistory->collection()
+                    ->filterByOriginalReference($item->getPspReference());
 
-                if (!$samePaymentItems->filterAllByEventCode(EventCodes::CANCELLATION)->isEmpty()) {
+                $cancellations = $samePaymentItems
+                    ->filterAllByEventCode(EventCodes::CANCELLATION)
+                    ->filterAllByStatus(true);
+                if (!$cancellations->isEmpty()) {
                     continue;
                 }
 
                 $captureAmount = $this->transactionDetailsService->getCapturedAmount($transactionHistory, $samePaymentItems);
                 $capturableAmount = $this->transactionDetailsService->getCapturableAmount($transactionHistory, $samePaymentItems, $captureAmount);
+
+                if ($capturableAmount->getValue() === 0) {
+                    continue;
+                }
 
                 if ($capturableAmount->getValue() < $amount->getValue()) {
                     $success &= $this->capturePayment($merchantAccount, $item->getPspReference(), $capturableAmount, $transactionHistory);

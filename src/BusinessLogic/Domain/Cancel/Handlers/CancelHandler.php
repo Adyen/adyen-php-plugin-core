@@ -156,13 +156,20 @@ class CancelHandler
             return true;
         }
 
-        $cancelled = $transactionHistory->collection()->filterByOriginalReference($authorizationPspReference)->filterAllByEventCode(EventCodes::CANCELLATION);
+        $cancelled = $transactionHistory->collection()
+            ->filterByOriginalReference($authorizationPspReference)
+            ->filterAllByEventCode(EventCodes::CANCELLATION)
+            ->filterAllByStatus(true);
 
         if (!$cancelled->isEmpty()) {
             return true;
         }
 
-        $refunded = $transactionHistory->collection()->filterByOriginalReference($authorizationPspReference)->filterAllByEventCode(EventCodes::REFUND);
+        $refunded = $transactionHistory->collection()
+            ->filterByOriginalReference($authorizationPspReference)
+            ->filterAllByEventCode(EventCodes::REFUND)
+            ->filterAllByStatus(true);
+
         $refundedAmount = $refunded->getAmount(Currency::fromIsoCode($transactionHistory->getCurrency()));
 
         if ($authorization->getAmount()->getValue() === $refundedAmount->getValue()) {

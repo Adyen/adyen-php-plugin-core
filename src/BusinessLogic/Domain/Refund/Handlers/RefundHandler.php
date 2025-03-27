@@ -103,16 +103,16 @@ class RefundHandler
             $success = true;
             $refundRequests = [];
 
-            foreach ($transactionHistory->collection()->filterAllByEventCode(EventCodes::AUTHORISATION)->getAll() as $item) {
+            $authorizationItems = $transactionHistory->collection()
+                ->filterAllByEventCode(EventCodes::AUTHORISATION)
+                ->filterAllByStatus(true)
+                ->getAll();
+            foreach ($authorizationItems as $item) {
                 if ($amount->getValue() === 0) {
                     break;
                 }
 
                 $samePaymentItems = $transactionHistory->collection()->filterByOriginalReference($item->getPspReference());
-
-                if (!$samePaymentItems->filterAllByEventCode(EventCodes::CANCELLATION)->isEmpty()) {
-                    continue;
-                }
 
                 $refundedAmount = $samePaymentItems->filterByEventCode(EventCodes::REFUND)->getAmount($transactionHistory->getCurrency());
                 $captureAmount = $this->transactionDetailsService->getCapturedAmount($transactionHistory, $samePaymentItems);
