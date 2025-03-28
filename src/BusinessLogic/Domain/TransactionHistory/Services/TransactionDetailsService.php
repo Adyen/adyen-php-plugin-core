@@ -14,6 +14,7 @@ use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsService;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\PaymentMethod;
 use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
+use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\ShopEvents;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItemCollection;
@@ -92,7 +93,8 @@ class TransactionDetailsService
         $orderOpen = $transactionHistory->collection()->filterAllByEventCode(EventCodes::ORDER_OPENED)->getAll();
         $authorization = $transactionHistory->collection()->filterAllByEventCode(EventCodes::AUTHORISATION)->getAll();
         $orderClosed = $transactionHistory->collection()->filterAllByEventCode(EventCodes::ORDER_CLOSED)->getAll();
-        $transactions = array_merge($orderOpen, $authorization, $orderClosed);
+        $paymentLinkTransactions = $transactionHistory->collection()->filterByEventCode(ShopEvents::PAYMENT_LINK_CREATED)->getAll();
+        $transactions = array_merge($orderOpen, $authorization, $paymentLinkTransactions, $orderClosed);
 
         usort($transactions, static function ($a, $b) {
             return strtotime($a->getDateAndTime()) - strtotime($b->getDateAndTime());
@@ -121,7 +123,11 @@ class TransactionDetailsService
                     ]];
                 }
 
-                if ($item->getEventCode() === EventCodes::AUTHORISATION) {
+                if (in_array(
+                    $item->getEventCode(),
+                    [EventCodes::AUTHORISATION, ShopEvents::PAYMENT_LINK_CREATED],
+                    true
+                )) {
                     $result[] = $this->formatItem($item, $transactionHistory, $isMerchantConnected, $connectionSettings, $storeId);
                 }
             } catch (CurrencyMismatchException $e) {

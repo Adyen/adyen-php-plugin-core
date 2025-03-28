@@ -56,7 +56,7 @@ class GeneralSettings extends Entity
             self::getDataValue($generalSettings, 'payByLinkTitle'),
             self::getDataValue($generalSettings, 'defaultLinkExpirationTime', 7),
             self::getDataValue($generalSettings, 'cancelledPartialPayment'),
-            self::getDataValue($generalSettings, 'disabledOrderModificationsForFailedRefund')
+            self::getDataValue($generalSettings, 'disabledOrderModificationsForFailedRefund', false)
         );
     }
 

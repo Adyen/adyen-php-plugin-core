@@ -8,6 +8,7 @@ use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\GeneralSettings;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsService;
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
+use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\ShopEvents;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItemCollection;
@@ -120,6 +121,7 @@ class WebhookSynchronizationService
             $captureType = CaptureType::immediate();
         }
 
+        $isPaymentLinkSet = $transactionHistory->getPaymentLink();
         $transactionHistory->add(
             new HistoryItem(
                 $webhook->getPspReference(),
@@ -161,13 +163,17 @@ class WebhookSynchronizationService
         }
 
         $newStateId = $this->orderStatusProvider->getOrderStatus($newState);
-        if (!empty($newStateId) && $orderCreated) {
+        if (!empty($newStateId)) {
             $this->orderService->updateOrderStatus($webhook, $newStateId);
         }
 
-        if ($orderCreated && $webhook->isSuccess() &&
-            $webhook->getEventCode() === EventCodes::ORDER_CLOSED &&
-            $webhook->getPspReference() !== $transactionHistory->getOriginalPspReference()) {
+        if ($webhook->isSuccess() &&
+            in_array($webhook->getEventCode(), [EventCodes::ORDER_CLOSED, EventCodes::AUTHORISATION], true) &&
+            (
+                $webhook->getPspReference() !== $transactionHistory->getOriginalPspReference() ||
+                $isPaymentLinkSet
+            )
+        ) {
             $this->orderService->updateOrderPayment($webhook);
         }
     }
@@ -197,6 +203,13 @@ class WebhookSynchronizationService
      */
     protected function shouldNotHandleWebhook(Webhook $webhook, ?GeneralSettings $settings, TransactionHistory $transactionHistory): bool
     {
+        $paymentLinkTransactionsExists = !$transactionHistory->collection()
+            ->filterAllByEventCode(ShopEvents::PAYMENT_LINK_CREATED)
+            ->isEmpty();
+        if ($paymentLinkTransactionsExists && $webhook->getEventCode() === EventCodes::AUTHORISATION) {
+            return false;
+        }
+
         return in_array($webhook->getEventCode(), [EventCodes::AUTHORISATION, EventCodes::ORDER_OPENED], true) ||
             ($settings && $webhook->getEventCode() === EventCodes::CANCELLATION
                 && !$settings->isCancelledPartialPayment() &&
