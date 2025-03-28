@@ -3,6 +3,7 @@
 namespace Adyen\Core\BusinessLogic\Domain\Webhook\Services;
 
 use Adyen\Core\BusinessLogic\AdyenAPI\Management\Webhook\Http\Proxy;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\GeneralSettings;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsService;
@@ -111,8 +112,13 @@ class WebhookSynchronizationService
             $newState = $previousPaymentState;
         }
 
-        $generalSettings = $this->settingsService->getGeneralSettings();
-        $captureType = $generalSettings ? $generalSettings->getCapture() : CaptureType::immediate();
+        $captureType = $transactionHistory->getCaptureType();
+        if (
+            in_array($webhook->getPaymentMethod(), PaymentMethodCode::SUPPORTED_PAYMENT_METHODS, true) &&
+            !PaymentMethodCode::parse($webhook->getPaymentMethod())->isCaptureSupported()
+        ) {
+            $captureType = CaptureType::immediate();
+        }
 
         $transactionHistory->add(
             new HistoryItem(
@@ -131,14 +137,17 @@ class WebhookSynchronizationService
             )
         );
 
+        $references = $transactionHistory->getAuthorizationPspReferences();
         if ($webhook->getEventCode() === EventCodes::CANCELLATION) {
-            $references = $transactionHistory->getAuthorizationPspReferences();
             $transactionHistory->setAuthorizationPspReferences(array_diff($references, [$webhook->getOriginalReference()]));
         }
 
         if ($webhook->getEventCode() === EventCodes::AUTHORISATION && $webhook->isSuccess()) {
-            $references = $transactionHistory->getAuthorizationPspReferences();
             $transactionHistory->setAuthorizationPspReferences(array_unique(array_merge($references, [$webhook->getPspReference()])));
+        }
+
+        if ($webhook->getEventCode() === EventCodes::ORDER_CLOSED && $webhook->isSuccess()) {
+            $this->handleOrderClosedSuccess($webhook, $transactionHistory);
         }
 
         $this->transactionHistoryService->setTransactionHistory($transactionHistory);
@@ -203,18 +212,11 @@ class WebhookSynchronizationService
     protected function handleOrderClosedFailure(Webhook $webhook, TransactionHistory $transactionHistory): void
     {
         $eventPSPReference = $webhook->getPspReference();
-        $references = [];
+        $references = $webhook->getPspReferencesFromAdditionalData();
 
-        foreach ($webhook->getAdditionalData() as $key => $value) {
-            if (strpos($key, 'pspReference') !== false) {
-                $references[] = $value;
-            }
-        }
-
-        $obsoleteItems = [$transactionHistory->collection()->filterByPspReference($eventPSPReference)->getAll()];
-
+        $obsoleteItems = [$transactionHistory->collection()->filterAllByPspReference($eventPSPReference)->getAll()];
         foreach ($references as $reference) {
-            $obsoleteItems[] = $transactionHistory->collection()->filterByPspReference($reference)->getAll();
+            $obsoleteItems[] = $transactionHistory->collection()->filterAllByPspReference($reference)->getAll();
             $obsoleteItems[] = $transactionHistory->collection()->filterByOriginalReference($reference)->getAll();
         }
 
@@ -229,6 +231,32 @@ class WebhookSynchronizationService
         }
 
         $transactionHistory->setAuthorizationPspReferences(array_diff($transactionHistory->getAuthorizationPspReferences(), $references));
+        $transactionHistory->setCollection(new HistoryItemCollection($items));
+        $this->transactionHistoryService->setTransactionHistory($transactionHistory);
+    }
+
+    protected function handleOrderClosedSuccess(Webhook $webhook, TransactionHistory $transactionHistory): void
+    {
+        $references = $webhook->getPspReferencesFromAdditionalData();
+
+        $obsoleteItems = [];
+        foreach ($transactionHistory->getAuthorizationPspReferences() as $reference) {
+            if (!in_array($reference, $references, true)) {
+                $obsoleteItems[] = $transactionHistory->collection()->filterAllByPspReference($reference)->getAll();
+            }
+        }
+
+        $obsoleteItems = array_merge(...$obsoleteItems);
+        $allItems = $transactionHistory->collection()->getAll();
+        $items = [];
+
+        foreach ($allItems as $item) {
+            if (!in_array($item, $obsoleteItems, true)) {
+                $items[] = $item;
+            }
+        }
+
+        $transactionHistory->setAuthorizationPspReferences($references);
         $transactionHistory->setCollection(new HistoryItemCollection($items));
         $this->transactionHistoryService->setTransactionHistory($transactionHistory);
     }

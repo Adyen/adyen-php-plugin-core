@@ -126,6 +126,10 @@ class TransactionHistoryService
     ): void {
         $history = $this->getTransactionHistory($merchantReference, $currency, $captureType, $authorizationType, $historyItem, $order);
 
+        if ($captureType) {
+            $history->setCaptureType($captureType);
+        }
+
         $this->setTransactionHistory($history);
     }
 }

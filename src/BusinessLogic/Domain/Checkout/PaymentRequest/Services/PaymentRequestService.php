@@ -149,7 +149,8 @@ class PaymentRequestService
                 $context->getPaymentMethodCode(),
                 0,
                 $connectionSettings && $connectionSettings->getMode() === Mode::MODE_LIVE,
-                $result->getPspReference() ?? ''
+                $result->getPspReference() ?? '',
+                $captureType
             );
 
             $this->transactionHistoryService->createTransactionHistory(
@@ -202,7 +203,7 @@ class PaymentRequestService
 
         $requests[] = $this
             ->createPaymentMethodTransactionRequest($partialTransactionRequest, $deductedAmount);
-        
+
         $amount = Amount::fromFloat(
             $partialTransactionRequest->getOrderTotalAmount(),
             Currency::fromIsoCode($partialTransactionRequest->getCurrency())
