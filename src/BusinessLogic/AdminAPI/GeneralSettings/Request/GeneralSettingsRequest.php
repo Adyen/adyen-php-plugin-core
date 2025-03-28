@@ -60,6 +60,10 @@ class GeneralSettingsRequest extends Request
      * @var bool
      */
     private $cancelledPartialPayment;
+    /**
+     * @var bool
+     */
+    private $disabledOrderModificationsForFailedRefund;
 
     /**
      * @param bool $basketItemSync
@@ -71,6 +75,7 @@ class GeneralSettingsRequest extends Request
      * @param string $payByLinkTitle
      * @param string $defaultLinkExpirationTime
      * @param bool $cancelledPartialPayment
+     * @param bool $disabledOrderModificationsForFailedRefund
      */
     public function __construct(
         bool $basketItemSync,
@@ -81,7 +86,8 @@ class GeneralSettingsRequest extends Request
         bool $enablePayByLink = true,
         string $payByLinkTitle = '',
         string $defaultLinkExpirationTime = '7',
-        bool $cancelledPartialPayment = true
+        bool $cancelledPartialPayment = true,
+        bool $disabledOrderModificationsForFailedRefund = false
     ) {
         $this->basketItemSync = $basketItemSync;
         $this->captureType = $captureType;
@@ -92,6 +98,7 @@ class GeneralSettingsRequest extends Request
         $this->payByLinkTitle = $payByLinkTitle;
         $this->defaultLinkExpirationTime = $defaultLinkExpirationTime;
         $this->cancelledPartialPayment = $cancelledPartialPayment;
+        $this->disabledOrderModificationsForFailedRefund = $disabledOrderModificationsForFailedRefund;
     }
 
     /**
@@ -115,7 +122,8 @@ class GeneralSettingsRequest extends Request
             $this->enablePayByLink,
             !empty($this->payByLinkTitle) ? $this->payByLinkTitle : 'Adyen Pay By Link',
             !empty($this->defaultLinkExpirationTime) ? $this->defaultLinkExpirationTime : '7',
-            $this->cancelledPartialPayment
+            $this->cancelledPartialPayment,
+            $this->disabledOrderModificationsForFailedRefund
         );
     }
 }

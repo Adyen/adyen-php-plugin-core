@@ -212,6 +212,7 @@ class GeneralSettingsApiTest extends BaseTestCase
             'payByLinkTitle' => 'Title',
             'defaultLinkExpirationTime' => 7,
             'cancelledPartialPayment' => true,
+            'disabledOrderModificationsForFailedRefund' => false
         ];
     }
 }

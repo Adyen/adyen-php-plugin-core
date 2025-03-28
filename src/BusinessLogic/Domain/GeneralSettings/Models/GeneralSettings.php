@@ -57,6 +57,10 @@ class GeneralSettings
      * @var bool
      */
     private $cancelledPartialPayment;
+    /**
+     * @var bool
+     */
+    private $disabledOrderModificationsForFailedRefund;
 
     /**
      * @param bool $basketItemSync
@@ -68,7 +72,7 @@ class GeneralSettings
      * @param string $payByLinkTitle
      * @param string $defaultLinkExpirationTime
      * @param bool $cancelledPartialPayment
-     *
+     * @param bool $disabledOrderModificationsForFailedRefund
      * @throws InvalidCaptureDelayException
      * @throws InvalidDefaultExpirationTimeException
      * @throws InvalidRetentionPeriodException
@@ -82,7 +86,8 @@ class GeneralSettings
         bool $enablePayByLink = true,
         string $payByLinkTitle = 'Adyen Pay By Link',
         string $defaultLinkExpirationTime = '7',
-        bool $cancelledPartialPayment = true
+        bool $cancelledPartialPayment = true,
+        bool $disabledOrderModificationsForFailedRefund = false
     ) {
         $this->validate($captureDelay, $retentionPeriod, $defaultLinkExpirationTime);
 
@@ -95,6 +100,7 @@ class GeneralSettings
         $this->payByLinkTitle = $payByLinkTitle;
         $this->defaultLinkExpirationTime = $defaultLinkExpirationTime;
         $this->cancelledPartialPayment = $cancelledPartialPayment;
+        $this->disabledOrderModificationsForFailedRefund = $disabledOrderModificationsForFailedRefund;
     }
 
     /**
@@ -180,6 +186,11 @@ class GeneralSettings
     public function isCancelledPartialPayment(): bool
     {
         return $this->cancelledPartialPayment;
+    }
+
+    public function areDisabledOrderModificationsForFailedRefund(): bool
+    {
+        return $this->disabledOrderModificationsForFailedRefund;
     }
 
     /**

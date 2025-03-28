@@ -41,7 +41,8 @@ class GeneralSettingsGetResponse extends Response
             'enablePayByLink' => false,
             'payByLinkTitle' => 'Adyen Pay By Link',
             'defaultLinkExpirationTime' => 7,
-            'cancelledPartialPayment' => true
+            'cancelledPartialPayment' => true,
+            'disabledOrderModificationsForFailedRefund' => false
         ];
     }
 
@@ -60,6 +61,8 @@ class GeneralSettingsGetResponse extends Response
             'payByLinkTitle' => $this->generalSettings->getPayByLinkTitle(),
             'defaultLinkExpirationTime' => $this->generalSettings->getDefaultLinkExpirationTime(),
             'cancelledPartialPayment' => $this->generalSettings->isCancelledPartialPayment(),
+            'disabledOrderModificationsForFailedRefund' =>
+                $this->generalSettings->areDisabledOrderModificationsForFailedRefund(),
         ];
     }
 }

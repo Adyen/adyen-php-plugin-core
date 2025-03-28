@@ -102,6 +102,14 @@ class WebhookSynchronizationService
         }
 
         $newState = $this->orderStatusProvider->getNewPaymentState($webhook, $transactionHistory);
+        $settings = $this->settingsService->getGeneralSettings();
+
+        if ($this->shouldDisableOrderModifications($settings, $webhook)) {
+            $lastTransactionHistoryItem = $transactionHistory->collection()
+                ->filterByOriginalReference($webhook->getOriginalReference())->last();
+            $previousPaymentState = $lastTransactionHistoryItem ? $lastTransactionHistoryItem->getPaymentState() : '';
+            $newState = $previousPaymentState;
+        }
 
         $generalSettings = $this->settingsService->getGeneralSettings();
         $captureType = $generalSettings ? $generalSettings->getCapture() : CaptureType::immediate();
@@ -134,9 +142,12 @@ class WebhookSynchronizationService
         }
 
         $this->transactionHistoryService->setTransactionHistory($transactionHistory);
-        $settings = $this->settingsService->getGeneralSettings();
 
-        if ($this->shouldHandleWebhook($webhook, $settings, $transactionHistory)) {
+        if ($this->shouldNotHandleWebhook($webhook, $settings, $transactionHistory)) {
+            return;
+        }
+
+        if ($this->shouldDisableOrderModifications($settings, $webhook)) {
             return;
         }
 
@@ -175,7 +186,7 @@ class WebhookSynchronizationService
      * @param TransactionHistory $transactionHistory
      * @return bool
      */
-    protected function shouldHandleWebhook(Webhook $webhook, ?GeneralSettings $settings, TransactionHistory $transactionHistory): bool
+    protected function shouldNotHandleWebhook(Webhook $webhook, ?GeneralSettings $settings, TransactionHistory $transactionHistory): bool
     {
         return in_array($webhook->getEventCode(), [EventCodes::AUTHORISATION, EventCodes::ORDER_OPENED], true) ||
             ($settings && $webhook->getEventCode() === EventCodes::CANCELLATION
@@ -220,5 +231,18 @@ class WebhookSynchronizationService
         $transactionHistory->setAuthorizationPspReferences(array_diff($transactionHistory->getAuthorizationPspReferences(), $references));
         $transactionHistory->setCollection(new HistoryItemCollection($items));
         $this->transactionHistoryService->setTransactionHistory($transactionHistory);
+    }
+
+    /**
+     * @param GeneralSettings|null $generalSettings
+     * @param Webhook $webhook
+     * @return bool
+     */
+    private function shouldDisableOrderModifications(?GeneralSettings $generalSettings, Webhook $webhook): bool
+    {
+        return $generalSettings &&
+            $generalSettings->areDisabledOrderModificationsForFailedRefund() &&
+            $webhook->getEventCode() === EventCodes::REFUND &&
+            !$webhook->isSuccess();
     }
 }
