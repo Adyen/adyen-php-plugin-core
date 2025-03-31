@@ -131,7 +131,7 @@ class CaptureHandler
 
                 if ($capturableAmount->getValue() < $amount->getValue()) {
                     $success &= $this->capturePayment($merchantAccount, $item->getPspReference(), $capturableAmount, $transactionHistory);
-                    $amount->minus($capturableAmount);
+                    $amount = $amount->minus($capturableAmount);
                 } else {
                     $success &= $this->capturePayment($merchantAccount, $item->getPspReference(), $amount, $transactionHistory);
                     $amount = Amount::fromInt(0, $amount->getCurrency());

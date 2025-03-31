@@ -140,7 +140,7 @@ class RefundHandler
                         'pspReference' => $item->getPspReference(),
                         'refundableAmount' => $refundableAmount
                     ];
-                    $amount->minus($refundableAmount);
+                    $amount = $amount->minus($refundableAmount);
                 } else {
                     if (!$partialRefund && $refundableAmount->getValue() > $amount->getValue()) {
                         continue;

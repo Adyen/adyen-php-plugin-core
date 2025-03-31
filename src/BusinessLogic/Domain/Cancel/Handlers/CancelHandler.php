@@ -133,6 +133,9 @@ class CancelHandler
         }
 
         $pspReference = $transactionHistory->getOriginalPspReference();
+        if (empty($pspReference)) {
+            return true;
+        }
 
         $success = $this->cancelProxy->cancelPayment(
             new CancelRequest($pspReference, $merchantReference, $merchantAccount)
