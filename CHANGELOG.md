@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [1.2.5 - 1.2.6](https://github.com/Adyen/adyen-php-plugin-core/compare/1.2.5...1.2.6) - 2025-01-30
+- Update webhook module version
+
+## [1.2.4 - 1.2.5](https://github.com/Adyen/adyen-php-plugin-core/compare/1.2.4...1.2.5) - 2025-01-29
+- Fix filtering authorised transaction items
+
 ## [1.2.3 - 1.2.4](https://github.com/Adyen/adyen-php-plugin-core/compare/1.2.2...1.2.3) - 2025-01-22
 - Rename Index class in infrastructure ORM to avoid collision with index.php files on MacOS 
 
