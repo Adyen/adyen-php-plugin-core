@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [1.2.7 - 2.0.0](https://github.com/Adyen/adyen-php-plugin-core/compare/1.2.7...2.0.0) - 2025-04-03
+- Add support for partial payments
+
 ## [1.2.6 - 1.2.7](https://github.com/Adyen/adyen-php-plugin-core/compare/1.2.6...1.2.7) - 2025-04-02
 - Fix type mismatch by allowing null in getTransactionLog method
 
