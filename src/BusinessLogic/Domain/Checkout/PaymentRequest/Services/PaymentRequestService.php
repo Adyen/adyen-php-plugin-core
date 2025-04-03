@@ -24,6 +24,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Proxies\PaymentsProx
 use Adyen\Core\BusinessLogic\Domain\Connection\Enums\Mode;
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
+use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsService;
 use Adyen\Core\BusinessLogic\Domain\PartialPayments\Models\Order;
 use Adyen\Core\BusinessLogic\Domain\PartialPayments\Service\PartialPaymentService;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
@@ -72,6 +73,10 @@ class PaymentRequestService
      * @var PartialPaymentService
      */
     private $partialPaymentsService;
+    /**
+     * @var GeneralSettingsService
+     */
+    private $generalSettingsService;
 
     /**
      * @param PaymentsProxy $paymentsProxy
@@ -81,6 +86,7 @@ class PaymentRequestService
      * @param PaymentMethodConfigRepository $methodConfigRepository
      * @param ConnectionService $connectionService
      * @param PartialPaymentService $partialPaymentService
+     * @param GeneralSettingsService $generalSettingsService
      */
     public function __construct(
         PaymentsProxy                 $paymentsProxy,
@@ -89,7 +95,8 @@ class PaymentRequestService
         TransactionHistoryService     $transactionHistoryService,
         PaymentMethodConfigRepository $methodConfigRepository,
         ConnectionService             $connectionService,
-        PartialPaymentService         $partialPaymentService
+        PartialPaymentService         $partialPaymentService,
+        GeneralSettingsService $generalSettingsService
     )
     {
         $this->paymentsProxy = $paymentsProxy;
@@ -99,6 +106,7 @@ class PaymentRequestService
         $this->methodConfigRepository = $methodConfigRepository;
         $this->connectionService = $connectionService;
         $this->partialPaymentsService = $partialPaymentService;
+        $this->generalSettingsService = $generalSettingsService;
     }
 
     /**
@@ -116,7 +124,8 @@ class PaymentRequestService
         $result = $this->paymentsProxy->startPaymentTransaction($request);
 
         if ($result->getResultCode()->isSuccessful()) {
-            $captureType = null;
+            $generalSettings = $this->generalSettingsService->getGeneralSettings();
+            $captureType = $generalSettings ? $generalSettings->getCapture() : CaptureType::immediate();
             if (!PaymentMethodCode::parse($context->getPaymentMethodCode())->isCaptureSupported()) {
                 $captureType = CaptureType::immediate();
             }

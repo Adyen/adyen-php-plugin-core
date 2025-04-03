@@ -293,7 +293,8 @@ class BootstrapComponent extends BaseBootstrapComponent
                     ServiceRegister::getService(TransactionHistoryService::class),
                     ServiceRegister::getService(PaymentMethodConfigRepository::class),
                     ServiceRegister::getService(ConnectionService::class),
-                    ServiceRegister::getService(PartialPaymentService::class)
+                    ServiceRegister::getService(PartialPaymentService::class),
+                    ServiceRegister::getService(GeneralSettingsService::class)
                 );
             })
         );
