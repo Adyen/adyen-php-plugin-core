@@ -16,7 +16,7 @@ use Adyen\Core\Infrastructure\TaskExecution\QueueItem;
 class UpdateListener extends Listener
 {
     /**
-     * @var TransactionLog
+     * @var TransactionLog|null
      */
     protected $transactionLog;
 
@@ -38,6 +38,10 @@ class UpdateListener extends Listener
     protected function doHandle(BaseQueueItemEvent $event): void
     {
         $this->init($event);
+
+        if ($this->transactionLog === null) {
+            return;
+        }
 
         $this->transactionLog->setQueueStatus($this->queueItem->getStatus());
 
@@ -79,6 +83,10 @@ class UpdateListener extends Listener
      */
     protected function save(): void
     {
+        if ($this->transactionLog === null) {
+            return;
+        }
+
         $this->getService()->update($this->transactionLog);
     }
 

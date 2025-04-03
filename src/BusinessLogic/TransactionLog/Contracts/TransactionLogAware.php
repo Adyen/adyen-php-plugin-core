@@ -17,7 +17,7 @@ interface TransactionLogAware
      *
      * @return TransactionLog
      */
-    public function getTransactionLog(): TransactionLog;
+    public function getTransactionLog(): ?TransactionLog;
 
     /**
      * Sets transaction log.

@@ -7,14 +7,14 @@ use Adyen\Core\BusinessLogic\DataAccess\TransactionLog\Entities\TransactionLog;
 trait TransactionLogAware
 {
     /**
-     * @var TransactionLog
+     * @var TransactionLog|null
      */
     protected $transactionLog;
 
     /**
      * @return TransactionLog
      */
-    public function getTransactionLog(): TransactionLog
+    public function getTransactionLog(): ?TransactionLog
     {
         return $this->transactionLog;
     }
