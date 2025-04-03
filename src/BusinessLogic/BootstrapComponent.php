@@ -288,7 +288,6 @@ class BootstrapComponent extends BaseBootstrapComponent
             new SingleInstance(static function () {
                 return new PaymentRequestService(
                     ServiceRegister::getService(PaymentsProxyInterface::class),
-                    new PaymentRequestFactory(),
                     ServiceRegister::getService(DonationsDataRepository::class),
                     ServiceRegister::getService(TransactionHistoryService::class),
                     ServiceRegister::getService(PaymentMethodConfigRepository::class),

@@ -48,10 +48,6 @@ class PaymentRequestService
      */
     private $paymentsProxy;
     /**
-     * @var PaymentRequestFactory
-     */
-    private $paymentRequestFactory;
-    /**
      * @var DonationsDataRepository
      */
     private $donationsDataRepository;
@@ -80,7 +76,6 @@ class PaymentRequestService
 
     /**
      * @param PaymentsProxy $paymentsProxy
-     * @param PaymentRequestFactory $paymentRequestFactory
      * @param DonationsDataRepository $donationsDataRepository
      * @param TransactionHistoryService $transactionHistoryService
      * @param PaymentMethodConfigRepository $methodConfigRepository
@@ -90,7 +85,6 @@ class PaymentRequestService
      */
     public function __construct(
         PaymentsProxy                 $paymentsProxy,
-        PaymentRequestFactory         $paymentRequestFactory,
         DonationsDataRepository       $donationsDataRepository,
         TransactionHistoryService     $transactionHistoryService,
         PaymentMethodConfigRepository $methodConfigRepository,
@@ -100,7 +94,6 @@ class PaymentRequestService
     )
     {
         $this->paymentsProxy = $paymentsProxy;
-        $this->paymentRequestFactory = $paymentRequestFactory;
         $this->donationsDataRepository = $donationsDataRepository;
         $this->transactionHistoryService = $transactionHistoryService;
         $this->methodConfigRepository = $methodConfigRepository;
@@ -114,7 +107,8 @@ class PaymentRequestService
      */
     public function startTransaction(StartTransactionRequestContext $context, Order $order = null): StartTransactionResult
     {
-        $request = $this->paymentRequestFactory->crate($context);
+        $paymentRequestFactory = new PaymentRequestFactory();
+        $request = $paymentRequestFactory->crate($context);
 
         if ($order) {
             $paymentOrder = new \Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Order($order->getOrderData(), $order->getPspReference());

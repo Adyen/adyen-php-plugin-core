@@ -430,7 +430,6 @@ class BaseTestCase extends TestCase
             PaymentRequestService::class => function () {
                 return new PaymentRequestService(
                     TestServiceRegister::getService(PaymentsProxy::class),
-                    new PaymentRequestFactory(),
                     TestServiceRegister::getService(DonationsDataRepository::class),
                     TestServiceRegister::getService(TransactionHistoryService::class),
                     TestServiceRegister::getService(PaymentMethodConfigRepository::class),

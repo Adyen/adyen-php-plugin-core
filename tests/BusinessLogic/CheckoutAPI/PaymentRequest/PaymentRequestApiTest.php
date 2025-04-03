@@ -73,7 +73,6 @@ class PaymentRequestApiTest extends BaseTestCase
                 return new PaymentRequestController(
                     new PaymentRequestService(
                         $this->paymentsProxy,
-                        new PaymentRequestFactory(),
                         TestServiceRegister::getService(DonationsDataRepository::class),
                         TestServiceRegister::getService(TransactionHistoryService::class),
                         ServiceRegister::getService(PaymentMethodConfigRepository::class),

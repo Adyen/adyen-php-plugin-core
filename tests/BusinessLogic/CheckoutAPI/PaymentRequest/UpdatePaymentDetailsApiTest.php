@@ -51,7 +51,6 @@ class UpdatePaymentDetailsApiTest extends BaseTestCase
             new SingleInstance(function () {
                 return new PaymentRequestController(new PaymentRequestService(
                     $this->paymentsProxy,
-                    new PaymentRequestFactory(),
                     TestServiceRegister::getService(DonationsDataRepository::class),
                     TestServiceRegister::getService(TransactionHistoryService::class),
                     TestServiceRegister::getService(PaymentMethodConfigRepository::class),
