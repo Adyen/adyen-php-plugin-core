@@ -155,10 +155,12 @@ class PaymentCheckoutConfigResponse extends Response
                 }
 
                 if (!empty($additionalData->getGatewayMerchantId())) {
+                    $configurations['paywithgoogle']['gatewayMerchantId'] = $additionalData->getGatewayMerchantId();
                     $configurations['googlepay']['gatewayMerchantId'] = $additionalData->getGatewayMerchantId();
                 }
 
                 if (!empty($additionalData->getMerchantId())) {
+                    $configurations['paywithgoogle']['merchantId'] = $additionalData->getMerchantId();
                     $configurations['googlepay']['merchantId'] = $additionalData->getMerchantId();
                 }
             }

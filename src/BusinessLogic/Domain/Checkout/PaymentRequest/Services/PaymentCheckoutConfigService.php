@@ -201,14 +201,24 @@ class PaymentCheckoutConfigService
             )
         );
 
+        $methodsResponse = [];
+
         if (!empty($_SERVER['HTTP_USER_AGENT'])) {
             $userAgent = $_SERVER['HTTP_USER_AGENT'];
-            $methodsResponse = [];
 
             foreach ($paymentMethodsResponse->getPaymentMethodsResponse() as $methodResponse) {
                 if ($methodResponse->getType() === 'applepay' &&
                     (!strpos($userAgent, 'Safari') || strpos($userAgent, 'Chrome'))) {
                     continue;
+                }
+
+                if ($methodResponse->getType() === 'googlepay') {
+                    $metadata = $methodResponse->getMetadata();
+                    if (isset($metadata['type'])) {
+                        $metadata['type'] = 'paywithgoogle';
+                    }
+
+                    $methodsResponse[] = new PaymentMethodResponse($methodResponse->getName(), 'paywithgoogle', $metadata);
                 }
 
                 $methodsResponse[] = $methodResponse;
@@ -227,7 +237,7 @@ class PaymentCheckoutConfigService
             );
 
             $paymentMethodsResponse = new AvailablePaymentMethodsResponse(
-                $paymentMethodsResponse->getPaymentMethodsResponse(),
+                $methodsResponse ?: $paymentMethodsResponse->getPaymentMethodsResponse(),
                 $paymentMethodsResponse->getStoredPaymentMethodsResponse(),
                 $this->filterRecurringPaymentMethods(
                     $recurringPaymentMethods,
