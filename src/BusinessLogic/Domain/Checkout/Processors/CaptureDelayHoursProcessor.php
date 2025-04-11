@@ -63,7 +63,7 @@ class CaptureDelayHoursProcessor implements PaymentRequestProcessor, PaymentLink
 
         if (!$configuredPaymentMethod &&
             in_array(
-                $context->getPaymentMethodCode(),
+                (string)$context->getPaymentMethodCode(),
                 [(string)PaymentMethodCode::payWithGoogle(), (string)PaymentMethodCode::googlePay()],
                 true
             )
