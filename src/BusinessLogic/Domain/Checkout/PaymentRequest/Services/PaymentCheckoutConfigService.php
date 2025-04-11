@@ -8,6 +8,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\AvailablePaymentMethodsResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Country;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentCheckoutConfigResult;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodsRequest;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ShopperReference;
@@ -212,13 +213,30 @@ class PaymentCheckoutConfigService
                     continue;
                 }
 
-                if ($methodResponse->getType() === 'googlepay') {
+                if (PaymentMethodCode::googlePay()->equals($methodResponse->getType())) {
                     $metadata = $methodResponse->getMetadata();
                     if (isset($metadata['type'])) {
-                        $metadata['type'] = 'paywithgoogle';
+                        $metadata['type'] = (string)PaymentMethodCode::payWithGoogle();
                     }
 
-                    $methodsResponse[] = new PaymentMethodResponse($methodResponse->getName(), 'paywithgoogle', $metadata);
+                    $methodsResponse[] = new PaymentMethodResponse(
+                        $methodResponse->getName(),
+                        (string)PaymentMethodCode::payWithGoogle(),
+                        $metadata
+                    );
+                }
+
+                if (PaymentMethodCode::payWithGoogle()->equals($methodResponse->getType())) {
+                    $metadata = $methodResponse->getMetadata();
+                    if (isset($metadata['type'])) {
+                        $metadata['type'] = (string)PaymentMethodCode::googlePay();
+                    }
+
+                    $methodsResponse[] = new PaymentMethodResponse(
+                        $methodResponse->getName(),
+                        (string)PaymentMethodCode::googlePay(),
+                        $metadata
+                    );
                 }
 
                 $methodsResponse[] = $methodResponse;
