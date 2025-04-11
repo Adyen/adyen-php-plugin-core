@@ -194,6 +194,20 @@ class PaymentService
     }
 
     /**
+     * Retrieves GooglePay payment method.
+     *
+     * @return PaymentMethod|null
+     *
+     * @throws Exception
+     */
+    public function getGooglePayMethod(): ?PaymentMethod
+    {
+        $method = $this->repository->getPaymentMethodByCode('googlepay');
+
+        return $method ?: $this->repository->getPaymentMethodByCode('paywithgoogle');
+    }
+
+    /**
      * @param PaymentMethod $method
      * @param PaymentMethodResponse[] $managementMethods
      *

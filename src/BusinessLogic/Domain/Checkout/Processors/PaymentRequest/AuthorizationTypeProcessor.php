@@ -3,8 +3,11 @@
 namespace Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest;
 
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Factory\PaymentRequestBuilder;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\StartTransactionRequestContext;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
+use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
+use Adyen\Core\Infrastructure\ServiceRegister;
 use Exception;
 
 /**
@@ -40,6 +43,18 @@ class AuthorizationTypeProcessor implements PaymentRequestProcessor
         $configuredPaymentMethod = $this->methodConfigRepository->getPaymentMethodByCode(
             (string)$context->getPaymentMethodCode()
         );
+
+        if (!$configuredPaymentMethod &&
+            in_array(
+                $context->getPaymentMethodCode(),
+                [(string)PaymentMethodCode::payWithGoogle(), (string)PaymentMethodCode::googlePay()],
+                true
+            )
+        ) {
+            /** @var PaymentService $paymentService */
+            $paymentService = ServiceRegister::getService(PaymentService::class);
+            $configuredPaymentMethod = $paymentService->getGooglePayMethod();
+        }
 
         if (!$configuredPaymentMethod ||
             !$configuredPaymentMethod->getAuthorizationType()) {

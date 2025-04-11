@@ -29,10 +29,12 @@ use Adyen\Core\BusinessLogic\Domain\PartialPayments\Models\Order;
 use Adyen\Core\BusinessLogic\Domain\PartialPayments\Service\PartialPaymentService;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
+use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
+use Adyen\Core\Infrastructure\ServiceRegister;
 use Exception;
 
 /**
@@ -128,6 +130,18 @@ class PaymentRequestService
             $configuredPaymentMethod = $this->methodConfigRepository->getPaymentMethodByCode(
                 (string)$context->getPaymentMethodCode()
             );
+
+            if (!$configuredPaymentMethod &&
+                in_array(
+                    $context->getPaymentMethodCode(),
+                    [(string)PaymentMethodCode::payWithGoogle(), (string)PaymentMethodCode::googlePay()],
+                    true
+                )
+            ) {
+                /** @var PaymentService $paymentService */
+                $paymentService = ServiceRegister::getService(PaymentService::class);
+                $configuredPaymentMethod = $paymentService->getGooglePayMethod();
+            }
 
             if ($configuredPaymentMethod) {
                 $authorizationType = $configuredPaymentMethod->getAuthorizationType();
