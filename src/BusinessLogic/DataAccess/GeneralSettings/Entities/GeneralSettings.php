@@ -55,6 +55,7 @@ class GeneralSettings extends Entity
             self::getDataValue($generalSettings, 'enablePayByLink'),
             self::getDataValue($generalSettings, 'payByLinkTitle'),
             self::getDataValue($generalSettings, 'defaultLinkExpirationTime', 7),
+            self::getDataValue($generalSettings, 'executeOrderUpdateSynchronously', false),
             self::getDataValue($generalSettings, 'cancelledPartialPayment'),
             self::getDataValue($generalSettings, 'disabledOrderModificationsForFailedRefund', false)
         );
@@ -213,6 +214,7 @@ class GeneralSettings extends Entity
             'enablePayByLink' => $this->generalSettings->isEnablePayByLink(),
             'payByLinkTitle' => $this->generalSettings->getPayByLinkTitle(),
             'defaultLinkExpirationTime' => $this->generalSettings->getDefaultLinkExpirationTime(),
+            'executeOrderUpdateSynchronously' => $this->generalSettings->isExecuteOrderUpdateSynchronously(),
             'cancelledPartialPayment' => $this->generalSettings->isCancelledPartialPayment(),
             'disabledOrderModificationsForFailedRefund' =>
                 $this->generalSettings->areDisabledOrderModificationsForFailedRefund(),

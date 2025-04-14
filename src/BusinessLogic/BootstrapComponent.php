@@ -190,6 +190,7 @@ use Adyen\Core\Infrastructure\TaskExecution\QueueItem;
 use Adyen\Core\Infrastructure\TaskExecution\QueueService;
 use Adyen\Core\Infrastructure\TaskExecution\TaskEvents\TickEvent;
 use Adyen\Core\Infrastructure\Utility\Events\EventBus;
+use Adyen\Core\Infrastructure\Utility\TimeProvider;
 
 /**
  * Class BootstrapComponent
@@ -348,7 +349,8 @@ class BootstrapComponent extends BaseBootstrapComponent
             new SingleInstance(static function () {
                 return new WebhookHandler(
                     ServiceRegister::getService(WebhookSynchronizationService::class),
-                    ServiceRegister::getService(QueueService::class)
+                    ServiceRegister::getService(QueueService::class),
+                    ServiceRegister::getService(TimeProvider::class)
                 );
             })
         );
@@ -367,7 +369,8 @@ class BootstrapComponent extends BaseBootstrapComponent
                     ServiceRegister::getService(TransactionHistoryService::class),
                     ServiceRegister::getService(OrderService::class),
                     ServiceRegister::getService(OrderStatusProvider::class),
-                    ServiceRegister::getService(GeneralSettingsService::class)
+                    ServiceRegister::getService(GeneralSettingsService::class),
+                    ServiceRegister::getService(TimeProvider::class)
                 );
             })
         );

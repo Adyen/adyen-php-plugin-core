@@ -53,6 +53,11 @@ class GeneralSettings
      * @var int
      */
     private $defaultLinkExpirationTime;
+
+    /**
+     * @var bool
+     */
+    private $executeOrderUpdateSynchronously;
     /**
      * @var bool
      */
@@ -71,6 +76,7 @@ class GeneralSettings
      * @param bool $enablePayByLink
      * @param string $payByLinkTitle
      * @param string $defaultLinkExpirationTime
+     * @param bool $executeOrderUpdateSynchronously
      * @param bool $cancelledPartialPayment
      * @param bool $disabledOrderModificationsForFailedRefund
      * @throws InvalidCaptureDelayException
@@ -78,17 +84,19 @@ class GeneralSettings
      * @throws InvalidRetentionPeriodException
      */
     public function __construct(
-        bool $basketItemSync,
+        bool        $basketItemSync,
         CaptureType $captureType,
-        string $captureDelay = '1',
-        string $shipmentStatus = '',
-        string $retentionPeriod = '60',
-        bool $enablePayByLink = true,
-        string $payByLinkTitle = 'Adyen Pay By Link',
-        string $defaultLinkExpirationTime = '7',
-        bool $cancelledPartialPayment = true,
-        bool $disabledOrderModificationsForFailedRefund = false
-    ) {
+        string      $captureDelay = '1',
+        string      $shipmentStatus = '',
+        string      $retentionPeriod = '60',
+        bool        $enablePayByLink = true,
+        string      $payByLinkTitle = 'Adyen Pay By Link',
+        string      $defaultLinkExpirationTime = '7',
+        bool        $executeOrderUpdateSynchronously = false,
+        bool        $cancelledPartialPayment = true,
+        bool        $disabledOrderModificationsForFailedRefund = false
+    )
+    {
         $this->validate($captureDelay, $retentionPeriod, $defaultLinkExpirationTime);
 
         $this->basketItemSync = $basketItemSync;
@@ -99,6 +107,7 @@ class GeneralSettings
         $this->enablePayByLink = $enablePayByLink;
         $this->payByLinkTitle = $payByLinkTitle;
         $this->defaultLinkExpirationTime = $defaultLinkExpirationTime;
+        $this->executeOrderUpdateSynchronously = $executeOrderUpdateSynchronously;
         $this->cancelledPartialPayment = $cancelledPartialPayment;
         $this->disabledOrderModificationsForFailedRefund = $disabledOrderModificationsForFailedRefund;
     }
@@ -148,11 +157,11 @@ class GeneralSettings
      */
     public function getCaptureDelayHours(): int
     {
-        if($this->getCapture()->equal(CaptureType::manual())) {
+        if ($this->getCapture()->equal(CaptureType::manual())) {
             return -1;
         }
 
-        if($this->getCapture()->equal(CaptureType::delayed())) {
+        if ($this->getCapture()->equal(CaptureType::delayed())) {
             return $this->captureDelay * 24;
         }
 
@@ -181,6 +190,14 @@ class GeneralSettings
     public function getDefaultLinkExpirationTime(): int
     {
         return $this->defaultLinkExpirationTime;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExecuteOrderUpdateSynchronously(): bool
+    {
+        return $this->executeOrderUpdateSynchronously;
     }
 
     public function isCancelledPartialPayment(): bool

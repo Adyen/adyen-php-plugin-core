@@ -15,6 +15,7 @@ use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItemCollect
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Models\Webhook;
+use Adyen\Core\Infrastructure\Utility\TimeProvider;
 use Adyen\Webhook\EventCodes;
 
 /**
@@ -38,28 +39,36 @@ class WebhookSynchronizationService
      * @var OrderStatusProvider
      */
     protected $orderStatusProvider;
+
     /**
      * @var GeneralSettingsService
      */
     protected $settingsService;
 
     /**
+     * @var TimeProvider
+     */
+    protected $timeProvider;
+
+    /**
      * @param TransactionHistoryService $transactionHistoryService
      * @param OrderService $orderService
      * @param OrderStatusProvider $orderStatusProvider
      * @param GeneralSettingsService $settingsService
+     * @param TimeProvider $timeProvider
      */
     public function __construct(
         TransactionHistoryService $transactionHistoryService,
         OrderService              $orderService,
         OrderStatusProvider       $orderStatusProvider,
-        GeneralSettingsService    $settingsService
-    )
-    {
+        GeneralSettingsService    $settingsService,
+        TimeProvider              $timeProvider
+    ) {
         $this->transactionHistoryService = $transactionHistoryService;
         $this->orderService = $orderService;
         $this->orderStatusProvider = $orderStatusProvider;
         $this->settingsService = $settingsService;
+        $this->timeProvider = $timeProvider;
     }
 
     /**
@@ -78,13 +87,161 @@ class WebhookSynchronizationService
     }
 
     /**
+     * Determines whether webhook execution should be aborted based on retry count.
+     *
+     * @param Webhook $webhook
+     *
+     * @return bool
+     *
+     * @throws InvalidMerchantReferenceException
+     */
+    public function exceededRetryLimit(Webhook $webhook): bool
+    {
+        $history = $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference());
+        $existingItems = $history->collection()
+            ->filterAllByPspReference($webhook->getPspReference())
+            ->filterAllByEventCode($webhook->getEventCode())
+            ->filterByStatus($webhook->isSuccess());
+
+        if ($existingItems->isEmpty()) {
+            return false;
+        }
+
+        /** @var HistoryItem|null $last */
+        $first = $existingItems->firstItem();
+
+        return $first !== null && $first->getRetryCount() >= 4;
+    }
+
+    /**
+     * Fetches history item to check if the execution should proceeed.
+     *
+     * @param Webhook $webhook
+     *
+     * @return HistoryItem|null
+     *
+     * @throws InvalidMerchantReferenceException
+     */
+    public function fetchHistoryItem(Webhook $webhook): ?HistoryItem
+    {
+        $history = $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference());
+
+        $items = $history->collection()
+            ->filterAllByPspReference($webhook->getPspReference())
+            ->filterAllByEventCode($webhook->getEventCode())
+            ->filterByStatus($webhook->isSuccess());
+
+        return $items->firstItem();
+    }
+
+
+    /**
+     * Returns id of the transaction log or null if it is not still created
+     *
+     * @param Webhook $webhook
+     *
+     * @return int
+     *
+     * @throws InvalidMerchantReferenceException
+     */
+    public function getTransactionLogId(Webhook $webhook): ?int
+    {
+        $history = $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference());
+        $existingItems = $history->collection()
+            ->filterAllByPspReference($webhook->getPspReference())
+            ->filterAllByEventCode($webhook->getEventCode())
+            ->filterByStatus($webhook->isSuccess());
+
+        if ($existingItems->isEmpty()) {
+            return null;
+        }
+
+        /** @var HistoryItem|null $last */
+        $first = $existingItems->firstItem();
+
+        if ($first === null) {
+            return null;
+        }
+
+        return $first->getTransactionLogId();
+    }
+
+    /**
+     * Increments retry count
+     *
      * @param Webhook $webhook
      *
      * @return void
      *
      * @throws InvalidMerchantReferenceException
      */
-    public function synchronizeChanges(Webhook $webhook, bool $orderCreated = true): void
+    public function incrementRetryCount(Webhook $webhook): void
+    {
+        $history = $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference());
+
+        $item = $history->collection()
+            ->filterAllByPspReference($webhook->getPspReference())
+            ->filterAllByEventCode($webhook->getEventCode())
+            ->filterByStatus($webhook->isSuccess())
+            ->firstItem();
+
+        if ($item) {
+            $item->incrementRetryCount();
+            $this->transactionHistoryService->setTransactionHistory($history);
+        }
+    }
+
+    /**
+     * Sets the current timestamp as startedAt for the first matching history item.
+     *
+     * @param Webhook $webhook
+     *
+     * @return void
+     *
+     * @throws InvalidMerchantReferenceException
+     */
+    public function setStartedAtTimestamp(Webhook $webhook): void
+    {
+        $history = $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference());
+
+        $item = $history->collection()
+            ->filterAllByPspReference($webhook->getPspReference())
+            ->filterAllByEventCode($webhook->getEventCode())
+            ->filterByStatus($webhook->isSuccess())
+            ->firstItem();
+
+        if ($item !== null) {
+            $item->setStartedAt($this->timeProvider->getCurrentLocalTime()->getTimestamp());
+            $this->transactionHistoryService->setTransactionHistory($history);
+        }
+    }
+
+
+    /**
+     * Returns true if the execution should be synchronous
+     *
+     * @return bool
+     *
+     */
+    public function isExecuteOrderUpdateSynchronously(): bool
+    {
+        $generalSetting = $this->settingsService->getGeneralSettings();
+
+        if ($generalSetting === null) {
+            return false;
+        }
+
+        return $generalSetting->isExecuteOrderUpdateSynchronously();
+    }
+
+    /**
+     * @param Webhook $webhook
+     *
+     * @return void
+     *
+     * @throws InvalidMerchantReferenceException
+     */
+    public function synchronizeChanges(Webhook $webhook, bool $orderCreated = true, int $transactionLogId = null): void
     {
         $transactionHistory = $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference());
 
@@ -135,7 +292,10 @@ class WebhookSynchronizationService
                 $webhook->getRiskScore(),
                 $webhook->isLive(),
                 $webhook->getEventCode() === EventCodes::AUTHORISATION ? $webhook->getPspReference() : $webhook->getOriginalReference(),
-                $captureType
+                $captureType,
+                1,
+                $this->timeProvider->getCurrentLocalTime()->getTimestamp(),
+                $transactionLogId
             )
         );
 

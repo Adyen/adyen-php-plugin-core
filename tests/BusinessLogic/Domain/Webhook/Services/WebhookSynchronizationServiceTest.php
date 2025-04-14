@@ -19,6 +19,7 @@ use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHisto
 use Adyen\Core\BusinessLogic\Domain\Webhook\Models\Webhook;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Services\WebhookSynchronizationService;
 use Adyen\Core\BusinessLogic\Webhook\Services\OrderStatusMappingService;
+use Adyen\Core\Infrastructure\Utility\TimeProvider;
 use Adyen\Core\Tests\BusinessLogic\Common\BaseTestCase;
 use Adyen\Core\Tests\BusinessLogic\Common\MockComponents\MockStoreService;
 use Adyen\Core\Tests\BusinessLogic\Domain\TransactionHistory\MockComponents\MockTransactionRepository;
@@ -71,6 +72,11 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
     private $transactionService;
 
     /**
+     * @var TimeProvider
+     */
+    private $timeProvider;
+
+    /**
      * @return void
      */
     public function setUp(): void
@@ -106,6 +112,7 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
         $this->transactionService = TestServiceRegister::getService(TransactionHistoryService::class);
         $this->orderStatusMappingService = TestServiceRegister::getService(OrderStatusMappingService::class);
         $this->service = TestServiceRegister::getService(WebhookSynchronizationService::class);
+        $this->timeProvider = TestServiceRegister::getService(TimeProvider::class);
         $this->webhook = new Webhook(
             Amount::fromInt(1, Currency::getDefault()),
             'code',
@@ -264,7 +271,6 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
         // assert
         $transaction = $this->transactionService->getTransactionHistory($this->webhook->getMerchantReference());
         $expected = $this->expectedTransaction();
-
         self::assertEquals($expected, $transaction);
     }
 
@@ -435,7 +441,9 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
                     0,
                     false,
                     '7914073381342284',
-                    CaptureType::immediate()
+                    CaptureType::immediate(),
+                    1,
+                    $this->timeProvider->getCurrentLocalTime()->getTimestamp()
                 )
             ],
             '',

@@ -498,7 +498,8 @@ class BaseTestCase extends TestCase
             static function () {
                 return new WebhookHandler(
                     TestServiceRegister::getService(WebhookSynchronizationServiceInterface::class),
-                    TestServiceRegister::getService(QueueService::class)
+                    TestServiceRegister::getService(QueueService::class),
+                    TestServiceRegister::getService(TimeProvider::class)
                 );
             }
         );
@@ -563,7 +564,8 @@ class BaseTestCase extends TestCase
                     TestServiceRegister::getService(TransactionHistoryService::class),
                     TestServiceRegister::getService(OrderService::class),
                     TestServiceRegister::getService(OrderStatusMappingService::class),
-                    TestServiceRegister::getService(GeneralSettingsService::class)
+                    TestServiceRegister::getService(GeneralSettingsService::class),
+                    TestServiceRegister::getService(TimeProvider::class)
                 );
             }
         );

@@ -5,8 +5,10 @@ namespace Adyen\Core\BusinessLogic\TransactionLog\Services;
 use Adyen\Core\BusinessLogic\DataAccess\TransactionLog\Entities\TransactionLog;
 use Adyen\Core\BusinessLogic\Domain\Disconnect\Repositories\DisconnectRepository;
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
+use Adyen\Core\BusinessLogic\Domain\Multistore\StoreContext;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
+use Adyen\Core\BusinessLogic\Domain\Webhook\Models\Webhook;
 use Adyen\Core\BusinessLogic\TransactionLog\Contracts\TransactionLogAware;
 use Adyen\Core\BusinessLogic\TransactionLog\Repositories\TransactionLogRepository;
 use Adyen\Core\Infrastructure\ORM\Exceptions\QueryFilterInvalidParamException;
@@ -223,6 +225,45 @@ class TransactionLogService
     public function logsExist(DateTime $beforeDate): bool
     {
         return $this->transactionLogRepository->logsExist($beforeDate);
+    }
+
+    /**
+     * @param Webhook $webhook
+     * @return TransactionLog
+     * @throws InvalidMerchantReferenceException
+     * @throws QueryFilterInvalidParamException
+     */
+    public function createSyncTransactionLogInstance(Webhook $webhook, ?int $transactionLogId = null): TransactionLog
+    {
+        if ($transactionLogId !== null) {
+            return $this->transactionLogRepository->findById($transactionLogId);
+        }
+
+        $eventDate = DateTime::createFromFormat(DateTimeInterface::ATOM, $webhook->getEventDate());
+
+        $transactionLog = new TransactionLog();
+        $transactionLog->setStoreId(StoreContext::getInstance()->getStoreId() ?? '');
+        $transactionLog->setMerchantReference($webhook->getMerchantReference());
+        $transactionLog->setExecutionId(0);
+        $transactionLog->setEventCode($webhook->getEventCode());
+        $transactionLog->setReason($webhook->getReason());
+        $transactionLog->setIsSuccessful($webhook->isSuccess());
+        $transactionLog->setTimestamp($eventDate->getTimestamp());
+        $transactionLog->setPaymentMethod($webhook->getPaymentMethod());
+        $transactionLog->setAdyenLink(
+            $this->transactionHistoryService->getTransactionHistory(
+                $webhook->getMerchantReference()
+            )->getAdyenPaymentLinkFor($webhook->getPspReference())
+        );
+        $transactionLog->setShopLink(
+            $this->orderService->getOrderUrl($webhook->getMerchantReference())
+        );
+        $transactionLog->setQueueStatus(QueueItem::QUEUED);
+        $transactionLog->setPspReference($webhook->getPspReference());
+
+        $this->save($transactionLog);
+
+        return $transactionLog;
     }
 
     /**

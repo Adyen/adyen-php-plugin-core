@@ -10,7 +10,9 @@ use Adyen\Core\BusinessLogic\Domain\Webhook\Exceptions\WebhookConfigDoesntExistE
 use Adyen\Core\BusinessLogic\Domain\Webhook\Models\Webhook;
 use Adyen\Core\BusinessLogic\Webhook\Handler\WebhookHandler;
 use Adyen\Core\BusinessLogic\Webhook\Validator\WebhookValidator;
+use Adyen\Core\BusinessLogic\WebhookAPI\Exceptions\WebhookShouldRetryException;
 use Adyen\Core\BusinessLogic\WebhookAPI\Response\WebhookSuccessResponse;
+use Adyen\Core\BusinessLogic\WebhookAPI\Response\WebhookFailedResponse;
 use Adyen\Webhook\EventCodes;
 use Adyen\Webhook\Exception\AuthenticationException;
 use Adyen\Webhook\Exception\HMACKeyValidationException;
@@ -56,14 +58,19 @@ class WebhookController
      * @throws HMACKeyValidationException
      * @throws InvalidDataException
      * @throws MerchantAccountCodeException
+     * @throws WebhookShouldRetryException
      * @throws Exception
      */
     public function handleRequest(array $payload): Response
     {
-        $this->validator->validate($payload);
-        $this->handler->handle($this->fromPayload($payload));
+        try {
+            $this->validator->validate($payload);
+            $this->handler->handle($this->fromPayload($payload));
 
-        return new WebhookSuccessResponse();
+            return new WebhookSuccessResponse();
+        } catch (WebhookShouldRetryException $e) {
+            return new WebhookFailedResponse($e->getMessage());
+        }
     }
 
     /**

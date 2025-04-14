@@ -186,4 +186,22 @@ class TransactionLogRepository implements TransactionLogRepositoryInterface
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->repository->selectOne($queryFilter);
     }
+
+    /**
+     * Find transaction log by its ID.
+     *
+     * @param int $id
+     *
+     * @return TransactionLog|null
+     *
+     * @throws QueryFilterInvalidParamException
+     */
+    public function findById(int $id): ?TransactionLog
+    {
+        $queryFilter = new QueryFilter();
+        $queryFilter->where('id', Operators::EQUALS, $id);
+
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->repository->selectOne($queryFilter);
+    }
 }

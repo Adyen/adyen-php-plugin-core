@@ -56,6 +56,12 @@ class GeneralSettingsRequest extends Request
      * @var int
      */
     private $defaultLinkExpirationTime;
+
+    /**
+     * @var bool
+     */
+    private $executeOrderUpdateSynchronously;
+
     /**
      * @var bool
      */
@@ -74,21 +80,24 @@ class GeneralSettingsRequest extends Request
      * @param bool $enablePayByLink
      * @param string $payByLinkTitle
      * @param string $defaultLinkExpirationTime
+     * @param bool $executeOrderUpdateSynchronously
      * @param bool $cancelledPartialPayment
      * @param bool $disabledOrderModificationsForFailedRefund
      */
     public function __construct(
-        bool $basketItemSync,
+        bool   $basketItemSync,
         string $captureType,
         string $captureDelay = '1',
         string $shipmentStatus = '',
         string $retentionPeriod = '60',
-        bool $enablePayByLink = true,
+        bool   $enablePayByLink = true,
         string $payByLinkTitle = '',
         string $defaultLinkExpirationTime = '7',
-        bool $cancelledPartialPayment = true,
-        bool $disabledOrderModificationsForFailedRefund = false
-    ) {
+        bool   $executeOrderUpdateSynchronously = false,
+        bool   $cancelledPartialPayment = true,
+        bool   $disabledOrderModificationsForFailedRefund = false
+    )
+    {
         $this->basketItemSync = $basketItemSync;
         $this->captureType = $captureType;
         $this->captureDelay = $captureDelay;
@@ -97,6 +106,7 @@ class GeneralSettingsRequest extends Request
         $this->enablePayByLink = $enablePayByLink;
         $this->payByLinkTitle = $payByLinkTitle;
         $this->defaultLinkExpirationTime = $defaultLinkExpirationTime;
+        $this->executeOrderUpdateSynchronously = $executeOrderUpdateSynchronously;
         $this->cancelledPartialPayment = $cancelledPartialPayment;
         $this->disabledOrderModificationsForFailedRefund = $disabledOrderModificationsForFailedRefund;
     }
@@ -122,6 +132,7 @@ class GeneralSettingsRequest extends Request
             $this->enablePayByLink,
             !empty($this->payByLinkTitle) ? $this->payByLinkTitle : 'Adyen Pay By Link',
             !empty($this->defaultLinkExpirationTime) ? $this->defaultLinkExpirationTime : '7',
+            $this->executeOrderUpdateSynchronously,
             $this->cancelledPartialPayment,
             $this->disabledOrderModificationsForFailedRefund
         );

@@ -4,6 +4,7 @@ namespace Adyen\Core\Tests\BusinessLogic\WebhookAPI;
 
 use Adyen\Core\BusinessLogic\Bootstrap\SingleInstance;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidCurrencyCode;
+use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsService;
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Exceptions\WebhookConfigDoesntExistException;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Repositories\WebhookConfigRepository;
@@ -38,6 +39,11 @@ class WebhookApiTest extends BaseTestCase
      * @var OrderService
      */
     private $orderService;
+
+    /**
+     * @var GeneralSettingsService
+     */
+    private $service;
 
     public function setUp(): void
     {

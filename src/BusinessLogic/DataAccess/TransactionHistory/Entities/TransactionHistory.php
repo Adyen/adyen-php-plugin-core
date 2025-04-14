@@ -199,6 +199,9 @@ class TransactionHistory extends Entity
                 'authorizationPspReference' => $transactionHistoryItem->getAuthorizationPspReference(),
                 'captureType' => $transactionHistoryItem->getCaptureType() ?
                     $transactionHistoryItem->getCaptureType()->getType() : '',
+                'retryCount' => $transactionHistoryItem->getRetryCount(),
+                'startedAt' => $transactionHistoryItem->getStartedAt(),
+                'transactionLogId' => $transactionHistoryItem->getTransactionLogId()
             ];
         }
 
@@ -231,7 +234,10 @@ class TransactionHistory extends Entity
                 $value['isLive'],
                 static::getDataValue($value, 'authorizationPspReference'),
                 static::getDataValue($value, 'captureType', '') ?
-                    CaptureType::fromState(static::getDataValue($value, 'captureType')) : CaptureType::unknown()
+                    CaptureType::fromState(static::getDataValue($value, 'captureType')) : CaptureType::unknown(),
+                static::getDataValue($value, 'retryCount', 1),
+                static::getDataValue($value, 'startedAt', null),
+                static::getDataValue($value, 'transactionLogId', null)
             );
         }
 

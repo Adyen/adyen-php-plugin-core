@@ -11,7 +11,6 @@ use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidCaptureDel
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidCaptureTypeException;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidRetentionPeriodException;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType as CaptureTypeModel;
-use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\GeneralSettings;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\GeneralSettings as GeneralSettingsModel;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Repositories\GeneralSettingsRepository;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsService;
@@ -211,6 +210,7 @@ class GeneralSettingsApiTest extends BaseTestCase
             'enablePayByLink' => true,
             'payByLinkTitle' => 'Title',
             'defaultLinkExpirationTime' => 7,
+            'executeOrderUpdateSynchronously' => false,
             'cancelledPartialPayment' => true,
             'disabledOrderModificationsForFailedRefund' => false
         ];

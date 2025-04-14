@@ -148,6 +148,14 @@ class HistoryItemCollection
     /**
      * @return HistoryItem|null
      */
+    public function firstItem(): ?HistoryItem
+    {
+        return !$this->isEmpty() ? reset($this->historyItems) : null;
+    }
+
+    /**
+     * @return HistoryItem|null
+     */
     public function first(): ?HistoryItem
     {
         return !$this->isEmpty() ? current($this->filterAuthorisedItems()) : null;

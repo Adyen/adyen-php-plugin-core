@@ -50,6 +50,11 @@ class OrderUpdateTask extends TransactionalTask
     private $storeId;
 
     /**
+     * @var int
+     */
+    private $transactionLogId;
+
+    /**
      * @param Webhook $webhook
      */
     public function __construct(Webhook $webhook)
@@ -177,6 +182,22 @@ class OrderUpdateTask extends TransactionalTask
     }
 
     /**
+     * @return int
+     */
+    public function getTransactionLogId(): ?int
+    {
+        return $this->transactionLogId;
+    }
+
+    /**
+     * @return void
+     */
+    public function setTransactionLogId(?int $transactionLogId): void
+    {
+        $this->transactionLogId = $transactionLogId;
+    }
+
+    /**
      * @return void
      *
      * @throws InvalidMerchantReferenceException
@@ -191,7 +212,7 @@ class OrderUpdateTask extends TransactionalTask
                 $this->getShopNotificationService()->pushNotification($event);
             }
 
-            $this->getSynchronizationService()->synchronizeChanges($this->webhook, $this->checkIfOrderExists());
+            $this->getSynchronizationService()->synchronizeChanges($this->webhook, $this->checkIfOrderExists(), $this->getTransactionLogId());
         }
 
         $this->reportProgress(100);

@@ -41,6 +41,7 @@ class GeneralSettingsGetResponse extends Response
             'enablePayByLink' => false,
             'payByLinkTitle' => 'Adyen Pay By Link',
             'defaultLinkExpirationTime' => 7,
+            'executeOrderUpdateSynchronously' => false,
             'cancelledPartialPayment' => true,
             'disabledOrderModificationsForFailedRefund' => false
         ];
@@ -60,6 +61,7 @@ class GeneralSettingsGetResponse extends Response
             'enablePayByLink' => $this->generalSettings->isEnablePayByLink(),
             'payByLinkTitle' => $this->generalSettings->getPayByLinkTitle(),
             'defaultLinkExpirationTime' => $this->generalSettings->getDefaultLinkExpirationTime(),
+            'executeOrderUpdateSynchronously' => $this->generalSettings->isExecuteOrderUpdateSynchronously(),
             'cancelledPartialPayment' => $this->generalSettings->isCancelledPartialPayment(),
             'disabledOrderModificationsForFailedRefund' =>
                 $this->generalSettings->areDisabledOrderModificationsForFailedRefund(),
