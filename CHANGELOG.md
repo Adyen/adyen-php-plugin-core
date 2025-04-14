@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [2.0.0 - 2.1.0](https://github.com/Adyen/adyen-php-plugin-core/compare/2.0.0...2.1.0) - 2025-04-14
+- Add compatibility with both GooglePay tx variants - googlepay and paywithgoogle
+- Add support for synchronous webhooks handling
+
 ## [1.2.7 - 2.0.0](https://github.com/Adyen/adyen-php-plugin-core/compare/1.2.7...2.0.0) - 2025-04-03
 - Add support for partial payments
 
