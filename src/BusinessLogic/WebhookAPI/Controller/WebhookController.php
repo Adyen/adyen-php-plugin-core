@@ -92,7 +92,7 @@ class WebhookController
             ksort($additionalData);
 
             foreach ($additionalData as $key => $value) {
-                if (str_contains($key, 'paymentMethod')) {
+                if (strpos($key, 'paymentMethod') !== false) {
                     $paymentMethod = $value;
                 }
             }
