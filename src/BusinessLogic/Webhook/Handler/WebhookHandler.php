@@ -65,9 +65,13 @@ class WebhookHandler
      */
     public function handle(Webhook $webhook): void
     {
+        if ($this->synchronizationService->isSynchronizationNeeded($webhook)) {
+            return;
+        }
+
         $synchronousProcessing = $this->synchronizationService->isExecuteOrderUpdateSynchronously();
 
-        if (!$synchronousProcessing && $this->synchronizationService->isSynchronizationNeeded($webhook)) {
+        if (!$synchronousProcessing) {
             $this->queueService->enqueue('OrderUpdate', new OrderUpdateTask($webhook));
             return;
         }
