@@ -65,14 +65,11 @@ class WebhookHandler
      */
     public function handle(Webhook $webhook): void
     {
-        if ($this->synchronizationService->isSynchronizationNeeded($webhook)) {
-            return;
-        }
-
         $synchronousProcessing = $this->synchronizationService->isExecuteOrderUpdateSynchronously();
 
         if (!$synchronousProcessing) {
-            $this->queueService->enqueue('OrderUpdate', new OrderUpdateTask($webhook));
+            $this->asynchronousProcessing($webhook);
+
             return;
         }
 
@@ -115,6 +112,23 @@ class WebhookHandler
             $transactionLog->setFailureDescription($exception->getMessage());
             $transactionLogService->update($transactionLog);
         }
+    }
+
+    /**
+     * @param Webhook $webhook
+     *
+     * @return void
+     *
+     * @throws InvalidMerchantReferenceException
+     * @throws QueueStorageUnavailableException
+     */
+    private function asynchronousProcessing(Webhook $webhook): void
+    {
+        if (!$this->synchronizationService->isSynchronizationNeeded($webhook)) {
+            return;
+        }
+
+        $this->queueService->enqueue('OrderUpdate', new OrderUpdateTask($webhook));
     }
 
     /**
