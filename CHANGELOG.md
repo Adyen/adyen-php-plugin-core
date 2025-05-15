@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [2.1.1 - 2.1.2](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.1...2.1.2) - 2025-05-15
+- Fix duplicate webhook handling
+
 ## [2.1.0 - 2.1.1](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.0...2.1.1) - 2025-05-09
 - Remove str_contains from WebhookController
 
