@@ -204,8 +204,12 @@ class HistoryItemCollection
      *
      * @return HistoryItemCollection
      */
-    public function trimFromHistoryItem(HistoryItem $historyItem): HistoryItemCollection
+    public function trimFromHistoryItem(?HistoryItem $historyItem): HistoryItemCollection
     {
+        if ($historyItem === null) {
+            return new self([]);
+        }
+
         $found = false;
         $result = [];
 

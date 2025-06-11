@@ -323,18 +323,20 @@ class WebhookSynchronizationService
         }
 
         $newStateId = $this->orderStatusProvider->getOrderStatus($newState);
-        if (!empty($newStateId)) {
+        if (!empty($newStateId) && $orderCreated) {
             $this->orderService->updateOrderStatus($webhook, $newStateId);
         }
 
         if ($webhook->isSuccess() &&
             in_array($webhook->getEventCode(), [EventCodes::ORDER_CLOSED, EventCodes::AUTHORISATION], true) &&
+            !empty($transactionHistory->getOriginalPspReference()) &&
             (
                 $webhook->getPspReference() !== $transactionHistory->getOriginalPspReference() ||
                 $isPaymentLinkSet
             )
         ) {
             $this->orderService->updateOrderPayment($webhook);
+            $this->orderService->updateOrderStatus($webhook, $newStateId);
         }
     }
 

@@ -86,9 +86,11 @@ class WebhookHandler
 
         /** @var TransactionLog $transactionLog */
         $transactionLog = $transactionLogService->createSyncTransactionLogInstance($webhook, $transactionLogId);
+        if (in_array($transactionLog->getQueueStatus(), [QueueItem::COMPLETED, QueueItem::ABORTED])) {
+            return;
+        }
 
         $item = $this->synchronizationService->fetchHistoryItem($webhook);
-
         $message = $this->shouldAbortExecution($transactionLog, $item);
 
         if (!empty($message)) {
@@ -111,6 +113,8 @@ class WebhookHandler
             $transactionLog->setQueueStatus(QueueItem::FAILED);
             $transactionLog->setFailureDescription($exception->getMessage());
             $transactionLogService->update($transactionLog);
+
+            throw $exception;
         }
     }
 
@@ -146,20 +150,8 @@ class WebhookHandler
             return null;
         }
 
-        if ($log->getQueueStatus() === QueueItem::FAILED) {
-            return null;
-        }
-
-        if ($log->getQueueStatus() === QueueItem::COMPLETED) {
-            return "Task already executed successfully!";
-        }
-
         $elapsed = $this->timeProvider->getCurrentLocalTime()->getTimestamp() - $item->getStartedAt();
 
-        if ($elapsed <= 10) {
-            return "Task in progress, skipping!";
-        }
-
-        return null;
+        return ($elapsed <= 10) ? "Task in progress, skipping!" : null;
     }
 }
