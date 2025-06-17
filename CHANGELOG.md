@@ -4,8 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
- - Enhance webhook handling for carts not paid with Adyen
- - Enhance synchronous webhook handling for already processed webhooks 
+
+## [2.1.2 - 2.1.3](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.1...2.1.2) - 2025-06-17
+- Enhance webhook handling for carts not paid with Adyen
+- Enhance synchronous webhook handling for already processed webhooks
 
 ## [2.1.1 - 2.1.2](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.1...2.1.2) - 2025-05-15
 - Fix duplicate webhook handling
