@@ -106,7 +106,7 @@ class OrderUpdateTask extends TransactionalTask
                     $array['originalReference'],
                     $array['riskScore'],
                     $array['live'],
-                    $array['additionalData']
+                    $array['additionalData'] ?: []
                 )
             );
         });

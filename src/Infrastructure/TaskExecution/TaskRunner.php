@@ -125,8 +125,8 @@ class TaskRunner
             $this->wakeup();
 
             $this->logDebug(array('Message' => 'Task runner: lifecycle ended.'));
-        } catch (Exception $ex) {
-            $this->logDebug(
+        } catch (\Throwable $ex) {
+            $this->logError(
                 array(
                     'Message' => 'Fail to run task runner. Unexpected error occurred.',
                     'ExceptionMessage' => $ex->getMessage(),
@@ -499,6 +499,12 @@ class TaskRunner
     {
         $debugContent['RunnerGuid'] = $this->guid;
         Logger::logDebug($debugContent['Message'], 'Core', $debugContent);
+    }
+
+    private function logError(array $debugContent)
+    {
+        $debugContent['RunnerGuid'] = $this->guid;
+        Logger::logError($debugContent['Message'], 'Core', $debugContent);
     }
 
     /**
