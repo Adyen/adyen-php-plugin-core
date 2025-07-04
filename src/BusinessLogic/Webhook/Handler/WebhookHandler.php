@@ -13,6 +13,7 @@ use Adyen\Core\BusinessLogic\WebhookAPI\Exceptions\WebhookShouldRetryException;
 use Adyen\Core\Infrastructure\ORM\Exceptions\QueryFilterInvalidParamException;
 use Adyen\Core\Infrastructure\ServiceRegister;
 use Adyen\Core\Infrastructure\TaskExecution\Exceptions\QueueStorageUnavailableException;
+use Adyen\Core\Infrastructure\TaskExecution\Interfaces\TaskRunnerWakeup;
 use Adyen\Core\Infrastructure\TaskExecution\QueueItem;
 use Adyen\Core\Infrastructure\TaskExecution\QueueService;
 use Adyen\Core\Infrastructure\Utility\TimeProvider;
@@ -33,6 +34,13 @@ class WebhookHandler
      * @var QueueService
      */
     private $queueService;
+
+    /**
+     * Task runner wakeup instance.
+     *
+     * @var TaskRunnerWakeup
+     */
+    private $taskRunnerWakeup;
 
     /**
      * @var TimeProvider
@@ -72,6 +80,8 @@ class WebhookHandler
 
             return;
         }
+
+        $this->getTaskRunnerWakeup()->wakeup();
 
         /** @var TransactionLogService $transactionLogService */
         $transactionLogService = ServiceRegister::getService(TransactionLogService::class);
@@ -153,5 +163,19 @@ class WebhookHandler
         $elapsed = $this->timeProvider->getCurrentLocalTime()->getTimestamp() - $item->getStartedAt();
 
         return ($elapsed <= 10) ? "Task in progress, skipping!" : null;
+    }
+
+    /**
+     * Gets task runner wakeup instance.
+     *
+     * @return TaskRunnerWakeup Task runner wakeup instance.
+     */
+    private function getTaskRunnerWakeup()
+    {
+        if ($this->taskRunnerWakeup === null) {
+            $this->taskRunnerWakeup = ServiceRegister::getService(TaskRunnerWakeup::CLASS_NAME);
+        }
+
+        return $this->taskRunnerWakeup;
     }
 }
