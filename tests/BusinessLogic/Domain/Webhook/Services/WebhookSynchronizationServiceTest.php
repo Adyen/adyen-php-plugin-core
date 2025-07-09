@@ -151,7 +151,7 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
         $result = StoreContext::doWithStore('1', [$this->service, 'isSynchronizationNeeded'], [$this->webhook]);
 
         // assert
-        self::assertTrue($result);
+        self::assertFalse($result);
     }
 
     /**
@@ -462,6 +462,18 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
         return new TransactionHistory('merchantRef', CaptureType::immediate(), 0, null,
             AuthorizationType::finalAuthorization(),
             [
+                new HistoryItem(
+                    'PAYMENT_REQUESTED_originalPsp',
+                    'merchantRef',
+                    'PAYMENT_REQUESTED',
+                    'paymentState',
+                    'date',
+                    true,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    'paymentMethod',
+                    0,
+                    false
+                ),
                 new HistoryItem(
                     'originalPsp',
                     'merchantRef',

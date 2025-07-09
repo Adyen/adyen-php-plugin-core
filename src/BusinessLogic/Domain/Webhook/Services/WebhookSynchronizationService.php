@@ -80,8 +80,16 @@ class WebhookSynchronizationService
      */
     public function isSynchronizationNeeded(Webhook $webhook): bool
     {
+        $transactionHistory = $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference());
+        if (
+            $webhook->getEventCode() !== EventCodes::AUTHORISATION &&
+            $transactionHistory->collection()->filterAllByEventCode('PAYMENT_REQUESTED')->isEmpty()
+        ) {
+            return false;
+        }
+
         return !$this->hasDuplicates(
-                $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference()),
+                $transactionHistory,
                 $webhook
             ) && $webhook->getMerchantReference() !== Proxy::TEST_WEBHOOK;
     }
