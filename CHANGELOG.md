@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [2.1.6 - 2.1.7](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.6...2.1.7) - 2025-07-11
+- Fix issue where orders were created in error status
+
 ## [2.1.5 - 2.1.6](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.5...2.1.6) - 2025-07-10
 - Enhance webhook handling logic for multiple checkout payment retries
 - Enhance webhook handling logic for synchronous execution
