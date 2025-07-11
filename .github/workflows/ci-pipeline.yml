@@ -3,6 +3,10 @@ on:
   push:
     branches:
       - main
+      - test-pipeline
+permissions:
+  contents: read
+  pull-requests: write
 jobs: 
   run_unit_tests:
     strategy:
