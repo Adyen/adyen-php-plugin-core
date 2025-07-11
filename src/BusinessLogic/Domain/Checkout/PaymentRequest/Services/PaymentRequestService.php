@@ -230,6 +230,8 @@ class PaymentRequestService
             ->createOrder($partialTransactionRequest->getReference(), $amount);
         $order = new Order($orderCreateResult->getOrderData(), $orderCreateResult->getPspReference());
 
+        $this->removeTransactionHistoryItems($partialTransactionRequest->getReference());
+
         return $this->startTransactions($requests, $order);
     }
 
