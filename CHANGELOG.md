@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [2.1.7 - 2.1.8](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.7...2.1.8) - 2025-07-18
+- Update ORDER_CLOSED webhook handling
+
 ## [2.1.6 - 2.1.7](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.6...2.1.7) - 2025-07-11
 - Fix issue where orders were created in error status
 
