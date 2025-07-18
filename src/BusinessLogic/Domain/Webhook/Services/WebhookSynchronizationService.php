@@ -261,11 +261,7 @@ class WebhookSynchronizationService
 
         if ($webhook->getEventCode() === EventCodes::ORDER_CLOSED && !$webhook->isSuccess()) {
             $this->handleOrderClosedFailure($webhook, $transactionHistory);
-
-            if (!$transactionHistory->collection()->filterAllByEventCode(EventCodes::AUTHORISATION)
-                ->filterAllByStatus(true)->isEmpty()) {
-                return;
-            }
+            return;
         }
 
         $newState = $this->orderStatusProvider->getNewPaymentState($webhook, $transactionHistory);
