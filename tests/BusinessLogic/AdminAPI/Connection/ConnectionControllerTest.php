@@ -314,6 +314,6 @@ class ConnectionControllerTest extends BaseTestCase
         $result = AdminAPI::get()->connection('1')->reRegisterWebhook();
 
         // assert
-        self::assertEmpty($result->toArray());
+        self::assertEquals(['status' => true], $result->toArray());
     }
 }

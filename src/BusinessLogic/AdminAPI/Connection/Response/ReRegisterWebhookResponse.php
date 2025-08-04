@@ -16,6 +16,6 @@ class ReRegisterWebhookResponse extends Response
      */
     public function toArray(): array
     {
-        return [];
+        return ['status' => true];
     }
 }
