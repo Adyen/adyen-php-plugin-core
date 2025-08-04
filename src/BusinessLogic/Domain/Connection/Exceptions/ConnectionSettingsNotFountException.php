@@ -11,5 +11,4 @@ use Adyen\Core\BusinessLogic\Domain\Translations\Model\BaseTranslatableException
  */
 class ConnectionSettingsNotFountException extends BaseTranslatableException
 {
-
 }

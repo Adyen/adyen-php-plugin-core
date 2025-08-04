@@ -3,9 +3,7 @@
 namespace Adyen\Core\Tests\BusinessLogic\Domain\Connection;
 
 use Adyen\Core\BusinessLogic\DataAccess\Connection\Entities\ConnectionSettings as ConnectionSettingsEntity;
-use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\ApiCredentialsDoNotExistException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\ConnectionSettingsNotFountException;
-use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\InvalidAllowedOriginException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\InvalidApiKeyException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\UserDoesNotHaveNecessaryRolesException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Models\ConnectionData;
@@ -15,11 +13,13 @@ use Adyen\Core\BusinessLogic\Domain\Connection\Repositories\ConnectionSettingsRe
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
 use Adyen\Core\BusinessLogic\Domain\Integration\Store\StoreService;
 use Adyen\Core\BusinessLogic\Domain\Multistore\StoreContext;
+use Adyen\Core\BusinessLogic\Domain\Webhook\Models\WebhookConfig;
+use Adyen\Core\BusinessLogic\Domain\Webhook\Repositories\WebhookConfigRepository;
 use Adyen\Core\BusinessLogic\Webhook\Repositories\OrderStatusMappingRepository;
 use Adyen\Core\Infrastructure\Http\HttpClient;
 use Adyen\Core\Infrastructure\Http\HttpResponse;
 use Adyen\Core\Tests\BusinessLogic\Common\BaseTestCase;
-use Adyen\Core\Tests\BusinessLogic\Domain\MockComponents\MockConnectionProxyNoAPIKey;
+use Adyen\Core\Tests\BusinessLogic\Common\MockComponents\MockWebhookConfigRepository;
 use Adyen\Core\Tests\BusinessLogic\Domain\MockComponents\MockConnectionProxySuccess;
 use Adyen\Core\Tests\BusinessLogic\Domain\MockComponents\MockStoreService;
 use Adyen\Core\Tests\Infrastructure\Common\TestComponents\ORM\MemoryRepository;
@@ -42,26 +42,27 @@ class ConnectionServiceTest extends BaseTestCase
      * @var MemoryRepository
      */
     public $repository;
-
     /**
      * @var ConnectionProxy
      */
     public $proxy;
-
     /**
      * @var ConnectionSettingsRepository
      */
     public $connectionSettingsRepository;
-
     /**
      * @var OrderStatusMappingRepository
      */
     public $orderStatusMappingRepository;
-
     /**
      * @var StoreService
      */
     public $storeService;
+
+    /**
+     * @var WebhookConfigRepository
+     */
+    public $webhookConfigRepository;
 
     protected function setUp(): void
     {
@@ -93,6 +94,7 @@ class ConnectionServiceTest extends BaseTestCase
         $this->repository = TestRepositoryRegistry::getRepository(ConnectionSettingsEntity::getClassName());
         $this->service = TestServiceRegister::getService(ConnectionService::class);
         $this->orderStatusMappingRepository = TestServiceRegister::getService(OrderStatusMappingRepository::class);
+        $this->webhookConfigRepository = new MockWebhookConfigRepository();
     }
 
     public function testSaveConnectionDataApiKeyValid(): void
@@ -166,8 +168,81 @@ class ConnectionServiceTest extends BaseTestCase
         $this->expectException(UserDoesNotHaveNecessaryRolesException::class);
         $this->service = TestServiceRegister::getService(ConnectionService::class);
 
-
         // act
         StoreContext::doWithStore('1', [$this->service, 'saveConnectionData'], [$settings]);
+    }
+
+    /**
+     * @return void
+     *
+     * @throws Exception
+     */
+    public function testReRegisterWebhooksNoConnectionData(): void
+    {
+        // arrange
+        $this->expectException(ConnectionSettingsNotFountException::class);
+
+        // act
+        StoreContext::doWithStore('1', [$this->service, 'reRegisterWebhook']);
+
+        // assert
+    }
+
+    /**
+     * @return void
+     *
+     * @throws Exception
+     */
+    public function testReRegisterWebhooks(): void
+    {
+        // arrange
+        TestServiceRegister::registerService(WebhookConfigRepository::class,
+            function () {
+                return $this->webhookConfigRepository;
+            }
+        );
+
+        $this->webhookConfigRepository->setWebhookConfig(
+            new WebhookConfig(
+                '1',
+                'merchant1',
+                true,
+                'username',
+                'password',
+                'hmac')
+        );
+        $this->httpClient->setMockResponses([
+            new HttpResponse(200, [], file_get_contents(__DIR__ . '/../../Common/ApiResponses/me.json')),
+            new HttpResponse(200, [], file_get_contents(__DIR__ . '/../../Common/ApiResponses/Webhook/webhooks.json')),
+            new HttpResponse(200, [], ''),
+            new HttpResponse(200, [],
+                file_get_contents(__DIR__ . '/../../Common/ApiResponses/Webhook/registerWebhook.json')),
+            new HttpResponse(200, [], file_get_contents(__DIR__ . '/../../Common/ApiResponses/hmac.json')),
+            new HttpResponse(200, [],
+                file_get_contents(__DIR__ . '/../../Common/ApiResponses/Webhook/testWebhook.json'))
+        ]);
+        $settings = new ConnectionSettings(
+            '1',
+            'test',
+            new ConnectionData('1234567890', '123'),
+            null
+        );
+        $this->connectionSettingsRepository->setConnectionSettings($settings);
+
+       TestServiceRegister::registerService(ConnectionService::class,
+        function () {
+            return new ConnectionService(
+               $this->connectionSettingsRepository,
+                $this->storeService,
+                $this->webhookConfigRepository
+            );
+        });
+       $this->service = TestServiceRegister::getService(ConnectionService::class);
+        // act
+        StoreContext::doWithStore('1', [$this->service, 'reRegisterWebhook']);
+
+        // assert
+        self::assertEquals($this->webhookConfigRepository->getWebhookConfig()->getHmac(),
+            '7052E6804F0AF40DCC390464C817F4F963516FA42AC8816D518DC5D39F41E902');
     }
 }

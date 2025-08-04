@@ -5,16 +5,17 @@ namespace Adyen\Core\BusinessLogic\AdminAPI\Connection\Controller;
 use Adyen\Core\BusinessLogic\AdminAPI\Connection\Request\ConnectionRequest;
 use Adyen\Core\BusinessLogic\AdminAPI\Connection\Response\ConnectionResponse;
 use Adyen\Core\BusinessLogic\AdminAPI\Connection\Response\ConnectionSettingsResponse;
+use Adyen\Core\BusinessLogic\AdminAPI\Connection\Response\ReRegisterWebhookResponse;
 use Adyen\Core\BusinessLogic\AdyenAPI\Exceptions\ConnectionSettingsNotFoundException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\ApiCredentialsDoNotExistException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\ApiKeyCompanyLevelException;
+use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\ConnectionSettingsNotFountException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\EmptyConnectionDataException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\EmptyStoreException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\InvalidAllowedOriginException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\InvalidApiKeyException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\InvalidConnectionSettingsException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\InvalidModeException;
-use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\MerchantIdChangedException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\ModeChangedException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\UserDoesNotHaveNecessaryRolesException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
@@ -79,5 +80,19 @@ class ConnectionController
     public function getConnectionSettings(): ConnectionSettingsResponse
     {
         return new ConnectionSettingsResponse($this->connectionService->getConnectionData());
+    }
+
+    /**
+     * @return ReRegisterWebhookResponse
+     *
+     * @throws FailedToGenerateHmacException
+     * @throws FailedToRegisterWebhookException
+     * @throws ConnectionSettingsNotFountException
+     */
+    public function reRegisterWebhook(): ReRegisterWebhookResponse
+    {
+        $this->connectionService->reRegisterWebhook();
+
+        return new ReRegisterWebhookResponse();
     }
 }

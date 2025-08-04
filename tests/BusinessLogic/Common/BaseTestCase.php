@@ -3,6 +3,7 @@
 namespace Adyen\Core\Tests\BusinessLogic\Common;
 
 use Adyen\Core\BusinessLogic\AdminAPI\AuthorizationAdjustment\Controller\AuthorizationAdjustmentController;
+use Adyen\Core\BusinessLogic\AdminAPI\Connection\Controller\ConnectionController;
 use Adyen\Core\BusinessLogic\AdminAPI\InfoSettings\Controller\AutoTestController;
 use Adyen\Core\BusinessLogic\AdminAPI\InfoSettings\Controller\DebugController;
 use Adyen\Core\BusinessLogic\AdminAPI\InfoSettings\Controller\SystemInfoController;
@@ -47,7 +48,6 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\AdyenGiving\Repositories\DonationsD
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Factory\PaymentLinkRequestFactory;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Proxies\PaymentLinkProxy;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Services\PaymentLinkService;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Factory\PaymentRequestFactory;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Proxies\PaymentsProxy;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Services\PaymentRequestService;
 use Adyen\Core\BusinessLogic\Domain\Connection\Proxies\ConnectionProxy;
@@ -373,6 +373,11 @@ class BaseTestCase extends TestCase
                     RepositoryRegistry::getQueueItemRepository(),
                     TestRepositoryRegistry::getRepository(ConnectionSettings::getClassName()),
                     TestServiceRegister::getService(DomainStoreService::class)
+                );
+            },
+            ConnectionController::class => function () {
+                return new ConnectionController(
+                    TestServiceRegister::getService(ConnectionService::class)
                 );
             },
             DomainStoreService::class => function () {

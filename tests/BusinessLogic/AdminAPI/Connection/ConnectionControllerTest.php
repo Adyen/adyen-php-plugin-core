@@ -2,22 +2,31 @@
 
 namespace Adyen\Core\Tests\BusinessLogic\AdminAPI\Connection;
 
+use Adyen\Core\BusinessLogic\AdminAPI\AdminAPI;
 use Adyen\Core\BusinessLogic\AdminAPI\Connection\Controller\ConnectionController;
 use Adyen\Core\BusinessLogic\AdminAPI\Connection\Request\ConnectionRequest;
 use Adyen\Core\BusinessLogic\AdminAPI\Connection\Response\ConnectionSettingsResponse;
+use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\ConnectionSettingsNotFountException;
+use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\EmptyConnectionDataException;
+use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\EmptyStoreException;
+use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\InvalidModeException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Models\ApiCredentials;
 use Adyen\Core\BusinessLogic\Domain\Connection\Models\ConnectionData;
 use Adyen\Core\BusinessLogic\Domain\Connection\Models\ConnectionSettings;
 use Adyen\Core\BusinessLogic\Domain\Connection\Proxies\ConnectionProxy;
 use Adyen\Core\BusinessLogic\Domain\Connection\Repositories\ConnectionSettingsRepository;
 use Adyen\Core\BusinessLogic\Domain\Connection\Services\ConnectionService;
+use Adyen\Core\BusinessLogic\Domain\Integration\Store\StoreService;
 use Adyen\Core\BusinessLogic\Domain\Merchant\Proxies\MerchantProxy;
 use Adyen\Core\BusinessLogic\Domain\Multistore\StoreContext;
+use Adyen\Core\BusinessLogic\Domain\Webhook\Exceptions\FailedToGenerateHmacException;
+use Adyen\Core\BusinessLogic\Domain\Webhook\Exceptions\FailedToRegisterWebhookException;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Proxies\WebhookProxy;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Repositories\WebhookConfigRepository;
 use Adyen\Core\Infrastructure\Http\HttpClient;
 use Adyen\Core\Infrastructure\Http\HttpResponse;
 use Adyen\Core\Tests\BusinessLogic\Common\BaseTestCase;
+use Adyen\Core\Tests\BusinessLogic\Common\MockComponents\MockConnectionService;
 use Adyen\Core\Tests\BusinessLogic\Domain\Merchant\MockComponents\MockMerchantProxy;
 use Adyen\Core\Tests\BusinessLogic\Domain\MockComponents\MockConnectionProxySuccess;
 use Adyen\Core\Tests\BusinessLogic\Domain\Webhook\Mocks\MockWebhookProxy;
@@ -231,5 +240,80 @@ class ConnectionControllerTest extends BaseTestCase
 
         // assert
         self::assertEquals(new ConnectionSettingsResponse($connectionSettings), $result);
+    }
+
+    /**
+     * @return void
+     *
+     * @throws ConnectionSettingsNotFountException
+     * @throws EmptyConnectionDataException
+     * @throws EmptyStoreException
+     * @throws InvalidModeException
+     * @throws FailedToGenerateHmacException
+     * @throws FailedToRegisterWebhookException
+     */
+    public function testReRegisterWebhookSuccess(): void
+    {
+        // arrange
+        $connectionSettings = new ConnectionSettings(
+            '1',
+            'test',
+            new ConnectionData('012345678', '', '', '1234', new ApiCredentials('123', true, 'test')),
+            null
+        );
+        $this->connectionSettingsRepository->setConnectionSettings($connectionSettings);
+
+        TestServiceRegister::registerService(
+            ConnectionService::class, static function () {
+            return new MockConnectionService(
+                TestServiceRegister::getService(ConnectionSettingsRepository::class),
+                TestServiceRegister::getService(StoreService::class),
+                TestServiceRegister::getService(WebhookConfigRepository::class)
+            );
+        });
+
+        // act
+        $result = AdminAPI::get()->connection('1')->reRegisterWebhook();
+
+        // assert
+        self::assertTrue($result->isSuccessful());
+    }
+
+
+    /**
+     * @return void
+     *
+     * @throws ConnectionSettingsNotFountException
+     * @throws EmptyConnectionDataException
+     * @throws EmptyStoreException
+     * @throws InvalidModeException
+     * @throws FailedToGenerateHmacException
+     * @throws FailedToRegisterWebhookException
+     */
+    public function testReRegisterWebhookToArray(): void
+    {
+        // arrange
+        $connectionSettings = new ConnectionSettings(
+            '1',
+            'test',
+            new ConnectionData('012345678', '', '', '1234', new ApiCredentials('123', true, 'test')),
+            null
+        );
+        $this->connectionSettingsRepository->setConnectionSettings($connectionSettings);
+
+        TestServiceRegister::registerService(
+            ConnectionService::class, static function () {
+            return new MockConnectionService(
+                TestServiceRegister::getService(ConnectionSettingsRepository::class),
+                TestServiceRegister::getService(StoreService::class),
+                TestServiceRegister::getService(WebhookConfigRepository::class)
+            );
+        });
+
+        // act
+        $result = AdminAPI::get()->connection('1')->reRegisterWebhook();
+
+        // assert
+        self::assertEmpty($result->toArray());
     }
 }

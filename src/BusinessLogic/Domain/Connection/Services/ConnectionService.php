@@ -8,6 +8,7 @@ use Adyen\Core\BusinessLogic\AdyenAPI\Management\ProxyFactory;
 use Adyen\Core\BusinessLogic\Domain\Connection\Enums\Mode;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\ApiCredentialsDoNotExistException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\ApiKeyCompanyLevelException;
+use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\ConnectionSettingsNotFountException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\InvalidAllowedOriginException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\InvalidApiKeyException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\InvalidConnectionSettingsException;
@@ -64,10 +65,9 @@ class ConnectionService
      */
     public function __construct(
         ConnectionSettingsRepository $connectionSettingsRepository,
-        StoreService                 $storeService,
-        WebhookConfigRepository      $webhookConfigRepository
-    )
-    {
+        StoreService $storeService,
+        WebhookConfigRepository $webhookConfigRepository
+    ) {
         $this->connectionSettingsRepository = $connectionSettingsRepository;
         $this->storeService = $storeService;
         $this->webhookConfigRepository = $webhookConfigRepository;
@@ -171,6 +171,27 @@ class ConnectionService
     }
 
     /**
+     * @return void
+     *
+     * @throws ConnectionSettingsNotFountException
+     * @throws FailedToGenerateHmacException
+     * @throws FailedToRegisterWebhookException
+     */
+    public function reRegisterWebhook(): void
+    {
+        $connectionSettings = $this->getConnectionData();
+
+        if (!$connectionSettings) {
+            throw new ConnectionSettingsNotFountException(
+                new TranslatableLabel('Connection settings not found.', 'connection.settingsNotFound')
+            );
+        }
+
+        $merchantId = $connectionSettings->getActiveConnectionData()->getMerchantId();
+        $this->initializeWebhook($merchantId);
+    }
+
+    /**
      * @param ConnectionSettings $connectionSettings
      * @param ConnectionSettings $existingSettings
      *
@@ -186,8 +207,10 @@ class ConnectionService
      * @noinspection NullPointerExceptionInspection
      *
      */
-    private function initializeConnection(ConnectionSettings $connectionSettings, ConnectionSettings $existingSettings): void
-    {
+    private function initializeConnection(
+        ConnectionSettings $connectionSettings,
+        ConnectionSettings $existingSettings
+    ): void {
 
         if ($this->connectionValidator->isApiKeyChanged($connectionSettings, $existingSettings) &&
             $this->connectionValidator->isModeChanged($connectionSettings, $existingSettings)) {
