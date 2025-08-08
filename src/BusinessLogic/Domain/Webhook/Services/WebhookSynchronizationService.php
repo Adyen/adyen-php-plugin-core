@@ -3,6 +3,7 @@
 namespace Adyen\Core\BusinessLogic\Domain\Webhook\Services;
 
 use Adyen\Core\BusinessLogic\AdyenAPI\Management\Webhook\Http\Proxy;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidPaymentMethodCodeException;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\GeneralSettings;
@@ -244,10 +245,13 @@ class WebhookSynchronizationService
 
     /**
      * @param Webhook $webhook
+     * @param bool $orderCreated
+     * @param int|null $transactionLogId
      *
      * @return void
      *
      * @throws InvalidMerchantReferenceException
+     * @throws InvalidPaymentMethodCodeException
      */
     public function synchronizeChanges(Webhook $webhook, bool $orderCreated = true, int $transactionLogId = null): void
     {

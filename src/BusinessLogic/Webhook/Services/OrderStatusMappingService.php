@@ -92,6 +92,7 @@ class OrderStatusMappingService implements OrderStatusProvider
     /**
      * @param Webhook $webhook
      * @param TransactionHistory $transactionHistory
+     *
      * @return string|null
      *
      * @throws InvalidDataException
@@ -104,6 +105,13 @@ class OrderStatusMappingService implements OrderStatusProvider
         $capturedAmount = $transactionHistory->getCapturedAmount();
         $authorizedAmount = $transactionHistory->getAuthorizedAmount();
         $refundedAmount = $transactionHistory->getTotalAmountForEventCode(EventCodes::REFUND);
+
+        if (
+            $webhook->getEventCode() === EventCodes::ORDER_CLOSED &&
+            $webhook->isSuccess()
+        ) {
+            $previousPaymentState = PaymentStates::STATE_NEW;
+        }
 
         if ($webhook->getEventCode() === EventCodes::ORDER_CLOSED &&
             !$webhook->isSuccess() &&

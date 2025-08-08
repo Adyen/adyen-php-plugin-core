@@ -352,6 +352,375 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
      *
      * @throws Exception
      */
+    public function testSynchronizeChangesWithSuccessfulOrderClosedWebhook(): void
+    {
+        // arrange
+        $this->webhook = new Webhook(
+            Amount::fromInt(1, Currency::getDefault()),
+            EventCodes::ORDER_CLOSED,
+            '2023-02-01T14:09:24+01:00',
+            'coqCmt/IZ4E3CzPvMY8zTjQVL5hYJUiBRg8UU+iCWo0=',
+            'TestMerchant',
+            'merchantRef',
+            '79140733813420890',
+            (string)PaymentMethodCode::giftCard(),
+            'reason',
+            true,
+            '',
+            0,
+            false,
+            []
+        );
+        $transactionHistory = new TransactionHistory(
+            'merchantRef', CaptureType::manual(), 1, Currency::getDefault(), null,
+            [
+                new HistoryItem(
+                    '7914073381342284',
+                    'merchantRef',
+                    EventCodes::ORDER_OPENED,
+                    PaymentStates::STATE_NEW,
+                    '2023-02-01T14:09:24+01:00',
+                    true,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    (string)PaymentMethodCode::giftCard(),
+                    0,
+                    false,
+                    '',
+                    CaptureType::immediate(),
+                    1,
+                    $this->timeProvider->getCurrentLocalTime()->getTimestamp()
+                ),
+                new HistoryItem(
+                    '7914073381342287',
+                    'merchantRef',
+                    EventCodes::OFFER_CLOSED,
+                    PaymentStates::STATE_CANCELLED,
+                    '2023-02-01T14:09:24+01:00',
+                    true,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    (string)PaymentMethodCode::giftCard(),
+                    0,
+                    false,
+                    '',
+                    CaptureType::immediate(),
+                    1,
+                    $this->timeProvider->getCurrentLocalTime()->getTimestamp()
+                ),
+            ],
+            '',
+            '',
+            []
+        );
+        $this->transactionHistoryRepository->setTransactionHistory($transactionHistory);
+        $this->orderService->setMockOrderExists(true);
+
+        // act
+        StoreContext::doWithStore('1', [$this->service, 'synchronizeChanges'], [$this->webhook]);
+
+        // assert
+        $transactionHistory = $this->transactionService->getTransactionHistory($this->webhook->getMerchantReference());
+
+        self::assertEquals(PaymentStates::STATE_PAID, $transactionHistory->collection()->last()->getPaymentState());
+        self::assertCount(3, $transactionHistory->collection()->getAll());
+    }
+
+    /**
+     * @return void
+     *
+     * @throws Exception
+     */
+    public function testSynchronizeChangesWithFailOrderClosedWebhook(): void
+    {
+        // arrange
+        $this->webhook = new Webhook(
+            Amount::fromInt(1, Currency::getDefault()),
+            EventCodes::ORDER_CLOSED,
+            '2023-02-01T14:09:24+01:00',
+            'coqCmt/IZ4E3CzPvMY8zTjQVL5hYJUiBRg8UU+iCWo0=',
+            'TestMerchant',
+            'merchantRef',
+            '79140733813420890',
+            (string)PaymentMethodCode::giftCard(),
+            'reason',
+            false,
+            '',
+            0,
+            false,
+            []
+        );
+        $transactionHistory = new TransactionHistory(
+            'merchantRef', CaptureType::manual(), 1, Currency::getDefault(), null,
+            [
+                new HistoryItem(
+                    '7914073381342284',
+                    'merchantRef',
+                    EventCodes::ORDER_OPENED,
+                    PaymentStates::STATE_NEW,
+                    '2023-02-01T14:09:24+01:00',
+                    true,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    (string)PaymentMethodCode::giftCard(),
+                    0,
+                    false,
+                    '',
+                    CaptureType::immediate(),
+                    1,
+                    $this->timeProvider->getCurrentLocalTime()->getTimestamp()
+                ),
+                new HistoryItem(
+                    '7914073381342287',
+                    'merchantRef',
+                    EventCodes::OFFER_CLOSED,
+                    PaymentStates::STATE_CANCELLED,
+                    '2023-02-01T14:09:24+01:00',
+                    true,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    (string)PaymentMethodCode::giftCard(),
+                    0,
+                    false,
+                    '',
+                    CaptureType::immediate(),
+                    1,
+                    $this->timeProvider->getCurrentLocalTime()->getTimestamp()
+                ),
+            ],
+            '',
+            '',
+            []
+        );
+        $this->transactionHistoryRepository->setTransactionHistory($transactionHistory);
+        $this->orderService->setMockOrderExists(true);
+
+        // act
+        StoreContext::doWithStore('1', [$this->service, 'synchronizeChanges'], [$this->webhook]);
+
+        // assert
+        $transactionHistory = $this->transactionService->getTransactionHistory($this->webhook->getMerchantReference());
+
+        self::assertEquals(PaymentStates::STATE_CANCELLED, $transactionHistory->collection()->last()->getPaymentState());
+        self::assertCount(2, $transactionHistory->collection()->getAll());
+    }
+
+    /**
+     * @return void
+     *
+     * @throws Exception
+     */
+    public function testSynchronizeChangesWithPartialRefund(): void
+    {
+        // arrange
+        $this->webhook = new Webhook(
+            Amount::fromInt(1, Currency::getDefault()),
+            EventCodes::REFUND,
+            '2023-02-01T14:09:24+01:00',
+            'coqCmt/IZ4E3CzPvMY8zTjQVL5hYJUiBRg8UU+iCWo0=',
+            'TestMerchant',
+            'merchantRef',
+            '79140733813420890',
+            (string)PaymentMethodCode::giftCard(),
+            'reason',
+            true,
+            '',
+            0,
+            false,
+            []
+        );
+        $transactionHistory = new TransactionHistory(
+            'merchantRef', CaptureType::manual(), 1, Currency::getDefault(), null,
+            [
+                new HistoryItem(
+                    '7914073381342284',
+                    'merchantRef',
+                    EventCodes::AUTHORISATION,
+                    PaymentStates::STATE_PAID,
+                    '2023-02-01T14:09:24+01:00',
+                    true,
+                    Amount::fromInt(222, Currency::getDefault()),
+                    (string)PaymentMethodCode::giftCard(),
+                    0,
+                    false,
+                    '',
+                    CaptureType::immediate(),
+                    1,
+                    $this->timeProvider->getCurrentLocalTime()->getTimestamp()
+                )
+            ],
+            '',
+            '',
+            []
+        );
+        $this->transactionHistoryRepository->setTransactionHistory($transactionHistory);
+        $this->orderService->setMockOrderExists(true);
+
+        // act
+        StoreContext::doWithStore('1', [$this->service, 'synchronizeChanges'], [$this->webhook]);
+
+        // assert
+        $transactionHistory = $this->transactionService->getTransactionHistory($this->webhook->getMerchantReference());
+
+        self::assertEquals(PaymentStates::STATE_PARTIALLY_REFUNDED, $transactionHistory->collection()->last()->getPaymentState());
+        self::assertCount(2, $transactionHistory->collection()->getAll());
+    }
+
+    /**
+     * @return void
+     *
+     * @throws Exception
+     */
+    public function testSynchronizeChangesWithPartialRefundAndPartialCapture(): void
+    {
+        // arrange
+        $this->webhook = new Webhook(
+            Amount::fromInt(100, Currency::getDefault()),
+            EventCodes::CAPTURE,
+            '2023-02-01T14:09:24+01:00',
+            'coqCmt/IZ4E3CzPvMY8zTjQVL5hYJUiBRg8UU+iCWo0=',
+            'TestMerchant',
+            'merchantRef',
+            '79140733813420890',
+            (string)PaymentMethodCode::giftCard(),
+            'reason',
+            true,
+            '7914073381342284',
+            0,
+            false,
+            []
+        );
+        $transactionHistory = new TransactionHistory(
+            'merchantRef', CaptureType::manual(), 1, Currency::getDefault(), null,
+            [
+                new HistoryItem(
+                    '7914073381342284',
+                    'merchantRef',
+                    EventCodes::AUTHORISATION,
+                    PaymentStates::STATE_PAID,
+                    '2023-02-01T14:09:24+01:00',
+                    true,
+                    Amount::fromInt(200, Currency::getDefault()),
+                    (string)PaymentMethodCode::giftCard(),
+                    0,
+                    false,
+                    '',
+                    CaptureType::immediate(),
+                    1,
+                    $this->timeProvider->getCurrentLocalTime()->getTimestamp()
+                ),
+                new HistoryItem(
+                    '791407338111342284',
+                    'merchantRef',
+                    EventCodes::CAPTURE,
+                    PaymentStates::STATE_PAID,
+                    '2023-02-01T14:09:24+01:00',
+                    true,
+                    Amount::fromInt(100, Currency::getDefault()),
+                    (string)PaymentMethodCode::giftCard(),
+                    0,
+                    false,
+                    '7914073381342284',
+                    CaptureType::immediate(),
+                    1,
+                    $this->timeProvider->getCurrentLocalTime()->getTimestamp()
+                ),
+                new HistoryItem(
+                    '79321407338111342284',
+                    'merchantRef',
+                    EventCodes::REFUND,
+                    PaymentStates::STATE_REFUNDED,
+                    '2023-02-01T14:09:24+01:00',
+                    true,
+                    Amount::fromInt(100, Currency::getDefault()),
+                    (string)PaymentMethodCode::giftCard(),
+                    0,
+                    false,
+                    '7914073381342284',
+                    CaptureType::immediate(),
+                    1,
+                    $this->timeProvider->getCurrentLocalTime()->getTimestamp()
+                )
+            ],
+            '',
+            '',
+            ['7914073381342284']
+        );
+        $this->transactionHistoryRepository->setTransactionHistory($transactionHistory);
+        $this->orderService->setMockOrderExists(true);
+
+        // act
+        StoreContext::doWithStore('1', [$this->service, 'synchronizeChanges'], [$this->webhook]);
+
+        // assert
+        $transactionHistory = $this->transactionService->getTransactionHistory($this->webhook->getMerchantReference());
+
+        self::assertEquals(PaymentStates::STATE_PARTIALLY_REFUNDED, $transactionHistory->collection()->last()->getPaymentState());
+        self::assertCount(4, $transactionHistory->collection()->getAll());
+    }
+
+    /**
+     * @return void
+     *
+     * @throws Exception
+     */
+    public function testSynchronizeChangesToPaidAfterInitialPaymentFails(): void
+    {
+        // arrange
+        $this->webhook = new Webhook(
+            Amount::fromInt(100, Currency::getDefault()),
+            EventCodes::AUTHORISATION,
+            '2023-02-01T14:09:24+01:00',
+            'coqCmt/IZ4E3CzPvMY8zTjQVL5hYJUiBRg8UU+iCWo0=',
+            'TestMerchant',
+            'merchantRef',
+            '2',
+            (string)PaymentMethodCode::giftCard(),
+            'reason',
+            true,
+            '2',
+            0,
+            false,
+            []
+        );
+        $transactionHistory = new TransactionHistory(
+            'merchantRef', CaptureType::manual(), 1, Currency::getDefault(), null,
+            [
+                new HistoryItem(
+                    '1',
+                    'merchantRef',
+                    EventCodes::AUTHORISATION,
+                    PaymentStates::STATE_FAILED,
+                    '2023-02-01T14:09:24+01:00',
+                    true,
+                    Amount::fromInt(200, Currency::getDefault()),
+                    (string)PaymentMethodCode::giftCard(),
+                    0,
+                    false,
+                    '1',
+                    CaptureType::immediate(),
+                    1,
+                    $this->timeProvider->getCurrentLocalTime()->getTimestamp()
+                )
+            ],
+            '',
+            '',
+            ['1']
+        );
+        $this->transactionHistoryRepository->setTransactionHistory($transactionHistory);
+        $this->orderService->setMockOrderExists(true);
+
+        // act
+        StoreContext::doWithStore('1', [$this->service, 'synchronizeChanges'], [$this->webhook]);
+
+        // assert
+        $transactionHistory = $this->transactionService->getTransactionHistory($this->webhook->getMerchantReference());
+
+        self::assertEquals(PaymentStates::STATE_PAID, $transactionHistory->collection()->last()->getPaymentState());
+        self::assertCount(2, $transactionHistory->collection()->getAll());
+    }
+
+    /**
+     * @return void
+     *
+     * @throws Exception
+     */
     public function testSynchronizeChangesWithTransactionHistoryWebhookSuccess(): void
     {
         //assert
