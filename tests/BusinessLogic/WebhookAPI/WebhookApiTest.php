@@ -8,6 +8,7 @@ use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsServ
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Exceptions\WebhookConfigDoesntExistException;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Repositories\WebhookConfigRepository;
+use Adyen\Core\BusinessLogic\WebhookAPI\Exceptions\WebhookShouldRetryException;
 use Adyen\Core\BusinessLogic\WebhookAPI\WebhookAPI;
 use Adyen\Core\Tests\BusinessLogic\Common\BaseTestCase;
 use Adyen\Core\Tests\BusinessLogic\WebhookAPI\MockComponents\MockOrderService;
@@ -17,6 +18,7 @@ use Adyen\Webhook\Exception\AuthenticationException;
 use Adyen\Webhook\Exception\HMACKeyValidationException;
 use Adyen\Webhook\Exception\InvalidDataException;
 use Adyen\Webhook\Exception\MerchantAccountCodeException;
+use Throwable;
 
 /**
  * Class WebhookApiTest
@@ -78,12 +80,14 @@ class WebhookApiTest extends BaseTestCase
     /**
      * @return void
      *
-     * @throws InvalidCurrencyCode
-     * @throws WebhookConfigDoesntExistException
      * @throws AuthenticationException
      * @throws HMACKeyValidationException
+     * @throws InvalidCurrencyCode
      * @throws InvalidDataException
      * @throws MerchantAccountCodeException
+     * @throws WebhookConfigDoesntExistException
+     * @throws WebhookShouldRetryException
+     * @throws Throwable
      */
     public function testIsResponseSuccessful(): void
     {

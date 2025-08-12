@@ -9,14 +9,17 @@ use Adyen\Core\BusinessLogic\Domain\Webhook\Models\Webhook;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Services\WebhookSynchronizationService;
 use Adyen\Core\BusinessLogic\TransactionLog\Services\TransactionLogService;
 use Adyen\Core\BusinessLogic\Webhook\Tasks\OrderUpdateTask;
+use Adyen\Core\BusinessLogic\Webhook\Tasks\SynchronousOrderUpdateTask;
 use Adyen\Core\BusinessLogic\WebhookAPI\Exceptions\WebhookShouldRetryException;
 use Adyen\Core\Infrastructure\ORM\Exceptions\QueryFilterInvalidParamException;
 use Adyen\Core\Infrastructure\ServiceRegister;
+use Adyen\Core\Infrastructure\TaskExecution\Exceptions\AbortTaskExecutionException;
 use Adyen\Core\Infrastructure\TaskExecution\Exceptions\QueueStorageUnavailableException;
 use Adyen\Core\Infrastructure\TaskExecution\Interfaces\TaskRunnerWakeup;
 use Adyen\Core\Infrastructure\TaskExecution\QueueItem;
 use Adyen\Core\Infrastructure\TaskExecution\QueueService;
 use Adyen\Core\Infrastructure\Utility\TimeProvider;
+use Throwable;
 
 /**
  * Class WebhookHandler
@@ -54,9 +57,9 @@ class WebhookHandler
      */
     public function __construct(
         WebhookSynchronizationService $synchronizationService,
-        QueueService                  $queueService,
-        TimeProvider                  $timeProvider)
-    {
+        QueueService $queueService,
+        TimeProvider $timeProvider
+    ) {
         $this->synchronizationService = $synchronizationService;
         $this->queueService = $queueService;
         $this->timeProvider = $timeProvider;
@@ -67,9 +70,12 @@ class WebhookHandler
      *
      * @return void
      *
-     * @throws QueueStorageUnavailableException
      * @throws InvalidMerchantReferenceException
      * @throws QueryFilterInvalidParamException
+     * @throws QueueStorageUnavailableException
+     * @throws WebhookShouldRetryException
+     * @throws AbortTaskExecutionException
+     * @throws Throwable
      */
     public function handle(Webhook $webhook): void
     {
@@ -116,14 +122,14 @@ class WebhookHandler
             $transactionLog->setQueueStatus(QueueItem::IN_PROGRESS);
             $transactionLogService->update($transactionLog);
 
-            $task = new OrderUpdateTask($webhook);
+            $task = new SynchronousOrderUpdateTask($webhook);
             $task->setTransactionLogId($transactionLog->getId());
             $task->execute();
 
             $transactionLog->setQueueStatus(QueueItem::COMPLETED);
             $transactionLog->setFailureDescription(null);
             $transactionLogService->update($transactionLog);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $transactionLog->setQueueStatus(QueueItem::FAILED);
             $transactionLog->setFailureDescription($exception->getMessage());
             $transactionLogService->update($transactionLog);

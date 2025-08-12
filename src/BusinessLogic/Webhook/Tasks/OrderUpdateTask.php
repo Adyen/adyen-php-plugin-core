@@ -42,17 +42,17 @@ class OrderUpdateTask extends TransactionalTask
     /**
      * @var Webhook
      */
-    private $webhook;
+    protected $webhook;
 
     /**
      * @var string
      */
-    private $storeId;
+    protected $storeId;
 
     /**
      * @var int
      */
-    private $transactionLogId;
+    protected $transactionLogId;
 
     /**
      * @param Webhook $webhook
@@ -190,6 +190,8 @@ class OrderUpdateTask extends TransactionalTask
     }
 
     /**
+     * @param int|null $transactionLogId
+     *
      * @return void
      */
     public function setTransactionLogId(?int $transactionLogId): void
@@ -203,7 +205,7 @@ class OrderUpdateTask extends TransactionalTask
      * @throws InvalidMerchantReferenceException
      * @throws Exception
      */
-    private function doExecute(): void
+    protected function doExecute(): void
     {
         if ($this->checkIfCartExists()) {
             $event = $this->getEventFromWebhook();
@@ -223,7 +225,7 @@ class OrderUpdateTask extends TransactionalTask
      *
      * @return ?Event
      */
-    private function getEventFromWebhook(): ?Event
+    protected function getEventFromWebhook(): ?Event
     {
         $event = $this->webhook->getEventCode();
         $success = $this->webhook->isSuccess();
@@ -290,7 +292,7 @@ class OrderUpdateTask extends TransactionalTask
      *
      * @return bool
      */
-    private function checkIfCartExists(): bool
+    protected function checkIfCartExists(): bool
     {
         return $this->getOrderService()->cartExists($this->webhook->getMerchantReference());
     }
@@ -305,7 +307,7 @@ class OrderUpdateTask extends TransactionalTask
      *
      * @throws Exception
      */
-    private function checkIfOrderExists(int $retryCount = 0): bool
+    protected function checkIfOrderExists(int $retryCount = 0): bool
     {
         $order = false;
 
@@ -334,7 +336,7 @@ class OrderUpdateTask extends TransactionalTask
     /**
      * @return ShopNotificationService
      */
-    private function getShopNotificationService(): ShopNotificationService
+    protected function getShopNotificationService(): ShopNotificationService
     {
         return ServiceRegister::getService(ShopNotificationService::class);
     }
@@ -342,7 +344,7 @@ class OrderUpdateTask extends TransactionalTask
     /**
      * @return OrderService
      */
-    private function getOrderService(): OrderService
+    protected function getOrderService(): OrderService
     {
         return ServiceRegister::getService(OrderService::class);
     }
@@ -350,7 +352,7 @@ class OrderUpdateTask extends TransactionalTask
     /**
      * @return WebhookSynchronizationService
      */
-    private function getSynchronizationService(): WebhookSynchronizationService
+    protected function getSynchronizationService(): WebhookSynchronizationService
     {
         return ServiceRegister::getService(WebhookSynchronizationService::class);
     }

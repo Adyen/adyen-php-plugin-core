@@ -19,6 +19,7 @@ use Adyen\Webhook\Exception\HMACKeyValidationException;
 use Adyen\Webhook\Exception\InvalidDataException;
 use Adyen\Webhook\Exception\MerchantAccountCodeException;
 use Exception;
+use Throwable;
 
 /**
  * Class WebhookController
@@ -60,6 +61,7 @@ class WebhookController
      * @throws MerchantAccountCodeException
      * @throws WebhookShouldRetryException
      * @throws Exception
+     * @throws Throwable
      */
     public function handleRequest(array $payload): Response
     {
