@@ -218,7 +218,7 @@ class OrderUpdateTask extends TransactionalTask
             $this->getShopNotificationService()->pushNotification($event);
         }
 
-        if ($this->webhook->getEventCode() === EventCodes::ORDER_CLOSED && !$this->webhook->isSuccess()) {
+        if (!$this->shouldCheckOrderExists()) {
             $this->getSynchronizationService()->synchronizeChanges(
                 $this->webhook,
                 false,
@@ -235,6 +235,30 @@ class OrderUpdateTask extends TransactionalTask
             $this->checkIfOrderExists(),
             $this->getTransactionLogId()
         );
+
+        $this->reportProgress(100);
+    }
+
+    /**
+     * In case Order closed and authorisation with success flag set to false there is no need to check if order exists.
+     * Also, when order opened webhook is received there is no need to check if order exists.
+     *
+     * @return bool
+     */
+    protected function shouldCheckOrderExists(): bool
+    {
+        if (
+            ($this->webhook->getEventCode() === EventCodes::ORDER_CLOSED || $this->webhook->getEventCode() === EventCodes::AUTHORISATION) &&
+            !$this->webhook->isSuccess()
+        ) {
+            return false;
+        }
+
+        if ($this->webhook->getEventCode() === EventCodes::ORDER_OPENED) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
