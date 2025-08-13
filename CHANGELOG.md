@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [2.1.9 - 2.1.10](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.9...2.1.10) - 2025-08-13
+- Fix webhook handling
+  - ORDER_CLOSED event handling
+  - Retry logic on synchronous webhook handling 
+
 ## [2.1.8 - 2.1.9](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.8...2.1.9) - 2025-08-05
 - Add webhook re-registration logic
 
