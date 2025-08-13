@@ -181,7 +181,7 @@ class PaymentRequestService
         }
 
         if (!$result->getResultCode()->isSuccessful()) {
-            $this->removeTransactionHistoryItems($context->getReference());
+            $this->removeTransactionHistoryItems($context->getReference(), $context->getAmount()->getCurrency());
         }
 
         if ($result->getDonationToken() &&
@@ -230,7 +230,7 @@ class PaymentRequestService
             ->createOrder($partialTransactionRequest->getReference(), $amount);
         $order = new Order($orderCreateResult->getOrderData(), $orderCreateResult->getPspReference());
 
-        $this->removeTransactionHistoryItems($partialTransactionRequest->getReference());
+        $this->removeTransactionHistoryItems($partialTransactionRequest->getReference(), $amount->getCurrency());
 
         return $this->startTransactions($requests, $order);
     }
@@ -255,7 +255,10 @@ class PaymentRequestService
         }
 
         if (!$result->getResultCode()->isSuccessful()) {
-            $this->removeTransactionHistoryItems($result->getMerchantReference());
+            $this->removeTransactionHistoryItems(
+                $result->getMerchantReference(),
+                !empty($result->getAmount()) ? $result->getAmount()->getCurrency() : null
+            );
         }
 
         return $result;
@@ -277,19 +280,21 @@ class PaymentRequestService
 
     /**
      * @param string $merchantReference
+     * @param Currency|null $currency
+     *
      * @return void
      *
      * @throws InvalidMerchantReferenceException
      */
-    public function removeTransactionHistoryItems(string $merchantReference): void
+    public function removeTransactionHistoryItems(string $merchantReference, ?Currency $currency): void
     {
         $transactionHistory = $this->transactionHistoryService->getTransactionHistory($merchantReference);
         $newHistory = new TransactionHistory(
             $merchantReference,
             $transactionHistory->getCaptureType(),
             $transactionHistory->getCaptureDelay(),
-            null,
-            null,
+            $currency ?: $transactionHistory->getCurrency(),
+            $transactionHistory->getAuthorizationType(),
             [],
             '',
             '',
