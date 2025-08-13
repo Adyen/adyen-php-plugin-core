@@ -293,7 +293,8 @@ class PaymentRequestService
             [],
             '',
             '',
-            []
+            [],
+            $transactionHistory->getRetryCounts()
         );
 
         $this->transactionHistoryService->setTransactionHistory($newHistory);
