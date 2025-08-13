@@ -207,17 +207,34 @@ class OrderUpdateTask extends TransactionalTask
      */
     protected function doExecute(): void
     {
-        if ($this->checkIfCartExists()) {
-            $event = $this->getEventFromWebhook();
+        if (!$this->checkIfCartExists()) {
+            $this->reportProgress(100);
 
-            if ($event) {
-                $this->getShopNotificationService()->pushNotification($event);
-            }
+            return;
+        }
+        $event = $this->getEventFromWebhook();
 
-            $this->getSynchronizationService()->synchronizeChanges($this->webhook, $this->checkIfOrderExists(), $this->getTransactionLogId());
+        if ($event) {
+            $this->getShopNotificationService()->pushNotification($event);
         }
 
-        $this->reportProgress(100);
+        if ($this->webhook->getEventCode() === EventCodes::ORDER_CLOSED && !$this->webhook->isSuccess()) {
+            $this->getSynchronizationService()->synchronizeChanges(
+                $this->webhook,
+                false,
+                $this->getTransactionLogId()
+            );
+
+            $this->reportProgress(100);
+
+            return;
+        }
+
+        $this->getSynchronizationService()->synchronizeChanges(
+            $this->webhook,
+            $this->checkIfOrderExists(),
+            $this->getTransactionLogId()
+        );
     }
 
     /**
@@ -307,8 +324,9 @@ class OrderUpdateTask extends TransactionalTask
      *
      * @throws Exception
      */
-    protected function checkIfOrderExists(int $retryCount = 0): bool
-    {
+    protected function checkIfOrderExists(
+        int $retryCount = 0
+    ): bool {
         $order = false;
 
         try {
@@ -328,6 +346,8 @@ class OrderUpdateTask extends TransactionalTask
 
                 return $this->checkIfOrderExists($retryCount);
             }
+
+            throw $exception;
         }
 
         return $order;

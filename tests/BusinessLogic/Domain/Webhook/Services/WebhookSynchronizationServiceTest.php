@@ -811,7 +811,6 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
                     false,
                     '7914073381342284',
                     CaptureType::immediate(),
-                    1,
                     $this->timeProvider->getCurrentLocalTime()->getTimestamp()
                 )
             ],

@@ -87,6 +87,13 @@ class TransactionHistory
     private $authorizationPspReferences;
 
     /**
+     * Map of PSP references and retry count of Adyen webhook processing in case of synchronous webhook processing.
+     *
+     * @var array<string, int>
+     */
+    private $retryCounts;
+
+    /**
      * @param string $merchantReference
      * @param CaptureType $captureType
      * @param int $captureDelay
@@ -96,6 +103,7 @@ class TransactionHistory
      * @param string $orderData
      * @param string $orderPspReference
      * @param array $authorizationPspReferences
+     * @param array<string, int> $retryCounts
      *
      * @throws InvalidMerchantReferenceException
      */
@@ -108,7 +116,8 @@ class TransactionHistory
         array $historyItems = [],
         string $orderData = '',
         string $orderPspReference = '',
-        array $authorizationPspReferences = []
+        array $authorizationPspReferences = [],
+        array $retryCounts = []
     ) {
         $this->merchantReference = $merchantReference;
         $this->captureType = $captureType;
@@ -119,6 +128,7 @@ class TransactionHistory
         $this->orderData = $orderData;
         $this->orderPspReference = $orderPspReference;
         $this->authorizationPspReferences = $authorizationPspReferences;
+        $this->retryCounts = $retryCounts;
 
         foreach ($historyItems as $item) {
             $this->add($item);
@@ -154,7 +164,8 @@ class TransactionHistory
             $item->getStatus()) {
             $this->originalPspReference = $item->getPspReference();
             $this->paymentLink = null;
-            $this->authorizationPspReferences = array_unique(array_merge($this->authorizationPspReferences, [$item->getPspReference()]));
+            $this->authorizationPspReferences = array_unique(array_merge($this->authorizationPspReferences,
+                [$item->getPspReference()]));
         }
 
         if ($this->historyItemCollection->isEmpty()) {
@@ -436,5 +447,33 @@ class TransactionHistory
     public function setCollection(HistoryItemCollection $historyItemCollection): void
     {
         $this->historyItemCollection = $historyItemCollection;
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    public function getRetryCounts(): array
+    {
+        return $this->retryCounts;
+    }
+
+    /**
+     * @param string $pspReference
+     *
+     * @return int
+     */
+    public function getRetryCountForPspReference(string $pspReference): int
+    {
+        return $this->retryCounts[$pspReference] ?? 0;
+    }
+
+    /**
+     * @param string $pspReference
+     *
+     * @return void
+     */
+    public function incrementRetryCountForPspReference(string $pspReference): void
+    {
+        $this->retryCounts[$pspReference] = $this->getRetryCountForPspReference($pspReference) + 1;
     }
 }

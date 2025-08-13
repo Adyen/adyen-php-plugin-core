@@ -65,9 +65,22 @@ class TransactionRepositoryTest extends BaseTestCase
     public function testGetTransaction(): void
     {
         // arrange
-        $transaction = new TransactionModel('merchantReference', CaptureType::manual(), 0, Currency::getDefault(),
+        $transaction = new TransactionModel(
+            'merchantReference',
+            CaptureType::manual(),
+            0,
+            Currency::getDefault(),
             AuthorizationType::finalAuthorization(),
-            $this->historyItems());
+            $this->historyItems(),
+            'data',
+            'pspReference',
+            [],
+            [
+                'psp1' => 1,
+                'psp2' => 2,
+                'psp3' => 3,
+            ]
+        );
         $transactionEntity = new TransactionEntity();
         $transactionEntity->setTransactionHistory($transaction);
         $transactionEntity->setStoreId('1');

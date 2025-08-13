@@ -143,7 +143,6 @@ class WebhookHandler
      *
      * @return void
      *
-     * @throws InvalidMerchantReferenceException
      * @throws QueueStorageUnavailableException
      */
     private function asynchronousProcessing(Webhook $webhook): void
@@ -176,7 +175,7 @@ class WebhookHandler
      *
      * @return TaskRunnerWakeup Task runner wakeup instance.
      */
-    private function getTaskRunnerWakeup()
+    private function getTaskRunnerWakeup(): TaskRunnerWakeup
     {
         if ($this->taskRunnerWakeup === null) {
             $this->taskRunnerWakeup = ServiceRegister::getService(TaskRunnerWakeup::CLASS_NAME);

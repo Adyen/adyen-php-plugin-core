@@ -365,6 +365,75 @@ class TransactionHistoryTest extends BaseTestCase
     }
 
     /**
+     * @throws InvalidMerchantReferenceException
+     */
+    public function testGetRetryCountForPSPReference(): void
+    {
+        // arrange
+        $transactionHistory = new TransactionHistory(
+            'merchantReference',
+            CaptureType::manual(),
+            0,
+            Currency::getDefault(),
+            AuthorizationType::finalAuthorization(),
+            [],
+            'data',
+            'pspReference',
+            [],
+            [
+                'psp1' => 1,
+                'psp2' => 2,
+                'psp3' => 3,
+            ]
+        );
+
+        // act
+        $transactionHistory->incrementRetryCountForPspReference('psp1');
+        $result1 = $transactionHistory->getRetryCountForPSPReference('psp1');
+        $result2 = $transactionHistory->getRetryCountForPspReference('psp2');
+        $result3 = $transactionHistory->getRetryCountForPspReference('psp3');
+
+        // assert
+        self::assertEquals(2, $result1);
+        self::assertEquals(2, $result2);
+        self::assertEquals(3, $result3);
+    }
+
+    /**
+     * @throws InvalidMerchantReferenceException
+     */
+    public function testIncrementRetryCountForPSPReference(): void
+    {
+        // arrange
+        $transactionHistory = new TransactionHistory(
+            'merchantReference',
+            CaptureType::manual(),
+            0,
+            Currency::getDefault(),
+            AuthorizationType::finalAuthorization(),
+            [],
+            'data',
+            'pspReference',
+            [],
+            [
+                'psp1' => 1,
+                'psp2' => 2,
+                'psp3' => 3,
+            ]
+        );
+
+        // act
+        $result1 = $transactionHistory->getRetryCountForPspReference('psp1');
+        $result2 = $transactionHistory->getRetryCountForPspReference('psp2');
+        $result3 = $transactionHistory->getRetryCountForPspReference('psp3');
+
+        // assert
+        self::assertEquals(1, $result1);
+        self::assertEquals(2, $result2);
+        self::assertEquals(3, $result3);
+    }
+
+    /**
      * @return TransactionHistory
      *
      * @throws InvalidMerchantReferenceException

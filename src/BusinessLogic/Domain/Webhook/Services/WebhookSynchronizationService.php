@@ -60,10 +60,10 @@ class WebhookSynchronizationService
      */
     public function __construct(
         TransactionHistoryService $transactionHistoryService,
-        OrderService              $orderService,
-        OrderStatusProvider       $orderStatusProvider,
-        GeneralSettingsService    $settingsService,
-        TimeProvider              $timeProvider
+        OrderService $orderService,
+        OrderStatusProvider $orderStatusProvider,
+        GeneralSettingsService $settingsService,
+        TimeProvider $timeProvider
     ) {
         $this->transactionHistoryService = $transactionHistoryService;
         $this->orderService = $orderService;
@@ -107,19 +107,8 @@ class WebhookSynchronizationService
     public function exceededRetryLimit(Webhook $webhook): bool
     {
         $history = $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference());
-        $existingItems = $history->collection()
-            ->filterAllByPspReference($webhook->getPspReference())
-            ->filterAllByEventCode($webhook->getEventCode())
-            ->filterByStatus($webhook->isSuccess());
 
-        if ($existingItems->isEmpty()) {
-            return false;
-        }
-
-        /** @var HistoryItem|null $last */
-        $first = $existingItems->firstItem();
-
-        return $first !== null && $first->getRetryCount() >= 4;
+        return $history->getRetryCountForPspReference($webhook->getPspReference()) >= 4;
     }
 
     /**
@@ -187,17 +176,8 @@ class WebhookSynchronizationService
     public function incrementRetryCount(Webhook $webhook): void
     {
         $history = $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference());
-
-        $item = $history->collection()
-            ->filterAllByPspReference($webhook->getPspReference())
-            ->filterAllByEventCode($webhook->getEventCode())
-            ->filterByStatus($webhook->isSuccess())
-            ->firstItem();
-
-        if ($item) {
-            $item->incrementRetryCount();
-            $this->transactionHistoryService->setTransactionHistory($history);
-        }
+        $history->incrementRetryCountForPspReference($webhook->getPspReference());
+        $this->transactionHistoryService->setTransactionHistory($history);
     }
 
     /**
@@ -301,7 +281,6 @@ class WebhookSynchronizationService
                 $webhook->isLive(),
                 $webhook->getEventCode() === EventCodes::AUTHORISATION ? $webhook->getPspReference() : $webhook->getOriginalReference(),
                 $captureType,
-                1,
                 $this->timeProvider->getCurrentLocalTime()->getTimestamp(),
                 $transactionLogId
             )
@@ -309,11 +288,15 @@ class WebhookSynchronizationService
 
         $references = $transactionHistory->getAuthorizationPspReferences();
         if ($webhook->getEventCode() === EventCodes::CANCELLATION) {
-            $transactionHistory->setAuthorizationPspReferences(array_diff($references, [$webhook->getOriginalReference()]));
+            $transactionHistory->setAuthorizationPspReferences(
+                array_diff($references, [$webhook->getOriginalReference()])
+            );
         }
 
         if ($webhook->getEventCode() === EventCodes::AUTHORISATION && $webhook->isSuccess()) {
-            $transactionHistory->setAuthorizationPspReferences(array_unique(array_merge($references, [$webhook->getPspReference()])));
+            $transactionHistory->setAuthorizationPspReferences(
+                array_unique(array_merge($references, [$webhook->getPspReference()]))
+            );
         }
 
         if ($webhook->getEventCode() === EventCodes::ORDER_CLOSED && $webhook->isSuccess()) {
@@ -369,10 +352,14 @@ class WebhookSynchronizationService
      * @param Webhook $webhook
      * @param GeneralSettings|null $settings
      * @param TransactionHistory $transactionHistory
+     *
      * @return bool
      */
-    protected function shouldNotHandleWebhook(Webhook $webhook, ?GeneralSettings $settings, TransactionHistory $transactionHistory): bool
-    {
+    protected function shouldNotHandleWebhook(
+        Webhook $webhook,
+        ?GeneralSettings $settings,
+        TransactionHistory $transactionHistory
+    ): bool {
         $paymentLinkTransactionsExists = !$transactionHistory->collection()
             ->filterAllByEventCode(ShopEvents::PAYMENT_LINK_CREATED)
             ->isEmpty();
@@ -413,7 +400,8 @@ class WebhookSynchronizationService
             }
         }
 
-        $transactionHistory->setAuthorizationPspReferences(array_diff($transactionHistory->getAuthorizationPspReferences(), $references));
+        $transactionHistory->setAuthorizationPspReferences(array_diff($transactionHistory->getAuthorizationPspReferences(),
+            $references));
         $transactionHistory->setCollection(new HistoryItemCollection($items));
         $this->transactionHistoryService->setTransactionHistory($transactionHistory);
     }
@@ -447,6 +435,7 @@ class WebhookSynchronizationService
     /**
      * @param GeneralSettings|null $generalSettings
      * @param Webhook $webhook
+     *
      * @return bool
      */
     private function shouldDisableOrderModifications(?GeneralSettings $generalSettings, Webhook $webhook): bool

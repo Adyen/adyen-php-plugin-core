@@ -69,17 +69,10 @@ class HistoryItem
      * @var CaptureType
      */
     private $captureType;
-
-    /**
-     * @var int|null
-     */
-    private $retryCount;
-
     /**
      * @var int|null
      */
     private $startedAt;
-
     /**
      * @var int|null
      */
@@ -98,28 +91,25 @@ class HistoryItem
      * @param bool $isLive
      * @param string $authorizationPspReference
      * @param CaptureType|null $captureType
-     * @param int $retryCount
      * @param int|null $startedAt
      * @param int|null $transactionLogId
      */
     public function __construct(
-        string      $pspReference,
-        string      $merchantReference,
-        string      $eventCode,
-        string      $paymentState,
-        string      $dateAndTime,
-        bool        $status,
-        Amount      $amount,
-        string      $paymentMethod,
-        int         $riskScore,
-        bool        $isLive,
-        string      $authorizationPspReference = '',
+        string $pspReference,
+        string $merchantReference,
+        string $eventCode,
+        string $paymentState,
+        string $dateAndTime,
+        bool $status,
+        Amount $amount,
+        string $paymentMethod,
+        int $riskScore,
+        bool $isLive,
+        string $authorizationPspReference = '',
         CaptureType $captureType = null,
-        int         $retryCount = 1,
-        int         $startedAt = null,
-        int         $transactionLogId = null
-    )
-    {
+        int $startedAt = null,
+        int $transactionLogId = null
+    ) {
         $this->pspReference = $pspReference;
         $this->merchantReference = $merchantReference;
         $this->eventCode = $eventCode;
@@ -132,7 +122,6 @@ class HistoryItem
         $this->isLive = $isLive;
         $this->authorizationPspReference = $authorizationPspReference;
         $this->captureType = $captureType;
-        $this->retryCount = $retryCount;
         $this->startedAt = $startedAt;
         $this->transactionLogId = $transactionLogId;
     }
@@ -236,28 +225,14 @@ class HistoryItem
     /**
      * @return int
      */
-    public function getRetryCount(): int
-    {
-        return $this->retryCount ?? 0;
-    }
-
-    /**
-     * @return void
-     */
-    public function incrementRetryCount(): void
-    {
-        $this->retryCount++;
-    }
-
-    /**
-     * @return int
-     */
     public function getStartedAt(): ?int
     {
         return $this->startedAt;
     }
 
     /**
+     * @param int $timestamp
+     *
      * @return void
      */
     public function setStartedAt(int $timestamp): void
@@ -274,6 +249,8 @@ class HistoryItem
     }
 
     /**
+     * @param int $logId
+     *
      * @return void
      */
     public function setTransactionLogId(int $logId): void

@@ -83,7 +83,8 @@ class TransactionHistory extends Entity
             $this->historyItemCollectionFromArray(self::getDataValue($transactionHistory, 'historyItemCollection')),
             self::getDataValue($transactionHistory, 'orderData'),
             self::getDataValue($transactionHistory, 'orderPspReference'),
-            self::getDataValue($transactionHistory, 'authorizationPspReferences', [])
+            self::getDataValue($transactionHistory, 'authorizationPspReferences', []),
+            self::getDataValue($transactionHistory, 'retryCounts', [])
         );
 
         $paymentLink = self::getDataValue($transactionHistory, 'paymentLink');
@@ -173,7 +174,8 @@ class TransactionHistory extends Entity
             'authorizationType' => $this->transactionHistory->getAuthorizationType() ? $this->transactionHistory->getAuthorizationType()->getType() : null,
             'orderData' => $this->transactionHistory->getOrderData(),
             'orderPspReference' => $this->transactionHistory->getOrderPspReference(),
-            'authorizationPspReferences' => $this->transactionHistory->getAuthorizationPspReferences()
+            'authorizationPspReferences' => $this->transactionHistory->getAuthorizationPspReferences(),
+            'retryCounts' => $this->transactionHistory->getRetryCounts()
         ];
     }
 
@@ -199,7 +201,6 @@ class TransactionHistory extends Entity
                 'authorizationPspReference' => $transactionHistoryItem->getAuthorizationPspReference(),
                 'captureType' => $transactionHistoryItem->getCaptureType() ?
                     $transactionHistoryItem->getCaptureType()->getType() : '',
-                'retryCount' => $transactionHistoryItem->getRetryCount(),
                 'startedAt' => $transactionHistoryItem->getStartedAt(),
                 'transactionLogId' => $transactionHistoryItem->getTransactionLogId()
             ];
@@ -235,7 +236,6 @@ class TransactionHistory extends Entity
                 static::getDataValue($value, 'authorizationPspReference'),
                 static::getDataValue($value, 'captureType', '') ?
                     CaptureType::fromState(static::getDataValue($value, 'captureType')) : CaptureType::unknown(),
-                static::getDataValue($value, 'retryCount', 1),
                 static::getDataValue($value, 'startedAt', null),
                 static::getDataValue($value, 'transactionLogId', null)
             );

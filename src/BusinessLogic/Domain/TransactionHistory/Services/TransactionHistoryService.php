@@ -46,6 +46,8 @@ class TransactionHistoryService
      * @param Currency|null $currency
      * @param CaptureType|null $captureType
      * @param AuthorizationType|null $authorizationType
+     * @param HistoryItem|null $historyItem
+     * @param Order|null $order
      *
      * @return TransactionHistory
      *
@@ -111,6 +113,8 @@ class TransactionHistoryService
      * @param Currency $currency
      * @param CaptureType|null $captureType
      * @param AuthorizationType|null $authorizationType
+     * @param HistoryItem|null $historyItem
+     * @param Order|null $order
      *
      * @return void
      *

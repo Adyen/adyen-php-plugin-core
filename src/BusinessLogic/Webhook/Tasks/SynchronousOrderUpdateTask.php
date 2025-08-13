@@ -13,7 +13,6 @@ use Exception;
  */
 class SynchronousOrderUpdateTask extends OrderUpdateTask
 {
-
     /**
      * Returns true if order is created in shop system. If it is not created sleep for 2 seconds and check again.
      * Repeat this checking for 5 times.
