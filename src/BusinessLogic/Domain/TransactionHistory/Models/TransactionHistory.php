@@ -476,4 +476,17 @@ class TransactionHistory
     {
         $this->retryCounts[$pspReference] = $this->getRetryCountForPspReference($pspReference) + 1;
     }
+
+    /**
+     * @param string $eventCode
+     *
+     * @return HistoryItem|null
+     */
+    public function getFirstItemByEvent(string $eventCode): ?HistoryItem
+    {
+        return $this->historyItemCollection
+            ->filterAllByStatus(true)
+            ->filterAllByEventCode($eventCode)
+            ->firstItem();
+    }
 }
