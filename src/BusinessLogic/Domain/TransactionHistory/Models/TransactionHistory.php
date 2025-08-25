@@ -478,15 +478,17 @@ class TransactionHistory
     }
 
     /**
+     * Returns the last successful item for the given event code.
+     *
      * @param string $eventCode
      *
      * @return HistoryItem|null
      */
-    public function getFirstItemByEvent(string $eventCode): ?HistoryItem
+    public function getLastSuccessfulItemByEvent(string $eventCode): ?HistoryItem
     {
         return $this->historyItemCollection
             ->filterAllByStatus(true)
             ->filterAllByEventCode($eventCode)
-            ->firstItem();
+            ->last();
     }
 }
