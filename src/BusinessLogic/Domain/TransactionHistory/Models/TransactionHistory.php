@@ -478,17 +478,15 @@ class TransactionHistory
     }
 
     /**
-     * Returns the last successful item for the given event code.
-     *
-     * @param string $eventCode
+     * Returns the last successful authorization item.
      *
      * @return HistoryItem|null
      */
-    public function getLastSuccessfulItemByEvent(string $eventCode): ?HistoryItem
+    public function getLastSuccessfulAuthorizationItem(): ?HistoryItem
     {
         return $this->historyItemCollection
             ->filterAllByStatus(true)
-            ->filterAllByEventCode($eventCode)
+            ->filterAllByEventCode(EventCodes::AUTHORISATION)
             ->last();
     }
 }
