@@ -417,7 +417,7 @@ class WebhookSynchronizationService
             }
         }
 
-        $obsoleteItems = array_merge(...$obsoleteItems);
+        $obsoleteItems = array_merge([], ...$obsoleteItems);
         $allItems = $transactionHistory->collection()->getAll();
         $items = [];
 
