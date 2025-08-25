@@ -486,7 +486,7 @@ class TransactionHistory
     {
         return $this->historyItemCollection
             ->filterAllByStatus(true)
-            ->filterAllByEventCode(EventCodes::AUTHORISATION)
+            ->filterAllByEventCode('AUTHORISATION')
             ->last();
     }
 }
