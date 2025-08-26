@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
-## [2.1.10 - 2.1.111](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.10...2.1.11) - 2025-08-18
+## [2.1.10 - 2.1.11](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.10...2.1.11) - 2025-08-18
 - Fix
   - Currency mismatch in transaction history when deleting history items 
 
