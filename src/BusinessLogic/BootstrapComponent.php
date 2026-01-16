@@ -350,7 +350,8 @@ class BootstrapComponent extends BaseBootstrapComponent
                 return new WebhookHandler(
                     ServiceRegister::getService(WebhookSynchronizationService::class),
                     ServiceRegister::getService(QueueService::class),
-                    ServiceRegister::getService(TimeProvider::class)
+                    ServiceRegister::getService(TimeProvider::class),
+                    ServiceRegister::getService(TransactionLogService::class)
                 );
             })
         );

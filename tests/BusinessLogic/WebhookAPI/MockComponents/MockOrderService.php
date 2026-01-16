@@ -14,7 +14,6 @@ use Adyen\Core\BusinessLogic\Domain\Webhook\Models\Webhook;
  */
 class MockOrderService implements OrderService
 {
-
     /**
      * @inheritDoc
      */
@@ -47,6 +46,16 @@ class MockOrderService implements OrderService
     }
 
     public function cartExists(string $merchantReference): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param Webhook $webhook
+     *
+     * @return bool
+     */
+    public function createOrderFromWebhook(Webhook $webhook): bool
     {
         return true;
     }

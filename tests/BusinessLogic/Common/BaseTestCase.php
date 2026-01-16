@@ -451,7 +451,8 @@ class BaseTestCase extends TestCase
             },
             PartialPaymentProxy::class =>
                 function () {
-                    return new \Adyen\Core\BusinessLogic\AdyenAPI\PartialPayments\Http\Proxy(new TestHttpClient(), 'https://checkout-test.adyen.com', 'v71', '0123456789');
+                    return new \Adyen\Core\BusinessLogic\AdyenAPI\PartialPayments\Http\Proxy(new TestHttpClient(),
+                        'https://checkout-test.adyen.com', 'v71', '0123456789');
                 },
             PartialPaymentController::class => function () {
                 return new PartialPaymentController(
@@ -504,7 +505,8 @@ class BaseTestCase extends TestCase
                 return new WebhookHandler(
                     TestServiceRegister::getService(WebhookSynchronizationServiceInterface::class),
                     TestServiceRegister::getService(QueueService::class),
-                    TestServiceRegister::getService(TimeProvider::class)
+                    TestServiceRegister::getService(TimeProvider::class),
+                    TestServiceRegister::getService(TransactionLogService::class)
                 );
             }
         );

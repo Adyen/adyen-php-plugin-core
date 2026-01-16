@@ -5,6 +5,7 @@ namespace Adyen\Core\BusinessLogic\Webhook\Tasks;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidCurrencyCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\Multistore\StoreContext;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Authorization\FailedPaymentAuthorizationEvent;
@@ -371,7 +372,17 @@ class OrderUpdateTask extends TransactionalTask
                 return $this->checkIfOrderExists($retryCount);
             }
 
-            throw $exception;
+            if (
+                $this->webhook->getEventCode() === EventCodes::AUTHORISATION &&
+                $this->webhook->isSuccess() &&
+                PaymentMethodCode::parse($this->webhook->getPaymentMethod())->supportsWebhookOrderCreation()
+            ) {
+                $order = $this->getOrderService()->createOrderFromWebhook($this->webhook);
+            }
+
+            if (!$order) {
+                throw $exception;
+            }
         }
 
         return $order;

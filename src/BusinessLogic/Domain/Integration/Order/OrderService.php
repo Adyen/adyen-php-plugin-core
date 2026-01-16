@@ -61,4 +61,13 @@ interface OrderService
      * @return Amount
      */
     public function getOrderAmount(string $merchantReference): Amount;
+
+    /**
+     * Creates order from webhook. Returns true if order was created, false otherwise.
+     *
+     * @param Webhook $webhook
+     *
+     * @return bool
+     */
+    public function createOrderFromWebhook(Webhook $webhook): bool;
 }

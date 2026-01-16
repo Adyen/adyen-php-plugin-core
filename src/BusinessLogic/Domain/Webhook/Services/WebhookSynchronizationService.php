@@ -103,12 +103,23 @@ class WebhookSynchronizationService
      * @return bool
      *
      * @throws InvalidMerchantReferenceException
+     * @throws InvalidPaymentMethodCodeException
      */
     public function exceededRetryLimit(Webhook $webhook): bool
     {
         $history = $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference());
 
-        return $history->getRetryCountForPspReference($webhook->getPspReference()) >= 4;
+        $exceeded = $history->getRetryCountForPspReference($webhook->getPspReference()) >= 4;
+
+        if ($exceeded &&
+            $webhook->getEventCode() === EventCodes::AUTHORISATION &&
+            $webhook->isSuccess() &&
+            PaymentMethodCode::parse($webhook->getPaymentMethod())->supportsWebhookOrderCreation()
+        ) {
+            return !$this->orderService->createOrderFromWebhook($webhook);
+        }
+
+        return $exceeded;
     }
 
     /**

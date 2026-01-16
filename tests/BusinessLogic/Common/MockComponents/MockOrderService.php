@@ -51,4 +51,14 @@ class MockOrderService implements OrderService
     {
         return true;
     }
+
+    /**
+     * @param Webhook $webhook
+     *
+     * @return bool
+     */
+    public function createOrderFromWebhook(Webhook $webhook): bool
+    {
+        return true;
+    }
 }

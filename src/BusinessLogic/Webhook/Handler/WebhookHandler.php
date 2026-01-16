@@ -51,18 +51,27 @@ class WebhookHandler
     protected $timeProvider;
 
     /**
+     * @var TransactionLogService $transactionLogService
+     */
+    protected $transactionLogService;
+
+    /**
      * @param WebhookSynchronizationService $synchronizationService
      * @param QueueService $queueService
      * @param TimeProvider $timeProvider
+     * @param TransactionLogService $transactionLogService
+     * @param TaskRunnerWakeup $taskRunnerWakeup
      */
     public function __construct(
         WebhookSynchronizationService $synchronizationService,
         QueueService $queueService,
-        TimeProvider $timeProvider
+        TimeProvider $timeProvider,
+        TransactionLogService $transactionLogService
     ) {
         $this->synchronizationService = $synchronizationService;
         $this->queueService = $queueService;
         $this->timeProvider = $timeProvider;
+        $this->transactionLogService = $transactionLogService;
     }
 
     /**
@@ -92,20 +101,14 @@ class WebhookHandler
         }
 
         $this->getTaskRunnerWakeup()->wakeup();
-
-        /** @var TransactionLogService $transactionLogService */
-        $transactionLogService = ServiceRegister::getService(TransactionLogService::class);
-
         if ($this->synchronizationService->exceededRetryLimit($webhook)) {
             return;
         }
 
         $this->synchronizationService->incrementRetryCount($webhook);
-
         $transactionLogId = $this->synchronizationService->getTransactionLogId($webhook);
 
-        /** @var TransactionLog $transactionLog */
-        $transactionLog = $transactionLogService->createSyncTransactionLogInstance($webhook, $transactionLogId);
+        $transactionLog = $this->transactionLogService->createSyncTransactionLogInstance($webhook, $transactionLogId);
         if (in_array($transactionLog->getQueueStatus(), [QueueItem::COMPLETED, QueueItem::ABORTED])) {
             return;
         }
@@ -120,7 +123,7 @@ class WebhookHandler
         try {
             $this->synchronizationService->setStartedAtTimestamp($webhook);
             $transactionLog->setQueueStatus(QueueItem::IN_PROGRESS);
-            $transactionLogService->update($transactionLog);
+            $this->transactionLogService->update($transactionLog);
 
             $task = new SynchronousOrderUpdateTask($webhook);
             $task->setTransactionLogId($transactionLog->getId());
@@ -128,11 +131,11 @@ class WebhookHandler
 
             $transactionLog->setQueueStatus(QueueItem::COMPLETED);
             $transactionLog->setFailureDescription(null);
-            $transactionLogService->update($transactionLog);
+            $this->transactionLogService->update($transactionLog);
         } catch (Throwable $exception) {
             $transactionLog->setQueueStatus(QueueItem::FAILED);
             $transactionLog->setFailureDescription($exception->getMessage());
-            $transactionLogService->update($transactionLog);
+            $this->transactionLogService->update($transactionLog);
 
             throw $exception;
         }
