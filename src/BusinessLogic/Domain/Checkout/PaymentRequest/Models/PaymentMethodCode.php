@@ -117,7 +117,8 @@ class PaymentMethodCode
         self::PAYSAFECARD,
         self::TWINT,
         self::ALMA,
-        self::BIZUM
+        self::BIZUM,
+        self::WECHATPAY
     ];
 
     public const CAPTURE_SUPPORTED = [
@@ -511,7 +512,8 @@ class PaymentMethodCode
         self::BLIK,
         self::WECHATPAYQR,
         self::MBWAY,
-        self::BCMC_MOBILE
+        self::BCMC_MOBILE,
+        self::WECHATPAY
     ];
 
     private const SCHEME = 'scheme';
@@ -570,6 +572,8 @@ class PaymentMethodCode
     private const VIPPS = 'vipps';
     private const ZIP = 'zip';
     private const WECHATPAYQR = 'wechatpayQR';
+
+    private const WECHATPAY = 'wechatpay';
     private const ALMA = 'alma';
 
     //<editor-fold desc="Gift cards" defaultstate="collapsed">
