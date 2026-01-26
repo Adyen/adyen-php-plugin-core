@@ -37,7 +37,7 @@ class MemoryRepository implements RepositoryInterface, MassInsert
      * @throws \Adyen\Core\Infrastructure\ORM\Exceptions\EntityClassException
      * @throws \Adyen\Core\Infrastructure\ORM\Exceptions\QueryFilterInvalidParamException
      */
-    public function select(QueryFilter $filter = null)
+    public function select(?QueryFilter $filter = null)
     {
         /** @var Entity $entity */
         $entity = new $this->entityClass;
@@ -86,7 +86,7 @@ class MemoryRepository implements RepositoryInterface, MassInsert
      * @throws \Adyen\Core\Infrastructure\ORM\Exceptions\EntityClassException
      * @throws \Adyen\Core\Infrastructure\ORM\Exceptions\QueryFilterInvalidParamException
      */
-    public function selectOne(QueryFilter $filter = null)
+    public function selectOne(?QueryFilter $filter = null)
     {
         if ($filter === null) {
             $filter = new QueryFilter();
@@ -430,7 +430,7 @@ class MemoryRepository implements RepositoryInterface, MassInsert
      * @throws \Adyen\Core\Infrastructure\ORM\Exceptions\EntityClassException
      * @throws \Adyen\Core\Infrastructure\ORM\Exceptions\QueryFilterInvalidParamException
      */
-    public function count(QueryFilter $filter = null)
+    public function count(?QueryFilter $filter = null)
     {
         return count($this->select($filter));
     }

@@ -23,7 +23,7 @@ class PaymentLinkRequestContext
     private $reference;
 
     /**
-     * @var DateTime
+     * @var DateTime | null
      */
     private $expiresAt;
 
@@ -32,7 +32,7 @@ class PaymentLinkRequestContext
      * @param string $reference
      * @param DateTime|null $expiresAt
      */
-    public function __construct(Amount $amount, string $reference, DateTime $expiresAt = null)
+    public function __construct(Amount $amount, string $reference, ?DateTime $expiresAt = null)
     {
         $this->amount = $amount;
         $this->reference = $reference;

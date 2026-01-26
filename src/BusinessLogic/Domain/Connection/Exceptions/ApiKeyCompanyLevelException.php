@@ -13,7 +13,7 @@ use Throwable;
  */
 class ApiKeyCompanyLevelException extends BaseTranslatableException
 {
-    public function __construct(TranslatableLabel $translatableLabel, Throwable $previous = null)
+    public function __construct(TranslatableLabel $translatableLabel, ?Throwable $previous = null)
     {
         $this->code = 401;
 

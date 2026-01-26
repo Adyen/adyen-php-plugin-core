@@ -78,7 +78,7 @@ class PaymentCheckoutConfigService
      */
     public function getPaymentCheckoutConfig(
         Amount $amount,
-        Country $country = null,
+        ?Country $country = null,
         string $shopperLocale = 'en-US',
         ?ShopperReference $shopperReference = null
     ): PaymentCheckoutConfigResult {
@@ -108,7 +108,7 @@ class PaymentCheckoutConfigService
      */
     public function getExpressPaymentCheckoutConfig(
         Amount $amount,
-        Country $country = null,
+        ?Country $country = null,
         string $shopperLocale = 'en-US',
         ?ShopperReference $shopperReference = null,
         bool $isGuest = false
@@ -165,7 +165,7 @@ class PaymentCheckoutConfigService
     protected function getPaymentCheckoutConfigForConfiguredMethods(
         array $paymentMethodsConfiguration,
         Amount $amount,
-        Country $country = null,
+        ?Country $country = null,
         string $shopperLocale = 'en-US',
         ?ShopperReference $shopperReference = null
     ): PaymentCheckoutConfigResult {

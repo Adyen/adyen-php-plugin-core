@@ -27,7 +27,7 @@ class AdditionalData
      * @param EnhancedSchemeData|null $enhancedSchemeData
      * @param bool|null $manualCapture
      */
-    public function __construct(?RiskData $riskData = null, EnhancedSchemeData $enhancedSchemeData = null, ?bool $manualCapture = null)
+    public function __construct(?RiskData $riskData = null, ?EnhancedSchemeData $enhancedSchemeData = null, ?bool $manualCapture = null)
     {
         $this->riskData = $riskData;
         $this->enhancedSchemeData = $enhancedSchemeData;

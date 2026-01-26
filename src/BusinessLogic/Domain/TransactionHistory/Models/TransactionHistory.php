@@ -60,7 +60,7 @@ class TransactionHistory
     private $captureDelay;
 
     /**
-     * @var Currency
+     * @var Currency | null
      */
     private $currency;
 
@@ -111,8 +111,8 @@ class TransactionHistory
         string $merchantReference,
         CaptureType $captureType,
         int $captureDelay = 0,
-        Currency $currency = null,
-        AuthorizationType $authorizationType = null,
+        ?Currency $currency = null,
+        ?AuthorizationType $authorizationType = null,
         array $historyItems = [],
         string $orderData = '',
         string $orderPspReference = '',

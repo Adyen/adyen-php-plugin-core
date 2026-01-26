@@ -29,7 +29,7 @@ class CreatePaymentLinkRequest extends Request
      */
     private $reference;
     /**
-     * @var DateTime
+     * @var DateTime | null
      */
     private $expiresAt;
 
@@ -43,7 +43,7 @@ class CreatePaymentLinkRequest extends Request
         float $amount,
         string $currency,
         string $reference,
-        DateTime $expiresAt = null
+        ?DateTime $expiresAt = null
     ) {
         $this->amount = $amount;
         $this->currency = $currency;

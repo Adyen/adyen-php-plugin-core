@@ -77,11 +77,11 @@ class PaymentMethodRequest extends Request
      */
     private $fixedSurcharge;
     /**
-     * @var float
+     * @var float | null
      */
     private $percentSurcharge;
     /**
-     * @var float
+     * @var float | null
      */
     private $surchargeLimit;
     /**
@@ -217,8 +217,8 @@ class PaymentMethodRequest extends Request
         string $description = '',
         string $surchargeType = '',
         string $fixedSurcharge = '',
-        float $percentSurcharge = null,
-        float $surchargeLimit = null,
+        ?float $percentSurcharge = null,
+        ?float $surchargeLimit = null,
         string $publicKeyId = '',
         string $merchantId = '',
         string $storeId = '',

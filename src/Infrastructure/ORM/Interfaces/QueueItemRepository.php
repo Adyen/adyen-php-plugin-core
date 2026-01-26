@@ -10,8 +10,8 @@ use Adyen\Core\Infrastructure\TaskExecution\QueueItem;
  * Interface QueueRepository.
  *
  * @package Adyen\Core\Infrastructure\ORM\Interfaces
- * @method QueueItem[] select(QueryFilter $filter = null)
- * @method QueueItem|null selectOne(QueryFilter $filter = null)
+ * @method QueueItem[] select(?QueryFilter $filter = null)
+ * @method QueueItem|null selectOne(?QueryFilter $filter = null)
  */
 interface QueueItemRepository extends RepositoryInterface
 {

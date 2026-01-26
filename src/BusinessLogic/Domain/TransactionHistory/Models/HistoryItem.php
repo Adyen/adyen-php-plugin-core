@@ -66,7 +66,7 @@ class HistoryItem
      */
     private $isLive;
     /**
-     * @var CaptureType
+     * @var CaptureType | null
      */
     private $captureType;
     /**
@@ -106,9 +106,9 @@ class HistoryItem
         int $riskScore,
         bool $isLive,
         string $authorizationPspReference = '',
-        CaptureType $captureType = null,
-        int $startedAt = null,
-        int $transactionLogId = null
+        ?CaptureType $captureType = null,
+        ?int $startedAt = null,
+        ?int $transactionLogId = null
     ) {
         $this->pspReference = $pspReference;
         $this->merchantReference = $merchantReference;

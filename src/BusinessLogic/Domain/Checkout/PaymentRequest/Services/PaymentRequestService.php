@@ -107,7 +107,7 @@ class PaymentRequestService
     /**
      * @throws Exception
      */
-    public function startTransaction(StartTransactionRequestContext $context, Order $order = null): StartTransactionResult
+    public function startTransaction(StartTransactionRequestContext $context, ?Order $order = null): StartTransactionResult
     {
         $paymentRequestFactory = new PaymentRequestFactory();
         $request = $paymentRequestFactory->crate($context);

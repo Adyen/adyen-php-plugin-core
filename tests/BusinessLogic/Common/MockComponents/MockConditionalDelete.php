@@ -6,7 +6,7 @@ use Adyen\Core\Infrastructure\ORM\QueryFilter\QueryFilter;
 
 trait MockConditionalDelete
 {
-    public function deleteWhere(QueryFilter $queryFilter = null): void
+    public function deleteWhere(?QueryFilter $queryFilter = null): void
     {
         // IMPORTANT NOTICE:
         // This is a mock implementation and it

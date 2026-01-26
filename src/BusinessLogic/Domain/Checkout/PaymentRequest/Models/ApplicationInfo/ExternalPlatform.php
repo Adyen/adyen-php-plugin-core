@@ -15,7 +15,7 @@ class ExternalPlatform
     private $name;
 
     /**
-     * @var string
+     * @var string | null
      */
     private $version;
 
@@ -28,7 +28,7 @@ class ExternalPlatform
      * @param string $name
      * @param string|null $version
      */
-    public function __construct(string $name, string $version = null)
+    public function __construct(string $name, ?string $version = null)
     {
         $this->name = $name;
         $this->version = $version;

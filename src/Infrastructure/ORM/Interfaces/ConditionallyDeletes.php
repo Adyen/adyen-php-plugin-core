@@ -10,5 +10,5 @@ use Adyen\Core\Infrastructure\ORM\QueryFilter\QueryFilter;
  */
 interface ConditionallyDeletes
 {
-    public function deleteWhere(QueryFilter $queryFilter = null);
+    public function deleteWhere(?QueryFilter $queryFilter = null);
 }

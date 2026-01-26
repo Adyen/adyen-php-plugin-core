@@ -63,11 +63,11 @@ class PaymentMethod
      */
     private $fixedSurcharge;
     /**
-     * @var float
+     * @var float | null
      */
     private $percentSurcharge;
     /**
-     * @var float
+     * @var float | null
      */
     private $surchargeLimit;
     /**
@@ -75,7 +75,7 @@ class PaymentMethod
      */
     private $documentationUrl;
     /**
-     * @var PaymentMethodAdditionalData
+     * @var PaymentMethodAdditionalData | null
      */
     private $additionalData;
     /**
@@ -143,7 +143,7 @@ class PaymentMethod
         string $description = '',
         string $surchargeType = '',
         string $fixedSurcharge = '',
-        float $percentSurcharge = null,
+        ?float $percentSurcharge = null,
         ?float $surchargeLimit = null,
         string $documentationUrl = '',
         ?PaymentMethodAdditionalData $additionalData = null,

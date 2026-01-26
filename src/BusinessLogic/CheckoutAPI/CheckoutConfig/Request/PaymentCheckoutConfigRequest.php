@@ -43,11 +43,11 @@ class PaymentCheckoutConfigRequest
 
     public function __construct(
         Amount $amount,
-        Country $country = null,
+        ?Country $country = null,
         string $shopperLocale = 'en-US',
-        string $shopperReference = null,
-        string $shopperEmail = null,
-        string $merchantDisplayName = null,
+        ?string $shopperReference = null,
+        ?string $shopperEmail = null,
+        ?string $merchantDisplayName = null,
         bool $isGuest = false
     ){
         $this->amount = $amount;

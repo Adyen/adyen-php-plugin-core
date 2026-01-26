@@ -51,8 +51,8 @@ class PaymentCheckoutConfigResponse extends Response
         Amount $amount,
         string $shopperLocale = 'en-US',
         string $country = '',
-        string $shopperEmail = null,
-        string $merchantDisplayName = null
+        ?string $shopperEmail = null,
+        ?string $merchantDisplayName = null
     ) {
         $this->result = $result;
         $this->amount = $amount;

@@ -16,5 +16,5 @@ interface ConditionallyDeletes
      *
      * @return void
      */
-    public function deleteWhere(QueryFilter $queryFilter = null): void;
+    public function deleteWhere(?QueryFilter $queryFilter = null): void;
 }

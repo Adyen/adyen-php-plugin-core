@@ -35,23 +35,23 @@ class PaymentRequest
      */
     private $paymentMethod;
     /**
-     * @var BrowserInfo
+     * @var BrowserInfo | null
      */
     private $browserInfo;
     /**
-     * @var BillingAddress
+     * @var BillingAddress | null
      */
     private $billingAddress;
     /**
-     * @var DeliveryAddress
+     * @var DeliveryAddress | null
      */
     private $deliveryAddress;
     /**
-     * @var RiskData
+     * @var RiskData | null
      */
     private $riskData;
     /**
-     * @var ShopperName
+     * @var ShopperName | null
      */
     private $shopperName;
     /**
@@ -75,7 +75,7 @@ class PaymentRequest
      */
     private $socialSecurityNumber;
     /**
-     * @var Installments
+     * @var Installments | null
      */
     private $installments;
     /**
@@ -135,15 +135,15 @@ class PaymentRequest
      */
     private $bankAccount;
     /**
-     * @var ApplicationInfo
+     * @var ApplicationInfo | null
      */
     private $applicationInfo;
     /**
-     * @var AuthorizationType
+     * @var AuthorizationType | null
      */
     private $authorizationType;
     /**
-     * @var Order
+     * @var Order | null
      */
     private $order;
 
@@ -202,20 +202,20 @@ class PaymentRequest
         bool $storePaymentMethod = false,
         string $conversionId = '',
         ?ShopperReference $shopperReference = null,
-        string $recurringProcessingModel = null,
-        string $shopperInteraction = null,
+        ?string $recurringProcessingModel = null,
+        ?string $shopperInteraction = null,
         string $shopperLocale = '',
         int $captureDelayHours = -1,
         string $channel = '',
         string $origin = '',
         array $lineItems = [],
-        AdditionalData $additionalData = null,
-        AuthenticationData $authenticationData = null,
+        ?AdditionalData $additionalData = null,
+        ?AuthenticationData $authenticationData = null,
         string $deviceFingerprint = '',
         array $bankAccount = [],
-        ApplicationInfo $applicationInfo = null,
-        AuthorizationType $authorizationType = null,
-        Order $order = null
+        ?ApplicationInfo $applicationInfo = null,
+        ?AuthorizationType $authorizationType = null,
+        ?Order $order = null
     ) {
         $this->amount = $amount;
         $this->merchantId = $merchantId;

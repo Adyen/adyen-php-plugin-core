@@ -10,7 +10,7 @@ namespace Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Applica
 class MerchantApplication
 {
     /**
-     * @var string
+     * @var string | null
      */
     private $version;
 
@@ -23,7 +23,7 @@ class MerchantApplication
      * @param string $name
      * @param string|null $version
      */
-    public function __construct(string $name, string $version = null)
+    public function __construct(string $name, ?string $version = null)
     {
         $this->name = $name;
         $this->version = $version;

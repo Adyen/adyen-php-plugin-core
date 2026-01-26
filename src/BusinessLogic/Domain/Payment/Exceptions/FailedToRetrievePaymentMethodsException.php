@@ -18,7 +18,7 @@ class FailedToRetrievePaymentMethodsException extends BaseTranslatableException
      * @param TranslatableLabel $translatableLabel
      * @param Throwable|null $previous
      */
-    public function __construct(TranslatableLabel $translatableLabel, Throwable $previous = null)
+    public function __construct(TranslatableLabel $translatableLabel, ?Throwable $previous = null)
     {
         if ($previous->getCode() === HttpClient::HTTP_STATUS_CODE_FORBIDDEN) {
             $this->code = 401;

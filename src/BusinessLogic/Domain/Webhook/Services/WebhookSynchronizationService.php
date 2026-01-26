@@ -244,7 +244,7 @@ class WebhookSynchronizationService
      * @throws InvalidMerchantReferenceException
      * @throws InvalidPaymentMethodCodeException
      */
-    public function synchronizeChanges(Webhook $webhook, bool $orderCreated = true, int $transactionLogId = null): void
+    public function synchronizeChanges(Webhook $webhook, bool $orderCreated = true, ?int $transactionLogId = null): void
     {
         $transactionHistory = $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference());
 

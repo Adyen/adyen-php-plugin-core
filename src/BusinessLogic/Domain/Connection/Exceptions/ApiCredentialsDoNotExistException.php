@@ -17,7 +17,7 @@ class ApiCredentialsDoNotExistException extends BaseTranslatableException
      * @param TranslatableLabel $translatableLabel
      * @param Throwable|null $previous
      */
-    public function __construct(TranslatableLabel $translatableLabel, Throwable $previous = null)
+    public function __construct(TranslatableLabel $translatableLabel, ?Throwable $previous = null)
     {
         $this->code = 401;
 

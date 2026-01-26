@@ -43,9 +43,9 @@ class PaymentMethodsRequest
     public function __construct(
         string $merchantId,
         array $allowedPaymentMethods,
-        Amount $amount = null,
-        Country $country = null,
-        string $shopperLocale = null,
+        ?Amount $amount = null,
+        ?Country $country = null,
+        ?string $shopperLocale = null,
         ?ShopperReference $shopperReference = null
     ) {
         $this->merchantId = $merchantId;

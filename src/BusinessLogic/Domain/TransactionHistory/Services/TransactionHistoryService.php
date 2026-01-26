@@ -55,11 +55,11 @@ class TransactionHistoryService
      */
     public function getTransactionHistory(
         string $merchantReference,
-        Currency $currency = null,
-        CaptureType $captureType = null,
-        AuthorizationType $authorizationType = null,
-        HistoryItem $historyItem = null,
-        Order $order = null
+        ?Currency $currency = null,
+        ?CaptureType $captureType = null,
+        ?AuthorizationType $authorizationType = null,
+        ?HistoryItem $historyItem = null,
+        ?Order $order = null
     ): TransactionHistory {
         $transactionHistory = $this->transactionRepository->getTransactionHistory($merchantReference);
 
@@ -123,10 +123,10 @@ class TransactionHistoryService
     public function createTransactionHistory(
         string $merchantReference,
         Currency $currency,
-        CaptureType $captureType = null,
-        AuthorizationType $authorizationType = null,
-        HistoryItem $historyItem = null,
-        Order $order = null
+        ?CaptureType $captureType = null,
+        ?AuthorizationType $authorizationType = null,
+        ?HistoryItem $historyItem = null,
+        ?Order $order = null
     ): void {
         $history = $this->getTransactionHistory($merchantReference, $currency, $captureType, $authorizationType, $historyItem, $order);
 

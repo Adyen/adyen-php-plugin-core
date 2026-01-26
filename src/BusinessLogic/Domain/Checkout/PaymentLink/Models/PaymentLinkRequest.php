@@ -38,32 +38,32 @@ class PaymentLinkRequest
     private $allowedPaymentMethods;
 
     /**
-     * @var string
+     * @var string | null
      */
     private $countryCode;
 
     /**
-     * @var ShopperReference
+     * @var ShopperReference | null
      */
     private $shopperReference;
 
     /**
-     * @var string
+     * @var string | null
      */
     private $shopperEmail;
 
     /**
-     * @var string
+     * @var string | null
      */
     private $shopperLocale;
 
     /**
-     * @var BillingAddress
+     * @var BillingAddress | null
      */
     private $billingAddress;
 
     /**
-     * @var DeliveryAddress
+     * @var DeliveryAddress | null
      */
     private $deliveryAddress;
 
@@ -78,27 +78,27 @@ class PaymentLinkRequest
     private $manualCapture;
 
     /**
-     * @var string
+     * @var string | null
      */
     private $shopperName;
 
     /**
-     * @var string
+     * @var string | null
      */
     private $dateOfBirth;
 
     /**
-     * @var ApplicationInfo
+     * @var ApplicationInfo | null
      */
     private $applicationInfo;
 
     /**
-     * @var LineItem[]
+     * @var LineItem[] | null
      */
     private $lineItems;
 
     /**
-     * @var string
+     * @var string | null
      */
     private $expiresAt;
 
@@ -137,8 +137,8 @@ class PaymentLinkRequest
         ?ShopperName $shopperName = null,
         ?string $dateOfBirth = null,
         ?ApplicationInfo $applicationInfo = null,
-        array $lineItems = null,
-        string $expiresAt = null
+        ?array $lineItems = null,
+        ?string $expiresAt = null
     ) {
         $this->reference = $reference;
         $this->merchantAccount = $merchantAccount;

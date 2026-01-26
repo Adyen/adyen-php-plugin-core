@@ -124,7 +124,7 @@ class TimeProvider
      *
      * @return string|null String serialized date.
      */
-    public function serializeDate(DateTime $dateTime = null, $format = null)
+    public function serializeDate(?DateTime $dateTime = null, $format = null)
     {
         if ($dateTime === null) {
             return null;

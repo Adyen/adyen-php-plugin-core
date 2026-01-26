@@ -27,7 +27,7 @@ class ConnectionData
      */
     protected $clientKey;
     /**
-     * @var ApiCredentials
+     * @var ApiCredentials | null
      */
     protected $apiCredentials;
 
@@ -43,7 +43,7 @@ class ConnectionData
         string $merchantId,
         string $clientPrefix = '',
         string $clientKey = '',
-        ApiCredentials $apiCredentials = null
+        ?ApiCredentials $apiCredentials = null
     )
     {
         $this->apiKey = $apiKey;
