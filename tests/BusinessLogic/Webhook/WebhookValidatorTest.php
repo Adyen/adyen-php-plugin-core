@@ -130,6 +130,71 @@ class WebhookValidatorTest extends BaseTestCase
      *
      * @throws Exception
      */
+    public function testMerchantReferenceMissing(): void
+    {
+        // arrange
+        $this->payload =
+            json_decode(
+                file_get_contents(__DIR__ . '/../Common/ApiResponses/Webhook/merchantReferenceMissing.json'),
+                true
+            );
+
+        $_SERVER['PHP_AUTH_USER'] = 'username';
+        $_SERVER['PHP_AUTH_PW'] = 'password';
+        $this->webhookConfigRepository->setWebhookConfig(
+            new WebhookConfig(
+                'ID',
+                'testMerchantId',
+                true,
+                'username',
+                'password'
+            )
+        );
+        $this->expectException(InvalidWebhookException::class);
+        $this->expectExceptionMessage('Webhook validation failed.');
+
+        // act
+        StoreContext::doWithStore('1', [$this->validator, 'validate'], [$this->payload]);
+        // assert
+    }
+
+    /**
+     * @return void
+     *
+     * @throws Exception
+     */
+    public function testMerchantReferenceEmpty(): void
+    {
+        // arrange
+        $this->payload = json_decode(
+            file_get_contents(__DIR__ . '/../Common/ApiResponses/Webhook/merchantReferenceEmpty.json'),
+            true
+        );
+        $_SERVER['PHP_AUTH_USER'] = 'username';
+        $_SERVER['PHP_AUTH_PW'] = 'password';
+        $this->webhookConfigRepository->setWebhookConfig(
+            new WebhookConfig(
+                'ID',
+                'testMerchantId',
+                true,
+                'username',
+                'password'
+            )
+        );
+
+        $this->expectException(InvalidWebhookException::class);
+        $this->expectExceptionMessage('Webhook validation failed.');
+
+        // act
+        StoreContext::doWithStore('1', [$this->validator, 'validate'], [$this->payload]);
+        // assert
+    }
+
+    /**
+     * @return void
+     *
+     * @throws Exception
+     */
     public function testAuthenticationException(): void
     {
         // arrange

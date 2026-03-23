@@ -77,6 +77,15 @@ class WebhookValidator
             );
         }
 
+        if (
+            !array_key_exists('merchantReference', $notificationRequestItem) ||
+            empty($notificationRequestItem['merchantReference'])
+        ) {
+            throw new InvalidWebhookException(
+                'Webhook validation failed. Missing merchantReference in the payload.'
+            );
+        }
+
         if (!$notificationReceiver->validateHmac($notificationRequestItem, $webhookConfig->getHmac())
         ) {
             throw new InvalidWebhookException('Webhook validation failed. Invalid hmac signature.');
