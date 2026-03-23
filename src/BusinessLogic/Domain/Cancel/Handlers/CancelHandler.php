@@ -188,13 +188,26 @@ class CancelHandler
         $cancellation = true;
 
         if ($capturedAmount->getValue() > 0) {
-            $refund = $this->refundProxy->refundPayment(new RefundRequest($authorizationPspReference, $capturedAmount, $merchantAccount));
+            $refund = $this->refundProxy->refundPayment(
+                new RefundRequest(
+                    $authorizationPspReference,
+                    $capturedAmount,
+                    $merchantAccount,
+                    $transactionHistory->getMerchantReference()
+                )
+            );
             $this->addHistoryItem($transactionHistory, $refund, ShopEvents::REFUND_REQUEST, 'refund');
             $this->pushNotification($refund, $transactionHistory);
         }
 
         if ($capturedAmount->getValue() < $authorization->getAmount()->getValue()) {
-            $cancellation = $this->cancelProxy->cancelPayment(new CancelRequest($authorizationPspReference, $transactionHistory->getMerchantReference(), $merchantAccount));
+            $cancellation = $this->cancelProxy->cancelPayment(
+                new CancelRequest(
+                    $authorizationPspReference,
+                    $transactionHistory->getMerchantReference(),
+                    $merchantAccount
+                )
+            );
             $this->addHistoryItem($transactionHistory, $cancellation, ShopEvents::CANCELLATION_REQUEST, 'cancel');
             $this->pushNotification($cancellation, $transactionHistory);
         }

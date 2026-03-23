@@ -1,6 +1,7 @@
 {
   "merchantAccount": "LogeecomECOM",
   "paymentPspReference": "JBJT7RNW2TGLNK82",
+  "reference": "dfe76bed-861c-4e13-18d1-88153c0d5e67",
   "pspReference": "P2JBPQT6L8NKGK82",
   "status": "received",
   "amount": {

@@ -53,7 +53,12 @@ class ProxyTest extends BaseTestCase
     public function testCaptureUrl(): void
     {
         // arrange
-        $request = new RefundRequest('psp', Amount::fromInt(1, Currency::getDefault()), 'acc');
+        $request = new RefundRequest(
+            'psp',
+            Amount::fromInt(1, Currency::getDefault()),
+            'acc',
+            'ref'
+        );
         $this->httpClient->setMockResponses([
             new HttpResponse(
                 200, array(), file_get_contents(__DIR__ . '/../../../Common/ApiResponses/Refund/refund.json')
@@ -76,7 +81,12 @@ class ProxyTest extends BaseTestCase
     public function testCaptureMethod(): void
     {
         // arrange
-        $request = new RefundRequest('psp', Amount::fromInt(1, Currency::getDefault()), 'acc');
+        $request = new RefundRequest(
+            'psp',
+            Amount::fromInt(1, Currency::getDefault()),
+            'acc',
+            'ref'
+        );
         $this->httpClient->setMockResponses([
             new HttpResponse(
                 200, array(), file_get_contents(__DIR__ . '/../../../Common/ApiResponses/Refund/refund.json')
@@ -98,7 +108,12 @@ class ProxyTest extends BaseTestCase
     public function testRefundBody(): void
     {
         // arrange
-        $request = new RefundRequest('psp', Amount::fromInt(1, Currency::getDefault()), 'acc');
+        $request = new RefundRequest(
+            'psp',
+            Amount::fromInt(1, Currency::getDefault()),
+            'acc',
+            'ref'
+        );
         $this->httpClient->setMockResponses([
             new HttpResponse(
                 200, array(), file_get_contents(__DIR__ . '/../../../Common/ApiResponses/Refund/refund.json')
@@ -114,7 +129,8 @@ class ProxyTest extends BaseTestCase
             'amount' => [
                 'currency' => 'EUR',
                 'value' => 1,
-            ]
+            ],
+            'reference' => 'ref'
         ];
 
         $history = $this->httpClient->getLastRequest();
@@ -129,7 +145,12 @@ class ProxyTest extends BaseTestCase
     public function testCaptureSuccess(): void
     {
         // arrange
-        $request = new RefundRequest('psp', Amount::fromInt(1, Currency::getDefault()), 'acc');
+        $request = new RefundRequest(
+            'psp',
+            Amount::fromInt(1, Currency::getDefault()),
+            'acc',
+            'ref'
+        );
         $this->httpClient->setMockResponses([
             new HttpResponse(
                 200, array(), file_get_contents(__DIR__ . '/../../../Common/ApiResponses/Refund/refund.json')
@@ -151,7 +172,12 @@ class ProxyTest extends BaseTestCase
     public function testCaptureFail(): void
     {
         // arrange
-        $request = new RefundRequest('psp', Amount::fromInt(1, Currency::getDefault()), 'acc');
+        $request = new RefundRequest(
+            'psp',
+            Amount::fromInt(1, Currency::getDefault()),
+            'acc',
+            'ref'
+        );
         $this->httpClient->setMockResponses([
             new HttpResponse(
                 200, array(), file_get_contents(__DIR__ . '/../../../Common/ApiResponses/Refund/failedRefund.json')

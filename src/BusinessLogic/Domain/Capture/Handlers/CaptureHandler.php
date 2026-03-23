@@ -160,7 +160,7 @@ class CaptureHandler
     private function capturePayment(string $merchantAccount, string $pspReference, Amount $amount, TransactionHistory $transactionHistory): bool
     {
         $success = $this->captureProxy->capturePayment(
-            new CaptureRequest($pspReference, $amount, $merchantAccount)
+            new CaptureRequest($pspReference, $amount, $merchantAccount, $transactionHistory->getMerchantReference())
         );
 
         $this->addHistoryItem($transactionHistory, $amount, $success, $pspReference);

@@ -246,7 +246,14 @@ class RefundHandler
      */
     public function refund(string $pspReference, Amount $amount, string $merchantAccount, TransactionHistory $transactionHistory): bool
     {
-        $success = $this->refundProxy->refundPayment(new RefundRequest($pspReference, $amount, $merchantAccount));
+        $success = $this->refundProxy->refundPayment(
+            new RefundRequest(
+                $pspReference,
+                $amount,
+                $merchantAccount,
+                $transactionHistory->getMerchantReference()
+            )
+        );
         $this->addHistoryItem($transactionHistory, $amount, $success, $pspReference);
         $this->pushNotification($success, $transactionHistory);
         return $success;
