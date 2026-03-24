@@ -27,15 +27,27 @@ class CaptureRequest
     private $merchantAccount;
 
     /**
+     * @var string
+     */
+    private $merchantReference;
+
+    /**
      * @param string $pspReference
      * @param Amount $amount
      * @param string $merchantAccount
+     * @param string $merchantReference
      */
-    public function __construct(string $pspReference, Amount $amount, string $merchantAccount)
+    public function __construct(
+        string $pspReference,
+        Amount $amount,
+        string $merchantAccount,
+        string $merchantReference
+    )
     {
         $this->pspReference = $pspReference;
         $this->amount = $amount;
         $this->merchantAccount = $merchantAccount;
+        $this->merchantReference = $merchantReference;
     }
 
     /**
@@ -60,5 +72,13 @@ class CaptureRequest
     public function getMerchantAccount(): string
     {
         return $this->merchantAccount;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMerchantReference(): string
+    {
+        return $this->merchantReference;
     }
 }

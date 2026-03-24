@@ -82,7 +82,9 @@ class RefundHandler
             $connectionSettings = $this->connectionService->getConnectionData();
             $merchantAccount = $connectionSettings ? $connectionSettings->getActiveConnectionData()->getMerchantId(
             ) : '';
-            $success = $this->refundProxy->refundPayment(new RefundRequest($pspReference, $amount, $merchantAccount));
+            $success = $this->refundProxy->refundPayment(
+                new RefundRequest($pspReference, $amount, $merchantAccount, $transactionHistory->getMerchantReference())
+            );
             $this->addHistoryItem($transactionHistory, $amount, $success);
             $this->pushNotification($success, $transactionHistory);
 

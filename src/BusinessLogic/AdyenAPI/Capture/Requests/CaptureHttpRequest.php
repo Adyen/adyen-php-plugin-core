@@ -37,7 +37,8 @@ class CaptureHttpRequest extends HttpRequest
             'amount' => [
                 'currency' => $this->captureRequest->getAmount()->getCurrency()->getIsoCode(),
                 'value' => $this->captureRequest->getAmount()->getValue(),
-            ]
+            ],
+            "reference" => $this->captureRequest->getMerchantReference()
         ];
     }
 }

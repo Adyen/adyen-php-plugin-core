@@ -24,6 +24,7 @@ class CancelRequest
     private $pspReference;
 
     /**
+     * @param string $pspReference
      * @param string $merchantReference
      * @param string $merchantAccount
      */

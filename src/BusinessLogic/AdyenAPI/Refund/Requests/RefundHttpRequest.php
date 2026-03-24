@@ -37,7 +37,8 @@ class RefundHttpRequest extends HttpRequest
             'amount' => [
                 'currency' => $this->refundRequest->getAmount()->getCurrency()->getIsoCode(),
                 'value' => $this->refundRequest->getAmount()->getValue(),
-            ]
+            ],
+            "reference" => $this->refundRequest->getMerchantReference()
         ];
     }
 }

@@ -83,7 +83,12 @@ class CaptureHandler
             $merchantAccount = $connectionSettings ? $connectionSettings->getActiveConnectionData()->getMerchantId(
             ) : '';
             $success = $this->captureProxy->capturePayment(
-                new CaptureRequest($pspReference, $amount, $merchantAccount)
+                new CaptureRequest(
+                    $pspReference,
+                    $amount,
+                    $merchantAccount,
+                    $transactionHistory->getMerchantReference()
+                )
             );
 
             $this->addHistoryItem($transactionHistory, $amount, $success);
