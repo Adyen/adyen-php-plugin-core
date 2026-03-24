@@ -50,7 +50,7 @@ class ProxyTest extends BaseTestCase
      *
      * @throws HttpRequestException
      */
-    public function testCaptureUrl(): void
+    public function testRefundUrl(): void
     {
         // arrange
         $request = new RefundRequest(
@@ -78,7 +78,7 @@ class ProxyTest extends BaseTestCase
      *
      * @throws HttpRequestException
      */
-    public function testCaptureMethod(): void
+    public function testRefundMethod(): void
     {
         // arrange
         $request = new RefundRequest(
@@ -142,7 +142,7 @@ class ProxyTest extends BaseTestCase
      *
      * @throws HttpRequestException
      */
-    public function testCaptureSuccess(): void
+    public function testRefundSuccess(): void
     {
         // arrange
         $request = new RefundRequest(
@@ -169,7 +169,7 @@ class ProxyTest extends BaseTestCase
      *
      * @throws HttpRequestException
      */
-    public function testCaptureFail(): void
+    public function testRefundFail(): void
     {
         // arrange
         $request = new RefundRequest(
