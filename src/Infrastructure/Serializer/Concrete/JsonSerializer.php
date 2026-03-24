@@ -21,18 +21,26 @@ class JsonSerializer extends Serializer
      */
     protected function doSerialize($data)
     {
-        if (!method_exists($data, 'toArray')) {
-            if ($data instanceof stdClass) {
-                $data->className = get_class($data);
+        if (is_object($data)) {
+            if (!method_exists($data, 'toArray')) {
+                if ($data instanceof stdClass) {
+                    $data->className = get_class($data);
+                }
+
+                return json_encode($data, true);
             }
 
-            return json_encode($data, true);
+            $preparedArray = $data->toArray();
+            $preparedArray['class_name'] = get_class($data);
+
+            return json_encode($preparedArray);
         }
 
-        $preparedArray = $data->toArray();
-        $preparedArray['class_name'] = get_class($data);
+        if (is_array($data)) {
+            return json_encode($data);
+        }
 
-        return json_encode($preparedArray);
+        return $data;
     }
 
     /**
