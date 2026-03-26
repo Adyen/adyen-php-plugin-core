@@ -59,7 +59,9 @@ class WebhookSynchronizationService
         return !$this->hasDuplicates(
                 $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference()),
                 $webhook
-            ) && $webhook->getMerchantReference() !== Proxy::TEST_WEBHOOK;
+            ) &&
+            $webhook->getMerchantReference() !== '' &&
+            $webhook->getMerchantReference() !== Proxy::TEST_WEBHOOK;
     }
 
     /**

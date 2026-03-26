@@ -159,7 +159,7 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
             'data',
             '',
             '',
-            '',
+            'merchantRef',
             'pspRef1',
             '',
             '',
@@ -206,6 +206,34 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
     /**
      * @throws Exception
      */
+    public function testSyncNotNeededEmptyMerchantReferenceWebhook(): void
+    {
+        // arrange
+        $this->webhook = new Webhook(
+            Amount::fromInt(1, Currency::getDefault()),
+            'CODE1',
+            'data',
+            '',
+            '',
+            '',
+            'pspRef1',
+            '',
+            '',
+            true,
+            'originalPsp',
+            0,
+            false,
+            []
+        );
+        // act
+        $result = StoreContext::doWithStore('1', [$this->service, 'isSynchronizationNeeded'], [$this->webhook]);
+        // assert
+        self::assertFalse($result);
+    }
+
+    /**
+     * @throws Exception
+     */
     public function testSyncNeededNoDuplicates(): void
     {
         // arrange
@@ -216,7 +244,7 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
             'data',
             '',
             '',
-            '',
+            'merchantRef',
             'pspRef16',
             '',
             '',
