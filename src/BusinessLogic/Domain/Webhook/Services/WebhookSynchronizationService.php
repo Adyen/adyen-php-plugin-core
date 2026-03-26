@@ -60,11 +60,12 @@ class WebhookSynchronizationService
      */
     public function __construct(
         TransactionHistoryService $transactionHistoryService,
-        OrderService $orderService,
-        OrderStatusProvider $orderStatusProvider,
-        GeneralSettingsService $settingsService,
-        TimeProvider $timeProvider
-    ) {
+        OrderService              $orderService,
+        OrderStatusProvider       $orderStatusProvider,
+        GeneralSettingsService    $settingsService,
+        TimeProvider              $timeProvider
+    )
+    {
         $this->transactionHistoryService = $transactionHistoryService;
         $this->orderService = $orderService;
         $this->orderStatusProvider = $orderStatusProvider;
@@ -92,7 +93,9 @@ class WebhookSynchronizationService
         return !$this->hasDuplicates(
                 $transactionHistory,
                 $webhook
-            ) && $webhook->getMerchantReference() !== Proxy::TEST_WEBHOOK;
+            ) &&
+            $webhook->getMerchantReference() !== '' &&
+            $webhook->getMerchantReference() !== Proxy::TEST_WEBHOOK;
     }
 
     /**
@@ -367,10 +370,11 @@ class WebhookSynchronizationService
      * @return bool
      */
     protected function shouldNotHandleWebhook(
-        Webhook $webhook,
-        ?GeneralSettings $settings,
+        Webhook            $webhook,
+        ?GeneralSettings   $settings,
         TransactionHistory $transactionHistory
-    ): bool {
+    ): bool
+    {
         $paymentLinkTransactionsExists = !$transactionHistory->collection()
             ->filterAllByEventCode(ShopEvents::PAYMENT_LINK_CREATED)
             ->isEmpty();
