@@ -90,10 +90,6 @@ class WebhookSynchronizationService
             return false;
         }
 
-        if ($webhook->getMerchantReference() === '') {
-            return false;
-        }
-
         return !$this->hasDuplicates(
                 $transactionHistory,
                 $webhook
