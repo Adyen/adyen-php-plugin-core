@@ -5,10 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
-## [2.1.15 - 2.1.16](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.13...2.1.14) - 2026-05-18
+## [2.1.15 - 2.1.16](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.15...2.1.16) - 2026-05-18
 - Add compatibility with PHP 8.5
 
-## [2.1.14 - 2.1.15](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.13...2.1.14) - 2026-03-30
+## [2.1.14 - 2.1.15](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.14...2.1.15) - 2026-03-30
 - Add merchant reference to capture and refund requests
 
 ## [2.1.13 - 2.1.14](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.13...2.1.14) - 2026-01-29
