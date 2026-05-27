@@ -11,6 +11,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\MissingCl
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\ShopperReference;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Services\PaymentCheckoutConfigService;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\ConnectionSettingsNotFountException;
+use Exception;
 
 /**
  * Class CheckoutConfigController
@@ -68,6 +69,18 @@ class CheckoutConfigController
             $request->getShopperLocale(),
             $request->getCountry() ? $request->getCountry()->getIsoCode() : ''
         );
+    }
+
+    /**
+     * @param bool $isGuest
+     *
+     * @return bool
+     *
+     * @throws Exception
+     */
+    public function hasEnabledExpressCheckoutPaymentMethods(bool $isGuest = false): bool
+    {
+        return $this->service->hasEnabledExpressCheckoutPaymentMethods($isGuest);
     }
 
     /**

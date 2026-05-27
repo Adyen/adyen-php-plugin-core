@@ -105,6 +105,7 @@ class PaymentCheckoutConfigService
      *
      * @throws MissingActiveApiConnectionData
      * @throws MissingClientKeyConfiguration
+     * @throws Exception
      */
     public function getExpressPaymentCheckoutConfig(
         Amount $amount,
@@ -120,6 +121,20 @@ class PaymentCheckoutConfigService
             $shopperLocale,
             $shopperReference
         );
+    }
+
+    /**
+     * Checks whether there are any express checkout payment methods that have express checkout feature enabled.
+     *
+     * @param bool $isGuest
+     *
+     * @return bool
+     *
+     * @throws Exception
+     */
+    public function hasEnabledExpressCheckoutPaymentMethods(bool $isGuest = false): bool
+    {
+        return count($this->paymentMethodConfigRepository->getEnabledExpressCheckoutPaymentMethods($isGuest)) > 0;
     }
 
     /**
