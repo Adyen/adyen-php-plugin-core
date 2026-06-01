@@ -5,6 +5,7 @@ namespace Adyen\Core\BusinessLogic\CheckoutAPI\CheckoutConfig\Controller;
 use Adyen\Core\BusinessLogic\CheckoutAPI\CheckoutConfig\Request\DisableStoredDetailsRequest;
 use Adyen\Core\BusinessLogic\CheckoutAPI\CheckoutConfig\Request\PaymentCheckoutConfigRequest;
 use Adyen\Core\BusinessLogic\CheckoutAPI\CheckoutConfig\Response\DisableStoredDetailsResponse;
+use Adyen\Core\BusinessLogic\CheckoutAPI\CheckoutConfig\Response\ExpressCheckoutEnabledResponse;
 use Adyen\Core\BusinessLogic\CheckoutAPI\CheckoutConfig\Response\PaymentCheckoutConfigResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\MissingActiveApiConnectionData;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\MissingClientKeyConfiguration;
@@ -25,6 +26,9 @@ class CheckoutConfigController
      */
     private $service;
 
+    /**
+     * @param PaymentCheckoutConfigService $service
+     */
     public function __construct(PaymentCheckoutConfigService $service)
     {
         $this->service = $service;
@@ -74,13 +78,15 @@ class CheckoutConfigController
     /**
      * @param bool $isGuest
      *
-     * @return bool
+     * @return ExpressCheckoutEnabledResponse
      *
      * @throws Exception
      */
-    public function hasEnabledExpressCheckoutPaymentMethods(bool $isGuest = false): bool
+    public function hasEnabledExpressCheckoutPaymentMethods(bool $isGuest = false): ExpressCheckoutEnabledResponse
     {
-        return $this->service->hasEnabledExpressCheckoutPaymentMethods($isGuest);
+        return new ExpressCheckoutEnabledResponse(
+            $this->service->hasEnabledExpressCheckoutPaymentMethods($isGuest)
+        );
     }
 
     /**

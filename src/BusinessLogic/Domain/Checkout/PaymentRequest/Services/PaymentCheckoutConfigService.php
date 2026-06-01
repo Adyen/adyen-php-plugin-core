@@ -71,10 +71,12 @@ class PaymentCheckoutConfigService
      * @param Country|null $country
      * @param string $shopperLocale
      * @param ShopperReference|null $shopperReference
+     *
      * @return PaymentCheckoutConfigResult
      *
      * @throws MissingActiveApiConnectionData
      * @throws MissingClientKeyConfiguration
+     * @throws Exception
      */
     public function getPaymentCheckoutConfig(
         Amount $amount,
@@ -82,7 +84,7 @@ class PaymentCheckoutConfigService
         string $shopperLocale = 'en-US',
         ?ShopperReference $shopperReference = null
     ): PaymentCheckoutConfigResult {
-        return $this->getPaymentCheckoutConfigForConfiguredMethods(
+    return $this->getPaymentCheckoutConfigForConfiguredMethods(
             $this->paymentMethodConfigRepository->getConfiguredPaymentMethods(),
             $amount,
             $country,

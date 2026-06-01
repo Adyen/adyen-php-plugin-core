@@ -14,7 +14,6 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Country;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodResponse;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Proxies\StoredDetailsProxy;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Services\PaymentCheckoutConfigService;
 use Adyen\Core\BusinessLogic\Domain\Connection\Enums\Mode;
 use Adyen\Core\BusinessLogic\Domain\Connection\Models\ConnectionData;
 use Adyen\Core\BusinessLogic\Domain\Connection\Models\ConnectionSettings;
@@ -31,6 +30,7 @@ use Adyen\Core\Tests\BusinessLogic\AdminAPI\Store\MockComponents\MockConnectionS
 use Adyen\Core\Tests\BusinessLogic\CheckoutAPI\CheckoutConfig\MockComponents\MockPaymentsProxy;
 use Adyen\Core\Tests\BusinessLogic\CheckoutAPI\CheckoutConfig\MockComponents\MockStoredDetailsProxy;
 use Adyen\Core\Tests\BusinessLogic\Common\BaseTestCase;
+use Adyen\Core\Tests\BusinessLogic\Common\MockComponents\MockPaymentCheckoutConfigService;
 use Adyen\Core\Tests\Infrastructure\Common\TestServiceRegister;
 use Exception;
 
@@ -57,6 +57,10 @@ class PaymentCheckoutConfigApiTest extends BaseTestCase
      * @var StoredDetailsProxy
      */
     private $storedDetailsProxy;
+    /**
+     * @var MockPaymentCheckoutConfigService
+     */
+    private $checkoutConfigService;
 
     public function setUp(): void
     {
@@ -66,19 +70,18 @@ class PaymentCheckoutConfigApiTest extends BaseTestCase
         $this->paymentMethodConfigRepo = TestServiceRegister::getService(PaymentMethodConfigRepository::class);
         $this->paymentsProxy = new MockPaymentsProxy();
         $this->storedDetailsProxy = new MockStoredDetailsProxy();
+        $this->checkoutConfigService = new MockPaymentCheckoutConfigService(
+            $this->connectionSettingsRepo,
+            $this->paymentMethodConfigRepo,
+            $this->paymentsProxy,
+            $this->storedDetailsProxy,
+            TestServiceRegister::getService(ConnectionService::class)
+        );
 
         TestServiceRegister::registerService(
             CheckoutConfigController::class,
             new SingleInstance(function () {
-                return new CheckoutConfigController(
-                    new PaymentCheckoutConfigService(
-                        $this->connectionSettingsRepo,
-                        $this->paymentMethodConfigRepo,
-                        $this->paymentsProxy,
-                        $this->storedDetailsProxy,
-                        TestServiceRegister::getService(ConnectionService::class)
-                    )
-                );
+                return new CheckoutConfigController($this->checkoutConfigService);
             })
         );
     }
@@ -626,5 +629,43 @@ class PaymentCheckoutConfigApiTest extends BaseTestCase
             $response->getRecurringPaymentMethodResponse()[0]
         );
         self::assertEquals(new PaymentMethodResponse('zip', 'zip'), $response->getRecurringPaymentMethodResponse()[1]);
+    }
+
+    /**
+     * @return void
+     *
+     * @throws Exception
+     */
+    public function testHasEnabledExpressCheckoutPaymentMethods(): void
+    {
+        // Arrange
+        $this->checkoutConfigService->setEnabledExpressCheckout(true);
+
+        // Act
+        $response = CheckoutAPI::get()->checkoutConfig('store1')->hasEnabledExpressCheckoutPaymentMethods();
+
+        // Assert
+        self::assertTrue($response->isSuccessful());
+        self::assertTrue($response->isEnabled());
+        self::assertTrue($response->toArray()['isEnabled']);
+    }
+
+    /**
+     * @return void
+     *
+     * @throws Exception
+     */
+    public function testHasNoEnabledExpressCheckoutPaymentMethods(): void
+    {
+        // Arrange
+        $this->checkoutConfigService->setEnabledExpressCheckout(false);
+
+        // Act
+        $response = CheckoutAPI::get()->checkoutConfig('store1')->hasEnabledExpressCheckoutPaymentMethods();
+
+        // Assert
+        self::assertTrue($response->isSuccessful());
+        self::assertFalse($response->isEnabled());
+        self::assertFalse($response->toArray()['isEnabled']);
     }
 }
