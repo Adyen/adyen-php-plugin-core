@@ -4,7 +4,7 @@ namespace Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest;
 
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Factory\PaymentRequestBuilder;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\StartTransactionRequestContext;
-use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
+use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
 use Exception;
 
 /**
@@ -15,16 +15,16 @@ use Exception;
 class AuthorizationTypeProcessor implements PaymentRequestProcessor
 {
     /**
-     * @var PaymentMethodConfigRepository
+     * @var PaymentService
      */
-    private $methodConfigRepository;
+    private $paymentService;
 
     /**
-     * @param PaymentMethodConfigRepository $methodConfigRepository
+     * @param PaymentService $paymentService
      */
-    public function __construct(PaymentMethodConfigRepository $methodConfigRepository)
+    public function __construct(PaymentService $paymentService)
     {
-        $this->methodConfigRepository = $methodConfigRepository;
+        $this->paymentService = $paymentService;
     }
 
     /**
@@ -37,7 +37,7 @@ class AuthorizationTypeProcessor implements PaymentRequestProcessor
      */
     public function process(PaymentRequestBuilder $builder, StartTransactionRequestContext $context): void
     {
-        $configuredPaymentMethod = $this->methodConfigRepository->getPaymentMethodByCode(
+        $configuredPaymentMethod = $this->paymentService->getPaymentMethodByCodeWithFallback(
             (string)$context->getPaymentMethodCode()
         );
 

@@ -134,6 +134,27 @@ class PaymentService
     }
 
     /**
+     * Retrieves payment method by code, with fallback to Oney configuration
+     * for Oney installment payment method codes.
+     *
+     * @param string $code
+     *
+     * @return PaymentMethod|null
+     *
+     * @throws Exception
+     */
+    public function getPaymentMethodByCodeWithFallback(string $code): ?PaymentMethod
+    {
+        $configuredPaymentMethod = $this->getPaymentMethodByCode($code);
+
+        if (!$configuredPaymentMethod && PaymentMethodCode::isOneyMethod($code)) {
+            $configuredPaymentMethod = $this->getPaymentMethodByCode((string)PaymentMethodCode::oney());
+        }
+
+        return $configuredPaymentMethod;
+    }
+
+    /**
      * Saves payment method configuration.
      *
      * @param PaymentMethod $method

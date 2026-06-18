@@ -15,7 +15,7 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\UpdatePayment
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Proxies\PaymentsProxy;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
-use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
+use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Exception;
 
@@ -46,29 +46,29 @@ class PaymentRequestService
     private $transactionHistoryService;
 
     /**
-     * @var PaymentMethodConfigRepository
+     * @var PaymentService
      */
-    private $methodConfigRepository;
+    private $paymentService;
 
     /**
      * @param PaymentsProxy $paymentsProxy
      * @param PaymentRequestFactory $paymentRequestFactory
      * @param DonationsDataRepository $donationsDataRepository
      * @param TransactionHistoryService $transactionHistoryService
-     * @param PaymentMethodConfigRepository $methodConfigRepository
+     * @param PaymentService  $paymentService
      */
     public function __construct(
         PaymentsProxy $paymentsProxy,
         PaymentRequestFactory $paymentRequestFactory,
         DonationsDataRepository $donationsDataRepository,
         TransactionHistoryService $transactionHistoryService,
-        PaymentMethodConfigRepository $methodConfigRepository
+        PaymentService $paymentService
     ) {
         $this->paymentsProxy = $paymentsProxy;
         $this->paymentRequestFactory = $paymentRequestFactory;
         $this->donationsDataRepository = $donationsDataRepository;
         $this->transactionHistoryService = $transactionHistoryService;
-        $this->methodConfigRepository = $methodConfigRepository;
+        $this->paymentService  = $paymentService;
     }
 
     /**
@@ -86,7 +86,7 @@ class PaymentRequestService
             }
 
             $authorizationType = null;
-            $configuredPaymentMethod = $this->methodConfigRepository->getPaymentMethodByCode(
+            $configuredPaymentMethod = $this->paymentService->getPaymentMethodByCodeWithFallback(
                 (string)$context->getPaymentMethodCode()
             );
 

@@ -288,7 +288,7 @@ class BootstrapComponent extends BaseBootstrapComponent
                     new PaymentRequestFactory(),
                     ServiceRegister::getService(DonationsDataRepository::class),
                     ServiceRegister::getService(TransactionHistoryService::class),
-                    ServiceRegister::getService(PaymentMethodConfigRepository::class)
+                    ServiceRegister::getService(PaymentService::class)
                 );
             })
         );
@@ -1134,7 +1134,7 @@ class BootstrapComponent extends BaseBootstrapComponent
             new SingleInstance(static function () {
                 return new CaptureDelayHoursProcessor(
                     ServiceRegister::getService(GeneralSettingsService::class),
-                    ServiceRegister::getService(PaymentMethodConfigRepository::class)
+                    ServiceRegister::getService(PaymentService::class)
                 );
             })
         );
@@ -1151,7 +1151,7 @@ class BootstrapComponent extends BaseBootstrapComponent
             new SingleInstance(static function () {
                 return new CaptureProcessor(
                     ServiceRegister::getService(GeneralSettingsService::class),
-                    ServiceRegister::getService(PaymentMethodConfigRepository::class)
+                    ServiceRegister::getService(PaymentService::class)
                 );
             })
         );
@@ -1196,7 +1196,7 @@ class BootstrapComponent extends BaseBootstrapComponent
         ServiceRegister::registerService(
             AuthorizationTypeProcessor::class,
             new SingleInstance(static function () {
-                return new AuthorizationTypeProcessor(ServiceRegister::getService(PaymentMethodConfigRepository::class));
+                return new AuthorizationTypeProcessor(ServiceRegister::getService(PaymentService::class));
             })
         );
 
