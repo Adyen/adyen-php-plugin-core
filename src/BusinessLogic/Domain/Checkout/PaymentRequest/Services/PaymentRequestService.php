@@ -28,13 +28,11 @@ use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsServ
 use Adyen\Core\BusinessLogic\Domain\PartialPayments\Models\Order;
 use Adyen\Core\BusinessLogic\Domain\PartialPayments\Service\PartialPaymentService;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
-use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
 use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
-use Adyen\Core\Infrastructure\ServiceRegister;
 use Exception;
 
 /**
@@ -60,9 +58,9 @@ class PaymentRequestService
     private $transactionHistoryService;
 
     /**
-     * @var PaymentMethodConfigRepository
+     * @var PaymentService
      */
-    private $methodConfigRepository;
+    private $paymentService;
     /**
      * @var ConnectionService
      */
@@ -80,7 +78,7 @@ class PaymentRequestService
      * @param PaymentsProxy $paymentsProxy
      * @param DonationsDataRepository $donationsDataRepository
      * @param TransactionHistoryService $transactionHistoryService
-     * @param PaymentMethodConfigRepository $methodConfigRepository
+     * @param PaymentService  $paymentService
      * @param ConnectionService $connectionService
      * @param PartialPaymentService $partialPaymentService
      * @param GeneralSettingsService $generalSettingsService
@@ -89,7 +87,7 @@ class PaymentRequestService
         PaymentsProxy                 $paymentsProxy,
         DonationsDataRepository       $donationsDataRepository,
         TransactionHistoryService     $transactionHistoryService,
-        PaymentMethodConfigRepository $methodConfigRepository,
+        PaymentService $paymentService,
         ConnectionService             $connectionService,
         PartialPaymentService         $partialPaymentService,
         GeneralSettingsService $generalSettingsService
@@ -98,7 +96,7 @@ class PaymentRequestService
         $this->paymentsProxy = $paymentsProxy;
         $this->donationsDataRepository = $donationsDataRepository;
         $this->transactionHistoryService = $transactionHistoryService;
-        $this->methodConfigRepository = $methodConfigRepository;
+        $this->paymentService = $paymentService;
         $this->connectionService = $connectionService;
         $this->partialPaymentsService = $partialPaymentService;
         $this->generalSettingsService = $generalSettingsService;
@@ -127,21 +125,9 @@ class PaymentRequestService
             }
 
             $authorizationType = null;
-            $configuredPaymentMethod = $this->methodConfigRepository->getPaymentMethodByCode(
+            $configuredPaymentMethod = $this->paymentService->getPaymentMethodByCodeWithFallback(
                 (string)$context->getPaymentMethodCode()
             );
-
-            if (!$configuredPaymentMethod &&
-                in_array(
-                    (string)$context->getPaymentMethodCode(),
-                    [(string)PaymentMethodCode::payWithGoogle(), (string)PaymentMethodCode::googlePay()],
-                    true
-                )
-            ) {
-                /** @var PaymentService $paymentService */
-                $paymentService = ServiceRegister::getService(PaymentService::class);
-                $configuredPaymentMethod = $paymentService->getGooglePayMethod();
-            }
 
             if ($configuredPaymentMethod) {
                 $authorizationType = $configuredPaymentMethod->getAuthorizationType();

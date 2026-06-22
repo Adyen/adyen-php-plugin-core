@@ -133,6 +133,29 @@ class PaymentService
         return $this->repository->getPaymentMethodByCode($code);
     }
 
+    public function getPaymentMethodByCodeWithFallback(string $code): ?PaymentMethod
+    {
+        $configuredPaymentMethod = $this->getPaymentMethodByCode($code);
+
+        if ($configuredPaymentMethod) {
+            return $configuredPaymentMethod;
+        }
+
+        if (in_array(
+            $code,
+            [(string)PaymentMethodCode::googlePay(), (string)PaymentMethodCode::payWithGoogle()],
+            true
+        )) {
+            return $this->getGooglePayMethod();
+        }
+
+        if (PaymentMethodCode::isOneyMethod($code)) {
+            return $this->getPaymentMethodByCode((string)PaymentMethodCode::oney());
+        }
+
+        return null;
+    }
+
     /**
      * Saves payment method configuration.
      *

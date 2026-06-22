@@ -6,16 +6,13 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Factory\PaymentLinkRequ
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentLink\Models\PaymentLinkRequestContext;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Factory\PaymentRequestBuilder;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\AdditionalData\AdditionalData;
-use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\StartTransactionRequestContext;
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentLinkRequest\PaymentLinkRequestProcessor;
 use Adyen\Core\BusinessLogic\Domain\Checkout\Processors\PaymentRequest\PaymentRequestProcessor;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsService;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
-use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
 use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
-use Adyen\Core\Infrastructure\ServiceRegister;
 use Exception;
 
 /**
@@ -31,20 +28,20 @@ class CaptureProcessor implements PaymentRequestProcessor, PaymentLinkRequestPro
     private $generalSettingsService;
 
     /**
-     * @var PaymentMethodConfigRepository
+     * @var PaymentService
      */
-    private $methodConfigRepository;
+    private $paymentService;
 
     /**
      * @param GeneralSettingsService $generalSettingsService
-     * @param PaymentMethodConfigRepository $methodConfigRepository
+     * @param PaymentService $paymentService
      */
     public function __construct(
         GeneralSettingsService $generalSettingsService,
-        PaymentMethodConfigRepository $methodConfigRepository
+        PaymentService $paymentService
     ) {
         $this->generalSettingsService = $generalSettingsService;
-        $this->methodConfigRepository = $methodConfigRepository;
+        $this->paymentService = $paymentService;
     }
 
     /**
@@ -58,24 +55,13 @@ class CaptureProcessor implements PaymentRequestProcessor, PaymentLinkRequestPro
     public function process(PaymentRequestBuilder $builder, StartTransactionRequestContext $context): void
     {
         $generalSettings = $this->generalSettingsService->getGeneralSettings();
-        $configuredPaymentMethod = $this->methodConfigRepository->getPaymentMethodByCode(
+        $configuredPaymentMethod = $this->paymentService->getPaymentMethodByCodeWithFallback(
             (string)$context->getPaymentMethodCode()
         );
 
-        if (!$configuredPaymentMethod &&
-            in_array(
-                (string)$context->getPaymentMethodCode(),
-                [(string)PaymentMethodCode::payWithGoogle(), (string)PaymentMethodCode::googlePay()],
-                true
-            )
-        ) {
-            /** @var PaymentService $paymentService */
-            $paymentService = ServiceRegister::getService(PaymentService::class);
-            $configuredPaymentMethod = $paymentService->getGooglePayMethod();
-        }
-
         if ((!$generalSettings || $generalSettings->getCapture()->getType() !== CaptureType::MANUAL) &&
             (
+                !$configuredPaymentMethod ||
                 !$configuredPaymentMethod->getAuthorizationType() ||
                 !$configuredPaymentMethod->getAuthorizationType()->equal(AuthorizationType::preAuthorization())
             )
