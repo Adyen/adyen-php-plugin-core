@@ -170,7 +170,11 @@ class CreateIntegrationDataService
             $captureType !== '' ? $captureType : $generalSettingsData['capture'],
             $captureDelay !== '' ? $captureDelay : $generalSettingsData['captureDelay'],
             $shipmentStatus,
-            $retentionPeriod !== '' ? $retentionPeriod : $generalSettingsData['retentionPeriod']
+            $retentionPeriod !== '' ? $retentionPeriod : $generalSettingsData['retentionPeriod'],
+            true,
+            '',
+            '7',
+            true
         );
         AdminAPI::get()->generalSettings(1)->saveGeneralSettings($generalSettingsRequest);
     }
