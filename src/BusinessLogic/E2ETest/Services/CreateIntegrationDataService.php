@@ -20,7 +20,6 @@ use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\InvalidAllowedOriginEx
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\InvalidApiKeyException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\InvalidConnectionSettingsException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\InvalidModeException;
-use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\MerchantIdChangedException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\ModeChangedException;
 use Adyen\Core\BusinessLogic\Domain\Connection\Exceptions\UserDoesNotHaveNecessaryRolesException;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidCaptureDelayException;
@@ -28,8 +27,10 @@ use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidCaptureTyp
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Exceptions\InvalidRetentionPeriodException;
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Models\CaptureType;
 use Adyen\Core\BusinessLogic\Domain\Merchant\Exceptions\ClientKeyGenerationFailedException;
+use Adyen\Core\BusinessLogic\Domain\Merchant\Exceptions\ClientPrefixDoesNotExistException;
 use Adyen\Core\BusinessLogic\Domain\Multistore\StoreContext;
 use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\PaymentMethodDataEmptyException;
+use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Exceptions\FailedToGenerateHmacException;
 use Adyen\Core\BusinessLogic\Domain\Webhook\Exceptions\FailedToRegisterWebhookException;
@@ -91,22 +92,24 @@ class CreateIntegrationDataService
     /**
      * Creates ConnectionSettings and WebhookConfig in database
      *
-     * @throws EmptyConnectionDataException
-     * @throws MerchantDoesNotExistException
-     * @throws ApiKeyCompanyLevelException
-     * @throws InvalidModeException
-     * @throws EmptyStoreException
-     * @throws InvalidApiKeyException
-     * @throws MerchantIdChangedException
-     * @throws ClientKeyGenerationFailedException
-     * @throws FailedToGenerateHmacException
-     * @throws UserDoesNotHaveNecessaryRolesException
-     * @throws InvalidAllowedOriginException
+     * @param string $testApiKey
+     *
      * @throws ApiCredentialsDoNotExistException
-     * @throws InvalidConnectionSettingsException
-     * @throws ModeChangedException
+     * @throws ApiKeyCompanyLevelException
+     * @throws ClientKeyGenerationFailedException
      * @throws ConnectionSettingsNotFoundException
+     * @throws EmptyConnectionDataException
+     * @throws EmptyStoreException
+     * @throws FailedToGenerateHmacException
      * @throws FailedToRegisterWebhookException
+     * @throws InvalidAllowedOriginException
+     * @throws InvalidApiKeyException
+     * @throws InvalidConnectionSettingsException
+     * @throws InvalidModeException
+     * @throws MerchantDoesNotExistException
+     * @throws ModeChangedException
+     * @throws UserDoesNotHaveNecessaryRolesException
+     * @throws ClientPrefixDoesNotExistException
      */
     public function createConnectionAndWebhookConfiguration(string $testApiKey): void
     {
@@ -259,11 +262,30 @@ class CreateIntegrationDataService
                 new DataBag([]),
                 new DataBag([])
             );
+
+            $paymentRequestedItem = new HistoryItem(
+                'PAYMENT_REQUESTED_' . $transactionContext->getReference(),
+                $transactionContext->getReference(),
+                'PAYMENT_REQUESTED',
+                '',
+                (new \DateTime())->format('Y-m-d H:i:s'),
+                true,
+                $transactionContext->getAmount(),
+                'scheme',
+                0,
+                false,
+                '',
+                $captureType
+            );
+
             /** @var TransactionHistoryService $transactionHistoryService */
             $transactionHistoryService = ServiceRegister::getService(TransactionHistoryService::class);
-            $transactionHistoryService->createTransactionHistory($transactionContext->getReference(),
+            $transactionHistoryService->createTransactionHistory(
+                $transactionContext->getReference(),
                 $transactionContext->getAmount()->getCurrency(),
-                $captureType
+                $captureType,
+                null,
+                $paymentRequestedItem
             );
         });
     }
