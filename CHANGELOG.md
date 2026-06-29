@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [2.1.17 - 2.1.18](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.17...2.1.18) - 2026-06-29
+- Fix E2E tests
+
 ## [2.1.16 - 2.1.17](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.16...2.1.17) - 2026-06-02
 - Add endpoint to check for express checkout-enabled payment methods
 
