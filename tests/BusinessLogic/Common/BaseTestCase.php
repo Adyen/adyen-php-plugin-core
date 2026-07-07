@@ -437,7 +437,7 @@ class BaseTestCase extends TestCase
                     TestServiceRegister::getService(PaymentsProxy::class),
                     TestServiceRegister::getService(DonationsDataRepository::class),
                     TestServiceRegister::getService(TransactionHistoryService::class),
-                    TestServiceRegister::getService(PaymentMethodConfigRepository::class),
+                    TestServiceRegister::getService(PaymentService::class),
                     TestServiceRegister::getService(ConnectionService::class),
                     TestServiceRegister::getService(PartialPaymentService::class),
                     TestServiceRegister::getService(GeneralSettingsService::class)
