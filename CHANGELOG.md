@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [2.1.18 - 2.1.19](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.18...2.1.19) - 2026-07-07
+- Fixed Oney payment method
+
 ## [2.1.17 - 2.1.18](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.17...2.1.18) - 2026-06-29
 - Fix E2E tests
 
