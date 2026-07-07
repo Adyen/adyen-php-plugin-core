@@ -35,6 +35,7 @@ use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsServ
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\PartialPayments\Service\PartialPaymentService;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
+use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Adyen\Core\Infrastructure\ServiceRegister;
 use Adyen\Core\Tests\BusinessLogic\AdminAPI\Store\MockComponents\MockConnectionSettingsRepository;
@@ -75,7 +76,7 @@ class PaymentRequestApiTest extends BaseTestCase
                         $this->paymentsProxy,
                         TestServiceRegister::getService(DonationsDataRepository::class),
                         TestServiceRegister::getService(TransactionHistoryService::class),
-                        ServiceRegister::getService(PaymentMethodConfigRepository::class),
+                        TestServiceRegister::getService(PaymentService::class),
                         TestServiceRegister::getService(ConnectionService::class),
                         TestServiceRegister::getService(PartialPaymentService::class),
                         TestServiceRegister::getService(GeneralSettingsService::class)
