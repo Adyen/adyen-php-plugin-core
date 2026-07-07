@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [1.2.8 - 1.2.9](https://github.com/Adyen/adyen-php-plugin-core/compare/1.2.8...1.2.9) - 2026-07-07
+- Fix Oney payment method
+
 ## [1.2.7 - 1.2.8](https://github.com/Adyen/adyen-php-plugin-core/compare/1.2.7...1.2.8) - 2026-03-30
 - Add merchant reference to capture and refund requests for Shopware 5
 
