@@ -84,7 +84,7 @@ class PaymentCheckoutConfigService
         string $shopperLocale = 'en-US',
         ?ShopperReference $shopperReference = null
     ): PaymentCheckoutConfigResult {
-    return $this->getPaymentCheckoutConfigForConfiguredMethods(
+        return $this->getPaymentCheckoutConfigForConfiguredMethods(
             $this->paymentMethodConfigRepository->getConfiguredPaymentMethods(),
             $amount,
             $country,
@@ -221,49 +221,40 @@ class PaymentCheckoutConfigService
 
         $methodsResponse = [];
 
-        if (!empty($_SERVER['HTTP_USER_AGENT'])) {
-            $userAgent = $_SERVER['HTTP_USER_AGENT'];
-
-            foreach ($paymentMethodsResponse->getPaymentMethodsResponse() as $methodResponse) {
-                if ($methodResponse->getType() === 'applepay' &&
-                    (!strpos($userAgent, 'Safari') || strpos($userAgent, 'Chrome'))) {
-                    continue;
+        foreach ($paymentMethodsResponse->getPaymentMethodsResponse() as $methodResponse) {
+            if (PaymentMethodCode::googlePay()->equals($methodResponse->getType())) {
+                $metadata = $methodResponse->getMetadata();
+                if (isset($metadata['type'])) {
+                    $metadata['type'] = (string)PaymentMethodCode::payWithGoogle();
                 }
 
-                if (PaymentMethodCode::googlePay()->equals($methodResponse->getType())) {
-                    $metadata = $methodResponse->getMetadata();
-                    if (isset($metadata['type'])) {
-                        $metadata['type'] = (string)PaymentMethodCode::payWithGoogle();
-                    }
-
-                    $methodsResponse[] = new PaymentMethodResponse(
-                        $methodResponse->getName(),
-                        (string)PaymentMethodCode::payWithGoogle(),
-                        $metadata
-                    );
-                }
-
-                if (PaymentMethodCode::payWithGoogle()->equals($methodResponse->getType())) {
-                    $metadata = $methodResponse->getMetadata();
-                    if (isset($metadata['type'])) {
-                        $metadata['type'] = (string)PaymentMethodCode::googlePay();
-                    }
-
-                    $methodsResponse[] = new PaymentMethodResponse(
-                        $methodResponse->getName(),
-                        (string)PaymentMethodCode::googlePay(),
-                        $metadata
-                    );
-                }
-
-                $methodsResponse[] = $methodResponse;
+                $methodsResponse[] = new PaymentMethodResponse(
+                    $methodResponse->getName(),
+                    (string)PaymentMethodCode::payWithGoogle(),
+                    $metadata
+                );
             }
 
-            $paymentMethodsResponse = new AvailablePaymentMethodsResponse(
-                $methodsResponse,
-                $paymentMethodsResponse->getStoredPaymentMethodsResponse()
-            );
+            if (PaymentMethodCode::payWithGoogle()->equals($methodResponse->getType())) {
+                $metadata = $methodResponse->getMetadata();
+                if (isset($metadata['type'])) {
+                    $metadata['type'] = (string)PaymentMethodCode::googlePay();
+                }
+
+                $methodsResponse[] = new PaymentMethodResponse(
+                    $methodResponse->getName(),
+                    (string)PaymentMethodCode::googlePay(),
+                    $metadata
+                );
+            }
+
+            $methodsResponse[] = $methodResponse;
         }
+
+        $paymentMethodsResponse = new AvailablePaymentMethodsResponse(
+            $methodsResponse,
+            $paymentMethodsResponse->getStoredPaymentMethodsResponse()
+        );
 
         if ($shopperReference) {
             $recurringPaymentMethods = $this->storedDetailsProxy->getStoredPaymentDetails(
