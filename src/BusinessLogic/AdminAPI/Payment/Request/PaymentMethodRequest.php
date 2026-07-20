@@ -13,7 +13,6 @@ use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\StringValuesNotAllowedExc
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\Exceptions\InvalidAuthorizationTypeException;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\Exceptions\InvalidTokenTypeException;
-use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\AmazonPay;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\ApplePay;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\CardConfig;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\EPS;
@@ -87,15 +86,7 @@ class PaymentMethodRequest extends Request
     /**
      * @var string
      */
-    private $publicKeyId;
-    /**
-     * @var string
-     */
     private $merchantId;
-    /**
-     * @var string
-     */
-    private $storeId;
     /**
      * @var string
      */
@@ -183,9 +174,7 @@ class PaymentMethodRequest extends Request
      * @param string $fixedSurcharge
      * @param float|null $percentSurcharge
      * @param float|null $surchargeLimit
-     * @param string $publicKeyId
      * @param string $merchantId
-     * @param string $storeId
      * @param string $displayButtonOn
      * @param string $merchantName
      * @param bool $showLogos
@@ -219,9 +208,7 @@ class PaymentMethodRequest extends Request
         string $fixedSurcharge = '',
         float $percentSurcharge = null,
         float $surchargeLimit = null,
-        string $publicKeyId = '',
         string $merchantId = '',
-        string $storeId = '',
         string $displayButtonOn = '',
         string $merchantName = '',
         bool $showLogos = false,
@@ -254,9 +241,7 @@ class PaymentMethodRequest extends Request
         $this->fixedSurcharge = $fixedSurcharge;
         $this->percentSurcharge = $percentSurcharge;
         $this->surchargeLimit = $surchargeLimit;
-        $this->publicKeyId = $publicKeyId;
         $this->merchantId = $merchantId;
-        $this->storeId = $storeId;
         $this->displayButtonOn = $displayButtonOn;
         $this->merchantName = $merchantName;
         $this->showLogos = $showLogos;
@@ -298,9 +283,7 @@ class PaymentMethodRequest extends Request
             $rawData['fixedSurcharge'] ?? '',
             !empty($rawData['percentSurcharge']) ? $rawData['percentSurcharge'] : null,
             !empty($rawData['surchargeLimit']) && $rawData['surchargeLimit'] !== 'null' ? $rawData['surchargeLimit'] : null,
-            $rawData['additionalData']['publicKeyId'] ?? '',
             $rawData['additionalData']['merchantId'] ?? '',
-            $rawData['additionalData']['storeId'] ?? '',
             $rawData['additionalData']['displayButtonOn'] ?? '',
             $rawData['additionalData']['merchantName'] ?? '',
             $rawData['additionalData']['showLogos'] ?? false,
@@ -377,10 +360,6 @@ class PaymentMethodRequest extends Request
      */
     private function transformAdditionalData(): ?PaymentMethodAdditionalData
     {
-        if (PaymentMethodCode::amazonPay()->equals($this->code)) {
-            return new AmazonPay($this->publicKeyId, $this->merchantId, $this->storeId, $this->displayButtonOn);
-        }
-
         if (PaymentMethodCode::applePay()->equals($this->code)) {
             return new ApplePay($this->merchantName, $this->merchantId, $this->displayButtonOn);
         }

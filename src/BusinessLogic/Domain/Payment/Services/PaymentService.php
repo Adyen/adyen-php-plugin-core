@@ -465,7 +465,10 @@ class PaymentService
      */
     protected function getAllowedPaymentMethods(): array
     {
-        return PaymentMethodCode::SUPPORTED_PAYMENT_METHODS;
+        return array_values(array_diff(
+            PaymentMethodCode::SUPPORTED_PAYMENT_METHODS,
+            PaymentMethodCode::DEPRECATED_PAYMENT_METHODS
+        ));
     }
 
 

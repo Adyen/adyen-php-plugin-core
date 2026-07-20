@@ -7,7 +7,6 @@ use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentCheckoutConfigResult;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodResponse;
-use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\AmazonPay;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\CardConfig;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\EPS;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\GooglePay;
@@ -161,23 +160,6 @@ class PaymentCheckoutConfigResponse extends Response
                 if (!empty($additionalData->getMerchantId())) {
                     $configurations['googlepay']['merchantId'] = $additionalData->getMerchantId();
                 }
-            }
-
-            if (PaymentMethodCode::amazonPay()->equals($method->getCode())) {
-                /** @var AmazonPay $additionalData */
-                $additionalData = $method->getAdditionalData();
-
-                if (!$additionalData) {
-                    continue;
-                }
-
-                $configurations[$method->getCode()] = [
-                    'configuration' => [
-                        'merchantId' => $additionalData->getMerchantId(),
-                        'publicKeyId' => $additionalData->getPublicKeyId(),
-                        'storeId' => $additionalData->getStoreId(),
-                    ],
-                ];
             }
 
             if (PaymentMethodCode::ideal()->equals($method->getCode()) ||

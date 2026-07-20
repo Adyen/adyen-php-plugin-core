@@ -120,6 +120,13 @@ class PaymentMethodCode
         self::BIZUM
     ];
 
+    /**
+     * Payment methods that are no longer offered for configuration
+     */
+    public const DEPRECATED_PAYMENT_METHODS = [
+        self::AMAZONPAY,
+    ];
+
     public const CAPTURE_SUPPORTED = [
         self::SCHEME,
         self::AMERICAN_EXPRESS,
@@ -790,7 +797,6 @@ class PaymentMethodCode
             (string)PaymentMethodCode::googlePay(),
             (string)PaymentMethodCode::payWithGoogle(),
             (string)PaymentMethodCode::payPal(),
-            (string)PaymentMethodCode::amazonPay(),
         ];
 
         // Add scheme always if there are express checkout methods to force Adyen API to return brands field
