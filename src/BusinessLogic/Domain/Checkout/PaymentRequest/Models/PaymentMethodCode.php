@@ -56,6 +56,7 @@ class PaymentMethodCode
         self::DIRECT_EBANKING,
         self::TRUSTLY,
         self::APPLEPAY,
+        self::AMAZONPAY,
         self::ALIPAY,
         self::BCMC_MOBILE,
         self::GOOGLEPAY,
@@ -120,6 +121,13 @@ class PaymentMethodCode
         self::WECHATPAY
     ];
 
+    /**
+     * Payment methods that are no longer offered for configuration
+     */
+    public const DEPRECATED_PAYMENT_METHODS = [
+        self::AMAZONPAY,
+    ];
+
     public const CAPTURE_SUPPORTED = [
         self::SCHEME,
         self::AMERICAN_EXPRESS,
@@ -152,6 +160,7 @@ class PaymentMethodCode
         self::KLARNA_PAYNOW,
         self::MOBILEPAY,
         self::APPLEPAY,
+        self::AMAZONPAY,
         self::GOOGLEPAY,
         self::PAY_WITH_GOOGLE,
         self::PAYPAL,
@@ -222,6 +231,7 @@ class PaymentMethodCode
         self::SEPA,
         self::GOOGLEPAY,
         self::PAY_WITH_GOOGLE,
+        self::AMAZONPAY,
         self::APPLEPAY,
         self::PAYPAL,
         self::ALIPAY,
@@ -327,6 +337,7 @@ class PaymentMethodCode
         self::SEPA,
         self::GOOGLEPAY,
         self::PAY_WITH_GOOGLE,
+        self::AMAZONPAY,
         self::APPLEPAY,
         self::PAYPAL,
         self::ALIPAY,
@@ -556,6 +567,7 @@ class PaymentMethodCode
     private const DIRECT_EBANKING = 'directEbanking';
     private const TRUSTLY = 'trustly';
     private const APPLEPAY = 'applepay';
+    private const AMAZONPAY = 'amazonpay';
     private const ALIPAY = 'alipay';
     private const BCMC_MOBILE = 'bcmc_mobile';
     private const GOOGLEPAY = 'googlepay';
@@ -926,6 +938,11 @@ class PaymentMethodCode
     public static function applePay(): PaymentMethodCode
     {
         return new self(self::APPLEPAY);
+    }
+
+    public static function amazonPay(): PaymentMethodCode
+    {
+        return new self(self::AMAZONPAY);
     }
 
     public static function aliPay(): PaymentMethodCode
