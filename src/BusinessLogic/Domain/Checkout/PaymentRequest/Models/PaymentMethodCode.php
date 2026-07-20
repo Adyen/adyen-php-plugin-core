@@ -56,7 +56,6 @@ class PaymentMethodCode
         self::DIRECT_EBANKING,
         self::TRUSTLY,
         self::APPLEPAY,
-        self::AMAZONPAY,
         self::ALIPAY,
         self::BCMC_MOBILE,
         self::GOOGLEPAY,
@@ -153,7 +152,6 @@ class PaymentMethodCode
         self::KLARNA_PAYNOW,
         self::MOBILEPAY,
         self::APPLEPAY,
-        self::AMAZONPAY,
         self::GOOGLEPAY,
         self::PAY_WITH_GOOGLE,
         self::PAYPAL,
@@ -224,7 +222,6 @@ class PaymentMethodCode
         self::SEPA,
         self::GOOGLEPAY,
         self::PAY_WITH_GOOGLE,
-        self::AMAZONPAY,
         self::APPLEPAY,
         self::PAYPAL,
         self::ALIPAY,
@@ -330,7 +327,6 @@ class PaymentMethodCode
         self::SEPA,
         self::GOOGLEPAY,
         self::PAY_WITH_GOOGLE,
-        self::AMAZONPAY,
         self::APPLEPAY,
         self::PAYPAL,
         self::ALIPAY,
@@ -560,7 +556,6 @@ class PaymentMethodCode
     private const DIRECT_EBANKING = 'directEbanking';
     private const TRUSTLY = 'trustly';
     private const APPLEPAY = 'applepay';
-    private const AMAZONPAY = 'amazonpay';
     private const ALIPAY = 'alipay';
     private const BCMC_MOBILE = 'bcmc_mobile';
     private const GOOGLEPAY = 'googlepay';
@@ -755,7 +750,6 @@ class PaymentMethodCode
             (string)PaymentMethodCode::googlePay(),
             (string)PaymentMethodCode::payWithGoogle(),
             (string)PaymentMethodCode::payPal(),
-            (string)PaymentMethodCode::amazonPay(),
         ];
 
         // Add scheme always if there are express checkout methods to force Adyen API to return brands field
@@ -932,11 +926,6 @@ class PaymentMethodCode
     public static function applePay(): PaymentMethodCode
     {
         return new self(self::APPLEPAY);
-    }
-
-    public static function amazonPay(): PaymentMethodCode
-    {
-        return new self(self::AMAZONPAY);
     }
 
     public static function aliPay(): PaymentMethodCode

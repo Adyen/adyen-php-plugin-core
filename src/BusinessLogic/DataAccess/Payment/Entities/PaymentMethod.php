@@ -12,7 +12,6 @@ use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\StringValuesNotAllowedExc
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\Exceptions\InvalidAuthorizationTypeException;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\Exceptions\InvalidTokenTypeException;
-use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\AmazonPay;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\ApplePay;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\CardConfig;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\EPS;
@@ -269,16 +268,6 @@ class PaymentMethod extends Entity
             ];
         }
 
-        if ($data instanceof AmazonPay) {
-            return [
-                'type' => AmazonPay::class,
-                'publicKeyId' => $data->getPublicKeyId(),
-                'merchantId' => $data->getMerchantId(),
-                'storeId' => $data->getStoreId(),
-                'displayButtonOn' => $data->getDisplayButtonOn(),
-            ];
-        }
-
         if ($data instanceof GooglePay) {
             return [
                 'type' => GooglePay::class,
@@ -353,15 +342,6 @@ class PaymentMethod extends Entity
             return new ApplePay(
                 static::getDataValue($additionalData, 'merchantName'),
                 static::getDataValue($additionalData, 'merchantId'),
-                static::getDataValue($additionalData, 'displayButtonOn')
-            );
-        }
-
-        if (PaymentMethodCode::amazonPay()->equals($paymentCode)) {
-            return new AmazonPay(
-                static::getDataValue($additionalData, 'publicKeyId'),
-                static::getDataValue($additionalData, 'merchantId'),
-                static::getDataValue($additionalData, 'storeId'),
                 static::getDataValue($additionalData, 'displayButtonOn')
             );
         }

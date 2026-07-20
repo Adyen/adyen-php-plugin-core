@@ -21,7 +21,6 @@ use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Repositories\GeneralSettings
 use Adyen\Core\BusinessLogic\Domain\GeneralSettings\Services\GeneralSettingsService;
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\Payment\Exceptions\PaymentMethodDataEmptyException;
-use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\AmazonPay;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\Oney;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\PaymentMethod;
 use Adyen\Core\BusinessLogic\Domain\Payment\Proxies\PaymentProxy;
@@ -347,7 +346,7 @@ class PaymentLinkRequestApiTest extends BaseTestCase
         return [
             new PaymentMethod(
                 'PM3224P6322322225FNZ7B8G595',
-                'amazonpay',
+                'wechatpay',
                 'Credit Card',
                 'https://checkoutshopper-live.adyen.com/checkoutshopper/images/logos/card.svg',
                 true,
@@ -359,8 +358,7 @@ class PaymentLinkRequestApiTest extends BaseTestCase
                 '',
                 null,
                 null,
-                '',
-                new AmazonPay()
+                ''
             )
         ];
     }

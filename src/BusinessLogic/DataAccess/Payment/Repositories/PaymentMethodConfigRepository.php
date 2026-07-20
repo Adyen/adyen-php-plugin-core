@@ -82,7 +82,6 @@ class PaymentMethodConfigRepository implements BasePaymentMethodConfigRepository
             (string)PaymentMethodCode::googlePay(),
             (string)PaymentMethodCode::payWithGoogle(),
             (string)PaymentMethodCode::payPal(),
-            (string)PaymentMethodCode::amazonPay(),
         ];
 
         if ($isGuest) {

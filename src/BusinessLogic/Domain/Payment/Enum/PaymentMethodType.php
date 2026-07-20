@@ -41,7 +41,6 @@ interface PaymentMethodType
         'trustly' => 'onlinePayments',
         'bizum' => 'onlinePayments',
         'applepay' => 'wallet',
-        'amazonpay' => 'wallet',
         'alipay' => 'wallet',
         'bcmc_mobile' => 'wallet',
         'googlepay' => 'wallet',

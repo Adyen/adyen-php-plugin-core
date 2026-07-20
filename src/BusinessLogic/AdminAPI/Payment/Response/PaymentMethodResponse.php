@@ -3,7 +3,6 @@
 namespace Adyen\Core\BusinessLogic\AdminAPI\Payment\Response;
 
 use Adyen\Core\BusinessLogic\AdminAPI\Response\Response;
-use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\AmazonPay;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\ApplePay;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\CardConfig;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\MethodAdditionalData\EPS;
@@ -121,16 +120,6 @@ class PaymentMethodResponse extends Response
                 'type' => ApplePay::class,
                 'merchantName' => $data->getMerchantName(),
                 'merchantId' => $data->getMerchantId(),
-                'displayButtonOn' => $data->getDisplayButtonOn(),
-            ];
-        }
-
-        if ($data instanceof AmazonPay) {
-            return [
-                'type' => AmazonPay::class,
-                'publicKeyId' => $data->getPublicKeyId(),
-                'merchantId' => $data->getMerchantId(),
-                'storeId' => $data->getStoreId(),
                 'displayButtonOn' => $data->getDisplayButtonOn(),
             ];
         }
