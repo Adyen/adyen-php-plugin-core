@@ -85,7 +85,7 @@ class WebhookSynchronizationService
         $transactionHistory = $this->transactionHistoryService->getTransactionHistory($webhook->getMerchantReference());
         if (
             $webhook->getEventCode() !== EventCodes::AUTHORISATION &&
-            $transactionHistory->collection()->filterAllByEventCode('PAYMENT_REQUESTED')->isEmpty()
+            !$this->isPaymentInitiatedByShop($transactionHistory)
         ) {
             return false;
         }
@@ -343,6 +343,23 @@ class WebhookSynchronizationService
             $this->orderService->updateOrderPayment($webhook);
             $this->orderService->updateOrderStatus($webhook, $newStateId);
         }
+    }
+
+    /**
+     * Checks whether the payment for this transaction history was initiated by the shop, either through the checkout
+     * (PAYMENT_REQUESTED) or through a back-office Pay by Link (PAYMENT LINK CREATED). Non-authorisation webhooks
+     * for other merchant references are ignored.
+     *
+     * @param TransactionHistory $transactionHistory
+     *
+     * @return bool
+     */
+    protected function isPaymentInitiatedByShop(TransactionHistory $transactionHistory): bool
+    {
+        $collection = $transactionHistory->collection();
+
+        return !$collection->filterAllByEventCode('PAYMENT_REQUESTED')->isEmpty() ||
+            !$collection->filterAllByEventCode(ShopEvents::PAYMENT_LINK_CREATED)->isEmpty();
     }
 
     /**

@@ -11,6 +11,7 @@ use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\Integration\Store\StoreService;
 use Adyen\Core\BusinessLogic\Domain\Multistore\StoreContext;
 use Adyen\Core\BusinessLogic\Domain\Payment\Models\AuthorizationType;
+use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\ShopEvents;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Exceptions\InvalidMerchantReferenceException;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\HistoryItem;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Models\TransactionHistory;
@@ -814,6 +815,111 @@ class WebhookSynchronizationServiceTest extends BaseTestCase
 
         self::assertEquals(PaymentStates::STATE_FAILED, $transactionHistory->collection()->last()->getPaymentState());
         self::assertCount(1, $transactionHistory->collection()->getAll());
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testSyncNotNeededNonAuthorisationWebhookWithoutPaymentRequested(): void
+    {
+        // arrange
+        $this->transactionHistoryRepository->setTransactionHistory(
+            $this->transactionHistoryWithoutPaymentRequested(EventCodes::AUTHORISATION, 'originalPsp')
+        );
+        $this->webhook = $this->refundWebhook();
+
+        // act
+        $result = StoreContext::doWithStore('1', [$this->service, 'isSynchronizationNeeded'], [$this->webhook]);
+
+        // assert
+        self::assertFalse($result);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testSyncNeededNonAuthorisationWebhookForPayByLinkOrder(): void
+    {
+        // arrange
+        $this->transactionHistoryRepository->setTransactionHistory(
+            $this->transactionHistoryWithoutPaymentRequested(ShopEvents::PAYMENT_LINK_CREATED, 'payment_link1')
+        );
+        $this->webhook = $this->refundWebhook();
+
+        // act
+        $result = StoreContext::doWithStore('1', [$this->service, 'isSynchronizationNeeded'], [$this->webhook]);
+
+        // assert
+        self::assertTrue($result);
+    }
+
+    /**
+     * @return Webhook
+     */
+    private function refundWebhook(): Webhook
+    {
+        return new Webhook(
+            Amount::fromInt(1, Currency::getDefault()),
+            EventCodes::REFUND,
+            'date',
+            '',
+            '',
+            'merchantRef',
+            'refundPsp',
+            '',
+            '',
+            true,
+            'originalPsp',
+            0,
+            false,
+            []
+        );
+    }
+
+    /**
+     * Transaction history whose first item is not a PAYMENT_REQUESTED item, followed by a successful authorisation.
+     *
+     * @param string $firstEventCode
+     * @param string $firstPspReference
+     *
+     * @return TransactionHistory
+     *
+     * @throws InvalidMerchantReferenceException
+     */
+    private function transactionHistoryWithoutPaymentRequested(
+        string $firstEventCode,
+        string $firstPspReference
+    ): TransactionHistory {
+        return new TransactionHistory('merchantRef', CaptureType::immediate(), 0, null,
+            AuthorizationType::finalAuthorization(),
+            [
+                new HistoryItem(
+                    $firstPspReference,
+                    'merchantRef',
+                    $firstEventCode,
+                    PaymentStates::STATE_NEW,
+                    'date',
+                    true,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    '',
+                    0,
+                    false
+                ),
+                new HistoryItem(
+                    'originalPsp',
+                    'merchantRef',
+                    EventCodes::AUTHORISATION,
+                    PaymentStates::STATE_PAID,
+                    'date',
+                    true,
+                    Amount::fromInt(1, Currency::getDefault()),
+                    'paymentMethod',
+                    0,
+                    false,
+                    'originalPsp'
+                ),
+            ]
+        );
     }
 
     /**
