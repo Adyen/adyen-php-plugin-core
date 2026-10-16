@@ -32,6 +32,7 @@ use Adyen\Core\BusinessLogic\Domain\Connection\Models\ConnectionData;
 use Adyen\Core\BusinessLogic\Domain\Connection\Models\ConnectionSettings;
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\Payment\Repositories\PaymentMethodConfigRepository;
+use Adyen\Core\BusinessLogic\Domain\Payment\Services\PaymentService;
 use Adyen\Core\BusinessLogic\Domain\TransactionHistory\Services\TransactionHistoryService;
 use Adyen\Core\Infrastructure\ServiceRegister;
 use Adyen\Core\Tests\BusinessLogic\AdminAPI\Store\MockComponents\MockConnectionSettingsRepository;
@@ -73,7 +74,7 @@ class PaymentRequestApiTest extends BaseTestCase
                         new PaymentRequestFactory(),
                         TestServiceRegister::getService(DonationsDataRepository::class),
                         TestServiceRegister::getService(TransactionHistoryService::class),
-                        ServiceRegister::getService(PaymentMethodConfigRepository::class)
+                        ServiceRegister::getService(PaymentService::class)
                     )
                 );
             })
@@ -132,7 +133,7 @@ class PaymentRequestApiTest extends BaseTestCase
         TestServiceRegister::registerService(
             AuthorizationTypeProcessor::class,
             new SingleInstance(static function () {
-                return new AuthorizationTypeProcessor(ServiceRegister::getService(PaymentMethodConfigRepository::class));
+                return new AuthorizationTypeProcessor(ServiceRegister::getService(PaymentService::class));
             })
         );
 
