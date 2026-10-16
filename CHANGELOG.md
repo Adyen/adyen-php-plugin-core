@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [1.2.9 - 1.2.10](https://github.com/Adyen/adyen-php-plugin-core/compare/1.2.9...1.2.10) - 2026-10-16
+- Remove Amazon Pay payment method
+
 ## [1.2.8 - 1.2.9](https://github.com/Adyen/adyen-php-plugin-core/compare/1.2.8...1.2.9) - 2026-07-07
 - Fix Oney payment method
 
