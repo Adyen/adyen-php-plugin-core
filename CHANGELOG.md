@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](,https://github.com/Adyen/adyen-php-plugin-core/compare/main...dev)
 
+## [2.1.20 - 2.1.21](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.20...2.1.21) - 2026-10-27
+- Fix non-authorisation webhooks being ignored for Pay by Link orders
+
 ## [2.1.19 - 2.1.20](https://github.com/Adyen/adyen-php-plugin-core/compare/2.1.18...2.1.19) - 2026-09-29
 - Remove Amazon Pay from supported  payment methods
 
