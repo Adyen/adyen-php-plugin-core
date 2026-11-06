@@ -560,6 +560,14 @@ class PaymentMethodCode
         self::DIRECT_EBANKING
     ];
 
+    public const WEBHOOK_ORDER_CREATION_SUPPORTED = [
+        self::BCMC_MOBILE,
+        self::BLIK,
+        self::MBWAY,
+        self::SWISH,
+        self::WECHATPAYQR
+    ];
+
     private const SCHEME = 'scheme';
     private const AMERICAN_EXPRESS = 'amex';
     private const BANCONTACT_CARD = 'bcmc';
@@ -1078,5 +1086,10 @@ class PaymentMethodCode
     public function isRecurringPaymentSupported(): bool
     {
         return in_array($this->type, self::RECURRING_PAYMENTS_SUPPORTED, true);
+    }
+
+    public function isWebhookOrderCreationSupported(): bool
+    {
+        return in_array($this->type, self::WEBHOOK_ORDER_CREATION_SUPPORTED, true);
     }
 }
