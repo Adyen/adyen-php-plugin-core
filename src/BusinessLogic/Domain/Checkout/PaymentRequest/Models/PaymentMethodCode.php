@@ -565,7 +565,8 @@ class PaymentMethodCode
         self::BLIK,
         self::MBWAY,
         self::SWISH,
-        self::WECHATPAYQR
+        self::WECHATPAYQR,
+        self::WECHATPAY
     ];
 
     private const SCHEME = 'scheme';
@@ -624,6 +625,7 @@ class PaymentMethodCode
     private const VIPPS = 'vipps';
     private const ZIP = 'zip';
     private const WECHATPAYQR = 'wechatpayQR';
+    private const WECHATPAY = 'wechatpay';
     private const ALMA = 'alma';
 
     //<editor-fold desc="Gift cards" defaultstate="collapsed">
@@ -1088,8 +1090,21 @@ class PaymentMethodCode
         return in_array($this->type, self::RECURRING_PAYMENTS_SUPPORTED, true);
     }
 
-    public function isWebhookOrderCreationSupported(): bool
+    /**
+     * Takes the raw code from the webhook rather than a parsed instance.
+     *
+     * @param string $code
+     *
+     * @return bool
+     */
+    public static function isWebhookOrderCreationSupported(string $code): bool
     {
-        return in_array($this->type, self::WEBHOOK_ORDER_CREATION_SUPPORTED, true);
+        foreach (self::WEBHOOK_ORDER_CREATION_SUPPORTED as $supportedCode) {
+            if ($code === $supportedCode || strpos($code, $supportedCode . '_') === 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

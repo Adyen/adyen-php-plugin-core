@@ -54,4 +54,15 @@ interface OrderService
      * @return Amount
      */
     public function getOrderAmount(string $merchantReference): Amount;
+
+    /**
+     * Creates the order for a successful AUTHORISATION webhook when the shopper never returned to the shop to
+     * create it. Called only for methods in PaymentMethodCode::WEBHOOK_ORDER_CREATION_SUPPORTED, and only after
+     * orderExists() kept failing.
+     *
+     * @param Webhook $webhook
+     *
+     * @return bool True when the order exists afterwards, false when it could not be created.
+     */
+    public function createOrderFromWebhook(Webhook $webhook): bool;
 }

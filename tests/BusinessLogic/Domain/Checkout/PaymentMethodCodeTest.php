@@ -12,19 +12,48 @@ use Adyen\Core\Tests\BusinessLogic\Common\BaseTestCase;
  */
 class PaymentMethodCodeTest extends BaseTestCase
 {
-    public function testWebhookOrderCreationSupportedForPendingActionMethods(): void
+    /**
+     * @dataProvider webhookPaymentMethodCodes
+     *
+     * @param string $code
+     * @param bool $expected
+     *
+     * @return void
+     */
+    public function testWebhookOrderCreationSupport(string $code, bool $expected): void
     {
-        self::assertTrue(PaymentMethodCode::bcmcMobile()->isWebhookOrderCreationSupported());
-        self::assertTrue(PaymentMethodCode::blik()->isWebhookOrderCreationSupported());
-        self::assertTrue(PaymentMethodCode::mbWay()->isWebhookOrderCreationSupported());
-        self::assertTrue(PaymentMethodCode::swish()->isWebhookOrderCreationSupported());
-        self::assertTrue(PaymentMethodCode::weChatPay()->isWebhookOrderCreationSupported());
+        self::assertSame($expected, PaymentMethodCode::isWebhookOrderCreationSupported($code));
     }
 
-    public function testWebhookOrderCreationNotSupportedForOtherMethods(): void
+    /**
+     * Raw paymentMethod values as Adyen sends them in notifications, including codes parse() rejects.
+     *
+     * @return array
+     */
+    public function webhookPaymentMethodCodes(): array
     {
-        self::assertFalse(PaymentMethodCode::scheme()->isWebhookOrderCreationSupported());
-        self::assertFalse(PaymentMethodCode::payPal()->isWebhookOrderCreationSupported());
-        self::assertFalse(PaymentMethodCode::ideal()->isWebhookOrderCreationSupported());
+        return [
+            'bcmc_mobile' => ['bcmc_mobile', true],
+            'blik' => ['blik', true],
+            'mbway' => ['mbway', true],
+            'swish' => ['swish', true],
+            'wechatpayQR' => ['wechatpayQR', true],
+            'wechatpay' => ['wechatpay', true],
+            'bcmc_mobile_QR variant' => ['bcmc_mobile_QR', true],
+            'bcmc_mobile_app variant' => ['bcmc_mobile_app', true],
+            'wechatpay_pos variant' => ['wechatpay_pos', true],
+            'same prefix without underscore' => ['blikx', false],
+            'wechatpayWeb redirect' => ['wechatpayWeb', false],
+            'scheme' => ['scheme', false],
+            'bcmc' => ['bcmc', false],
+            'paypal' => ['paypal', false],
+            'ideal' => ['ideal', false],
+            'twint' => ['twint', false],
+            'mobilepay' => ['mobilepay', false],
+            'vipps' => ['vipps', false],
+            'card brand visa' => ['visa', false],
+            'case differs' => ['BLIK', false],
+            'empty' => ['', false],
+        ];
     }
 }

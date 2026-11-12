@@ -5,6 +5,7 @@ namespace Adyen\Core\BusinessLogic\Webhook\Tasks;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Exceptions\InvalidCurrencyCode;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Amount;
 use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\Amount\Currency;
+use Adyen\Core\BusinessLogic\Domain\Checkout\PaymentRequest\Models\PaymentMethodCode;
 use Adyen\Core\BusinessLogic\Domain\Integration\Order\OrderService;
 use Adyen\Core\BusinessLogic\Domain\Multistore\StoreContext;
 use Adyen\Core\BusinessLogic\Domain\ShopNotifications\Models\Events\Authorization\FailedPaymentAuthorizationEvent;
@@ -182,7 +183,7 @@ class OrderUpdateTask extends TransactionalTask
      */
     private function doExecute(): void
     {
-        if ($this->checkIfOrderExists()) {
+        if ($this->orderExistsOrCreate()) {
             $event = $this->getEventFromWebhook();
 
             if ($event) {
@@ -252,6 +253,37 @@ class OrderUpdateTask extends TransactionalTask
         }
 
         return null;
+    }
+
+    /**
+     * Falls back to creating the order through the integration when a successful authorisation arrives for a
+     * supported method and the order is still missing after every retry.
+     *
+     * @return bool
+     *
+     * @throws Exception The original "order not found" exception when no order could be created either.
+     */
+    private function orderExistsOrCreate(): bool
+    {
+        try {
+            return $this->checkIfOrderExists();
+        } catch (Exception $exception) {
+            if ($this->canCreateOrderFromWebhook() && $this->getOrderService()->createOrderFromWebhook($this->webhook)) {
+                return true;
+            }
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    private function canCreateOrderFromWebhook(): bool
+    {
+        return $this->webhook->getEventCode() === EventCodes::AUTHORISATION
+            && $this->webhook->isSuccess()
+            && PaymentMethodCode::isWebhookOrderCreationSupported($this->webhook->getPaymentMethod());
     }
 
     /**
